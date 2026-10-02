@@ -165,7 +165,7 @@ if (loginForm) {
         );
 
         setTimeout(() => {
-            window.location.href = "Https://ik-pro.my.id/dashboard/index.html";
+            window.location.href = "https://ik-pro.my.id/dashboard/index.html";
         }, 1500);
     });
 }
