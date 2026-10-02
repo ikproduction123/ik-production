@@ -1,574 +1,385 @@
-/* =========================================================
-   IK-PRO.MY.ID
-   AUTHENTICATION JAVASCRIPT
-========================================================= */
-
+import { supabaseClient } from "./supabase.js";
 
 /* =========================================================
-   CUSTOM ALERT
-========================================================= */
-
-function showAlert(
-    type,
-    title,
-    message,
-    duration = 4000
-) {
-
-    const container =
-        document.getElementById("alertContainer");
-
-    if (!container) {
-        return;
-    }
-
-    const icons = {
-        success: "✓",
-        error: "!",
-        warning: "!",
-        info: "i"
-    };
-
-    const alert =
-        document.createElement("div");
-
-    alert.className =
-        `alert alert-${type}`;
-
-    alert.innerHTML = `
-        <div class="alert-icon">
-            ${icons[type] || "i"}
-        </div>
-
-        <div class="alert-content">
-            <div class="alert-title">
-                ${title}
-            </div>
-
-            <div class="alert-message">
-                ${message}
-            </div>
-        </div>
-
-        <button
-            type="button"
-            class="alert-close"
-            aria-label="Tutup"
-        >
-            ×
-        </button>
-    `;
-
-    container.appendChild(alert);
-
-
-    /* =========================================
-       CLOSE BUTTON
-    ========================================== */
-
-    const closeButton =
-        alert.querySelector(".alert-close");
-
-    closeButton?.addEventListener(
-        "click",
-        () => {
-            closeAlert(alert);
-        }
-    );
-
-
-    /* =========================================
-       AUTO CLOSE
-    ========================================== */
-
-    if (duration > 0) {
-
-        setTimeout(() => {
-
-            closeAlert(alert);
-
-        }, duration);
-    }
-}
-
-
-/* =========================================================
-   CLOSE ALERT
-========================================================= */
-
-function closeAlert(alert) {
-
-    if (
-        !alert ||
-        alert.classList.contains("hide")
-    ) {
-        return;
-    }
-
-    alert.classList.add("hide");
-
-    setTimeout(() => {
-
-        alert.remove();
-
-    }, 350);
-}
-
-
-/* =========================================================
-   CHECK SUPABASE CLIENT
-========================================================= */
-
-function getSupabaseClient() {
-
-    if (!window.supabaseClient) {
-
-        console.error(
-            "Supabase client tidak ditemukan."
-        );
-
-        showAlert(
-            "error",
-            "Konfigurasi error",
-            "Supabase belum berhasil dimuat."
-        );
-
-        return null;
-    }
-
-    return window.supabaseClient;
-}
-
-
-/* =========================================================
-   PASSWORD TOGGLE
-========================================================= */
-
-document
-    .querySelectorAll(".toggle-password")
-    .forEach(button => {
-
-        button.addEventListener(
-            "click",
-            () => {
-
-                const input =
-                    button.parentElement
-                        ?.querySelector("input");
-
-                if (!input) {
-                    return;
-                }
-
-                if (
-                    input.type === "password"
-                ) {
-
-                    input.type = "text";
-
-                    button.textContent = "🙈";
-
-                } else {
-
-                    input.type = "password";
-
-                    button.textContent = "👁";
-                }
-            }
-        );
-    });
-
-
-/* =========================================================
+   IK-Pro.My.Id
+   AUTH SYSTEM
    LOGIN
 ========================================================= */
 
-const loginForm =
-    document.getElementById("loginForm");
+document.addEventListener("DOMContentLoaded", () => {
+    /* =====================================================
+       ELEMENT
+    ===================================================== */
 
+    const loginForm = document.getElementById("login-form");
 
-if (loginForm) {
+    const emailInput = document.getElementById("email");
+    const passwordInput = document.getElementById("password");
 
-    loginForm.addEventListener(
-        "submit",
-        async event => {
+    const emailError = document.getElementById("email-error");
+    const passwordError = document.getElementById("password-error");
 
-            event.preventDefault();
+    const alertBox = document.getElementById("auth-alert");
 
+    const submitButton = document.getElementById("login-submit");
+    const submitText = document.getElementById("login-submit-text");
+    const loadingText = document.getElementById("login-loading");
 
-            /* =====================================
-               CLIENT
-            ====================================== */
+    const togglePassword = document.getElementById("toggle-password");
 
-            const client =
-                getSupabaseClient();
+    /* =====================================================
+       HELPER — ALERT
+    ===================================================== */
 
-            if (!client) {
-                return;
-            }
+    function showAlert(message, type = "error") {
+        if (!alertBox) return;
 
+        alertBox.textContent = message;
 
-            /* =====================================
-               FORM DATA
-            ====================================== */
+        alertBox.className = `auth-alert auth-alert-${type}`;
 
-            const email =
-                document
-                    .getElementById("loginEmail")
-                    ?.value
-                    .trim();
+        alertBox.hidden = false;
+    }
 
-            const password =
-                document
-                    .getElementById("loginPassword")
-                    ?.value;
+    function hideAlert() {
+        if (!alertBox) return;
 
+        alertBox.hidden = true;
+        alertBox.textContent = "";
+    }
 
-            /* =====================================
-               VALIDATION
-            ====================================== */
+    /* =====================================================
+       HELPER — FORM ERROR
+    ===================================================== */
 
-            if (!email || !password) {
-
-                showAlert(
-                    "warning",
-                    "Data belum lengkap",
-                    "Silakan isi email dan password."
-                );
-
-                return;
-            }
-
-
-            /* =====================================
-               BUTTON
-            ====================================== */
-
-            const button =
-                loginForm.querySelector(
-                    ".btn-primary"
-                );
-
-            const originalText =
-                button
-                    ? button.textContent
-                    : "Masuk";
-
-
-            if (button) {
-
-                button.disabled = true;
-
-                button.textContent =
-                    "Memproses...";
-            }
-
-
-            try {
-
-                /* =================================
-                   SUPABASE LOGIN
-                ================================= */
-
-                const {
-                    data,
-                    error
-                } =
-                    await client.auth
-                        .signInWithPassword({
-                            email,
-                            password
-                        });
-
-
-                /* =================================
-                   ERROR
-                ================================= */
-
-                if (error) {
-
-                    console.error(
-                        "Login error:",
-                        error
-                    );
-
-                    showAlert(
-                        "error",
-                        "Login gagal",
-                        error.message
-                    );
-
-                    return;
-                }
-
-
-                /* =================================
-                   SUCCESS
-                ================================= */
-
-                console.log(
-                    "Login berhasil:",
-                    data.user
-                );
-
-                showAlert(
-                    "success",
-                    "Login berhasil",
-                    "Selamat datang kembali. Mengalihkan ke dashboard...",
-                    1500
-                );
-
-
-                setTimeout(() => {
-
-                    window.location.href =
-                        "dashboard/index.html";
-
-                }, 1500);
-
-
-            } catch (error) {
-
-                console.error(
-                    "Login exception:",
-                    error
-                );
-
-                showAlert(
-                    "error",
-                    "Terjadi kesalahan",
-                    "Tidak dapat memproses login."
-                );
-
-            } finally {
-
-                if (button) {
-
-                    button.disabled = false;
-
-                    button.textContent =
-                        originalText;
-                }
-            }
+    function clearErrors() {
+        if (emailError) {
+            emailError.textContent = "";
         }
-    );
+
+        if (passwordError) {
+            passwordError.textContent = "";
+        }
+
+        if (emailInput) {
+            emailInput.classList.remove("input-error");
+        }
+
+        if (passwordInput) {
+            passwordInput.classList.remove("input-error");
+        }
+    }
+
+    /* =====================================================
+       VALIDATION
+    ===================================================== */
+
+    function validateForm() {
+        clearErrors();
+
+        let valid = true;
+
+        const email = emailInput.value.trim();
+
+        const password = passwordInput.value;
+
+        /* EMAIL */
+
+        if (!email) {
+            emailError.textContent = "Email wajib diisi.";
+
+            emailInput.classList.add("input-error");
+
+            valid = false;
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+            emailError.textContent = "Format email tidak valid.";
+
+            emailInput.classList.add("input-error");
+
+            valid = false;
+        }
+
+        /* PASSWORD */
+
+        if (!password) {
+            passwordError.textContent = "Password wajib diisi.";
+
+            passwordInput.classList.add("input-error");
+
+            valid = false;
+        }
+
+        return valid;
+    }
+
+    /* =====================================================
+       LOADING STATE
+    ===================================================== */
+
+    function setLoading(isLoading) {
+        if (submitButton) {
+            submitButton.disabled = isLoading;
+        }
+
+        if (submitText) {
+            submitText.hidden = isLoading;
+        }
+
+        if (loadingText) {
+            loadingText.hidden = !isLoading;
+        }
+
+        if (emailInput) {
+            emailInput.disabled = isLoading;
+        }
+
+        if (passwordInput) {
+            passwordInput.disabled = isLoading;
+        }
+    }
+
+    /* =====================================================
+       CHECK EXISTING SESSION
+    ===================================================== */
+
+    async function checkExistingSession() {
+        try {
+            const {
+                data: { session },
+                error
+            } = await supabaseClient.auth.getSession();
+
+            if (error) {
+                console.error("Session error:", error);
+
+                return;
+            }
+
+            /* =============================================
+               TIDAK ADA SESSION
+            ============================================= */
+
+            if (!session?.user) {
+                return;
+            }
+
+            /* =============================================
+               USER SUDAH LOGIN
+            ============================================= */
+
+            const { data: profile, error: profileError } = await supabaseClient
+                .from("profiles")
+                .select("role")
+                .eq("id", session.user.id)
+                .single();
+
+            if (profileError) {
+                console.error("Profile session error:", profileError);
+
+                return;
+            }
+
+            /* =============================================
+               REDIRECT ADMIN
+            ============================================= */
+
+            if (profile.role === "admin") {
+                window.location.replace("/admin/index.html");
+
+                return;
+            }
+
+            /* =============================================
+               REDIRECT CLIENT
+            ============================================= */
+
+            if (profile.role === "client") {
+                window.location.replace("/client/index.html");
+
+                return;
+            }
+
+            /* =============================================
+               ROLE TIDAK VALID
+            ============================================= */
+
+            await supabaseClient.auth.signOut();
+        } catch (error) {
+            console.error("Check session error:", error);
+        }
+    }
+
+    /* Jalankan pengecekan session */
+
+    checkExistingSession();
+
+    /* =====================================================
+       TOGGLE PASSWORD
+    ===================================================== */
+
+    if (togglePassword) {
+        togglePassword.addEventListener("click", () => {
+            const isPassword = passwordInput.type === "password";
+
+            passwordInput.type = isPassword ? "text" : "password";
+
+            togglePassword.setAttribute("aria-pressed", String(isPassword));
+
+            togglePassword.setAttribute(
+                "aria-label",
+                isPassword ? "Sembunyikan password" : "Tampilkan password"
+            );
+        });
+    }
+    
+    /* =====================================================
+   LOGOUT
+===================================================== */
+
+async function logout() {
+
+    try {
+
+        const {
+            error
+        } = await supabaseClient.auth.signOut();
+
+
+        if (error) {
+            throw error;
+        }
+
+
+        window.location.replace(
+            "/login.html"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Logout error:",
+            error
+        );
+
+        showAlert(
+            "Gagal keluar dari akun.",
+            "error"
+        );
+    }
 }
 
+    /* =====================================================
+       LOGIN
+    ===================================================== */
 
-/* =========================================================
-   REGISTER
-========================================================= */
-
-const registerForm =
-    document.getElementById("registerForm");
-
-
-if (registerForm) {
-
-    registerForm.addEventListener(
-        "submit",
-        async event => {
-
+    if (loginForm) {
+        loginForm.addEventListener("submit", async event => {
             event.preventDefault();
 
+            hideAlert();
 
-            /* =====================================
-               CLIENT
-            ====================================== */
+            /* =========================================
+                   VALIDASI
+                ========================================= */
 
-            const client =
-                getSupabaseClient();
-
-            if (!client) {
+            if (!validateForm()) {
                 return;
             }
 
+            const email = emailInput.value.trim();
 
-            /* =====================================
-               FORM DATA
-            ====================================== */
-
-            const name =
-                document
-                    .getElementById("registerName")
-                    ?.value
-                    .trim();
-
-            const phone =
-                document
-                    .getElementById("registerPhone")
-                    ?.value
-                    .trim();
-
-            const email =
-                document
-                    .getElementById("registerEmail")
-                    ?.value
-                    .trim();
-
-            const password =
-                document
-                    .getElementById("registerPassword")
-                    ?.value;
-
-
-            /* =====================================
-               VALIDATION
-            ====================================== */
-
-            if (
-                !name ||
-                !phone ||
-                !email ||
-                !password
-            ) {
-
-                showAlert(
-                    "warning",
-                    "Data belum lengkap",
-                    "Silakan lengkapi semua data terlebih dahulu."
-                );
-
-                return;
-            }
-
-
-            /* =====================================
-               PASSWORD
-            ====================================== */
-
-            if (password.length < 6) {
-
-                showAlert(
-                    "warning",
-                    "Password terlalu pendek",
-                    "Password minimal terdiri dari 6 karakter."
-                );
-
-                return;
-            }
-
-
-            /* =====================================
-               BUTTON
-            ====================================== */
-
-            const button =
-                registerForm.querySelector(
-                    ".btn-primary"
-                );
-
-            const originalText =
-                button
-                    ? button.textContent
-                    : "Daftar";
-
-
-            if (button) {
-
-                button.disabled = true;
-
-                button.textContent =
-                    "Mendaftar...";
-            }
-
+            const password = passwordInput.value;
 
             try {
+                setLoading(true);
 
-                /* =================================
-                   SUPABASE REGISTER
-                ================================= */
+                /* =====================================
+                       SUPABASE AUTH
+                    ===================================== */
 
-                const {
-                    data,
-                    error
-                } =
-                    await client.auth.signUp({
-
+                const { data, error } =
+                    await supabaseClient.auth.signInWithPassword({
                         email,
-
-                        password,
-
-                        options: {
-
-                            data: {
-                                name,
-                                phone
-                            }
-                        }
+                        password
                     });
 
-
-                /* =================================
-                   ERROR
-                ================================= */
-
                 if (error) {
+                    throw error;
+                }
 
-                    console.error(
-                        "Register error:",
-                        error
-                    );
+                /* =====================================
+                       VALIDASI USER
+                    ===================================== */
 
-                    showAlert(
-                        "error",
-                        "Pendaftaran gagal",
-                        error.message
+                if (!data?.user) {
+                    throw new Error(
+                        "Login gagal. Data pengguna tidak ditemukan."
                     );
+                }
+
+                /* =====================================
+                       AMBIL PROFILE
+                    ===================================== */
+
+                const { data: profile, error: profileError } =
+                    await supabaseClient
+                        .from("profiles")
+                        .select("id, name, phone, role")
+                        .eq("id", data.user.id)
+                        .single();
+
+                if (profileError) {
+                    console.error("Profile error:", profileError);
+
+                    throw new Error("Profile pengguna tidak dapat ditemukan.");
+                }
+
+                /* =====================================
+                       REDIRECT ADMIN
+                    ===================================== */
+
+                if (profile.role === "admin") {
+                    window.location.href = "/admin/index.html";
 
                     return;
                 }
 
+                /* =====================================
+                       REDIRECT CLIENT
+                    ===================================== */
 
-                /* =================================
-                   SUCCESS
-                ================================= */
+                if (profile.role === "client") {
+                    window.location.href = "/client/index.html";
 
-                console.log(
-                    "Register berhasil:",
-                    data
-                );
-
-
-                showAlert(
-                    "success",
-                    "Pendaftaran berhasil",
-                    "Silakan cek email untuk melakukan verifikasi.",
-                    3000
-                );
-
-
-                setTimeout(() => {
-
-                    window.location.href =
-                        "login.html";
-
-                }, 3000);
-
-
-            } catch (error) {
-
-                console.error(
-                    "Register exception:",
-                    error
-                );
-
-                showAlert(
-                    "error",
-                    "Terjadi kesalahan",
-                    "Tidak dapat memproses pendaftaran."
-                );
-
-            } finally {
-
-                if (button) {
-
-                    button.disabled = false;
-
-                    button.textContent =
-                        originalText;
+                    return;
                 }
+
+                /* =====================================
+                       ROLE TIDAK VALID
+                    ===================================== */
+
+                await supabaseClient.auth.signOut();
+
+                throw new Error("Role akun tidak valid.");
+            } catch (error) {
+                console.error("Login error:", error);
+
+                let message = "Terjadi kesalahan saat login.";
+
+                const errorMessage = error?.message?.toLowerCase();
+
+                if (errorMessage?.includes("invalid login credentials")) {
+                    message = "Email atau password salah.";
+                } else if (errorMessage?.includes("email not confirmed")) {
+                    message = "Email Anda belum dikonfirmasi.";
+                } else if (error?.message) {
+                    message = error.message;
+                }
+
+                showAlert(message, "error");
+            } finally {
+                setLoading(false);
             }
-        }
-    );
-}
+        });
+    }
+});

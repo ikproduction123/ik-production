@@ -1,0 +1,183 @@
+/* =========================================================
+   IK-Pro.My.Id
+   GLOBAL CSS
+   ========================================================= */
+
+:root {
+    --color-primary: #1E3A5F;
+    --color-gold: #D4AF37;
+    --color-background: #F8F4ED;
+    --color-rose: #9F1239;
+    --color-text: #334155;
+    --color-white: #FFFFFF;
+
+    --color-border: #E2E8F0;
+    --color-muted: #64748B;
+
+    --shadow-soft:
+        0 10px 30px rgba(15, 23, 42, 0.08);
+
+    --shadow-card:
+        0 20px 50px rgba(15, 23, 42, 0.10);
+
+    --radius-sm: 8px;
+    --radius-md: 14px;
+    --radius-lg: 24px;
+
+    --container-width: 1200px;
+
+    --transition:
+        180ms ease;
+}
+
+/* =========================================================
+   RESET
+   ========================================================= */
+
+*,
+*::before,
+*::after {
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+
+    font-family:
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    color: var(--color-text);
+    background: var(--color-background);
+
+    line-height: 1.6;
+
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+}
+
+img {
+    display: block;
+    max-width: 100%;
+}
+
+button,
+input,
+textarea,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+/* =========================================================
+   CONTAINER
+   ========================================================= */
+
+.container {
+    width: min(
+        100% - 32px,
+        var(--container-width)
+    );
+
+    margin-inline: auto;
+}
+
+/* =========================================================
+   BUTTON
+   ========================================================= */
+
+.btn {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-height: 46px;
+
+    padding: 0 22px;
+
+    border-radius: var(--radius-sm);
+
+    font-size: 14px;
+    font-weight: 700;
+
+    border: 1px solid transparent;
+
+    transition:
+        transform var(--transition),
+        box-shadow var(--transition),
+        background-color var(--transition),
+        color var(--transition);
+}
+
+.btn:hover {
+    transform: translateY(-2px);
+}
+
+.btn-primary {
+    color: var(--color-white);
+    background: var(--color-primary);
+
+    box-shadow: var(--shadow-soft);
+}
+
+.btn-primary:hover {
+    background: #172F4D;
+}
+
+.btn-secondary {
+    color: var(--color-primary);
+
+    background: var(--color-white);
+
+    border-color: var(--color-border);
+}
+
+.btn-outline {
+    color: var(--color-primary);
+
+    background: transparent;
+
+    border-color: var(--color-primary);
+}
+
+/* =========================================================
+   ACCESSIBILITY
+   ========================================================= */
+
+:focus-visible {
+    outline: 3px solid rgba(212, 175, 55, 0.45);
+    outline-offset: 3px;
+}
+
+/* =========================================================
+   REDUCED MOTION
+   ========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}

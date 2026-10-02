@@ -1,45 +1,30 @@
-
 /* =========================================================
-   IK-PRO.MY.ID
+   IK-Pro.My.Id
    SUPABASE CLIENT
-========================================================= */
+   ========================================================= */
 
-const SUPABASE_URL =
-    "https://gqrlyyhtjhsjrdkctfmc.supabase.co";
+const SUPABASE_URL = "https://urzmuomvcfdlmsrhjqlv.supabase.co";
 
-const SUPABASE_ANON_KEY =
-    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdxcmx5eWh0amhzanJka2N0Zm1jIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA4OTg5NTEsImV4cCI6MjEwNjQ3NDk1MX0.9G3uddg_QwlXK951ExTqkMplH1_c0_PV073mVcb2caY";
+const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InVyem11b212Y2ZkbG1zcmhqcWx2Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTA5NTU2NjIsImV4cCI6MjEwNjUzMTY2Mn0.wvXP12NlTmatx5xF7F5YEoXvq02t28x1arP4fqotO_w";
 
-/* =========================================================
-   VALIDASI
-========================================================= */
-
-if (
-    typeof supabase === "undefined"
-) {
-    console.error(
-        "Supabase JS belum dimuat."
-    );
-} else if (
-    !SUPABASE_URL ||
-    !SUPABASE_ANON_KEY
-) {
-    console.error(
-        "Konfigurasi Supabase belum lengkap."
-    );
-} else {
-
-    /* =====================================================
-       BUAT SUPABASE CLIENT
-    ===================================================== */
-
-    window.supabaseClient =
-        supabase.createClient(
-            SUPABASE_URL,
-            SUPABASE_ANON_KEY
-        );
-
-    console.log(
-        "Supabase client berhasil dibuat."
-    );
+if (!SUPABASE_URL || SUPABASE_URL.includes("YOUR-PROJECT")) {
+    throw new Error("SUPABASE_URL belum dikonfigurasi.");
 }
+
+if (!SUPABASE_ANON_KEY || SUPABASE_ANON_KEY.includes("YOUR_PUBLIC_ANON_KEY")) {
+    throw new Error("SUPABASE_ANON_KEY belum dikonfigurasi.");
+}
+
+/*
+ * Supabase client
+ *
+ * File ini akan digunakan oleh seluruh
+ * aplikasi IK-Pro.My.Id.
+ */
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_ANON_KEY
+);
+
+export { supabaseClient, SUPABASE_URL };
