@@ -165,7 +165,7 @@ if (loginForm) {
         );
 
         setTimeout(() => {
-            window.location.href = "dashboard.html";
+            window.location.href = "./dashboard/index.html";
         }, 1500);
     });
 }
