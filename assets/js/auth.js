@@ -1,13 +1,26 @@
+/* =========================================================
+   IK-PRO.MY.ID
+   AUTHENTICATION JAVASCRIPT
+========================================================= */
 
 
-/* ========================================
+/* =========================================================
    CUSTOM ALERT
-======================================== */
+========================================================= */
 
-function showAlert(type, title, message, duration = 4000) {
-    const container = document.getElementById("alertContainer");
+function showAlert(
+    type,
+    title,
+    message,
+    duration = 4000
+) {
 
-    if (!container) return;
+    const container =
+        document.getElementById("alertContainer");
+
+    if (!container) {
+        return;
+    }
 
     const icons = {
         success: "✓",
@@ -16,9 +29,11 @@ function showAlert(type, title, message, duration = 4000) {
         info: "i"
     };
 
-    const alert = document.createElement("div");
+    const alert =
+        document.createElement("div");
 
-    alert.className = `alert alert-${type}`;
+    alert.className =
+        `alert alert-${type}`;
 
     alert.innerHTML = `
         <div class="alert-icon">
@@ -46,212 +61,514 @@ function showAlert(type, title, message, duration = 4000) {
 
     container.appendChild(alert);
 
-    /* Tombol close */
 
-    const closeButton = alert.querySelector(".alert-close");
+    /* =========================================
+       CLOSE BUTTON
+    ========================================== */
 
-    closeButton.addEventListener("click", () => {
-        closeAlert(alert);
-    });
+    const closeButton =
+        alert.querySelector(".alert-close");
 
-    /* Auto close */
+    closeButton?.addEventListener(
+        "click",
+        () => {
+            closeAlert(alert);
+        }
+    );
+
+
+    /* =========================================
+       AUTO CLOSE
+    ========================================== */
 
     if (duration > 0) {
+
         setTimeout(() => {
+
             closeAlert(alert);
+
         }, duration);
     }
 }
 
-/* ========================================
+
+/* =========================================================
    CLOSE ALERT
-======================================== */
+========================================================= */
 
 function closeAlert(alert) {
-    if (!alert || alert.classList.contains("hide")) {
+
+    if (
+        !alert ||
+        alert.classList.contains("hide")
+    ) {
         return;
     }
 
     alert.classList.add("hide");
 
     setTimeout(() => {
+
         alert.remove();
+
     }, 350);
 }
 
-/* ========================================
-   TOGGLE PASSWORD
-======================================== */
 
-document.querySelectorAll(".toggle-password").forEach(button => {
-    button.addEventListener("click", () => {
-        const input = button.parentElement.querySelector("input");
+/* =========================================================
+   CHECK SUPABASE CLIENT
+========================================================= */
 
-        if (input.type === "password") {
-            input.type = "text";
-            button.textContent = "🙈";
-        } else {
-            input.type = "password";
-            button.textContent = "👁";
-        }
-    });
-});
+function getSupabaseClient() {
 
-/* ========================================
-   LOGIN
-======================================== */
+    if (!window.supabaseClient) {
 
-const loginForm = document.getElementById("loginForm");
-
-if (loginForm) {
-    loginForm.addEventListener("submit", async e => {
-        e.preventDefault();
-
-        const email = document.getElementById("loginEmail").value.trim();
-
-        const password = document.getElementById("loginPassword").value;
-
-        /* Validasi */
-
-        if (!email || !password) {
-            showAlert(
-                "warning",
-                "Data belum lengkap",
-                "Silakan isi email dan password."
-            );
-
-            return;
-        }
-
-        /* Loading */
-
-        const button = loginForm.querySelector(".btn-primary");
-
-        const originalText = button.textContent;
-
-        button.disabled = true;
-        button.textContent = "Memproses...";
-
-        /* Login Supabase */
-
-        const { error } = await supabaseClient.auth.signInWithPassword({
-            email,
-            password
-        });
-
-        button.disabled = false;
-        button.textContent = originalText;
-
-        /* Error */
-
-        if (error) {
-            showAlert("error", "Login gagal", error.message);
-
-            return;
-        }
-
-        /* Success */
-
-        showAlert(
-            "success",
-            "Login berhasil",
-            "Selamat datang kembali. Mengalihkan ke dashboard...",
-            1500
+        console.error(
+            "Supabase client tidak ditemukan."
         );
 
-        setTimeout(() => {
-            window.location.href = "https://ik-pro.my.id/dashboard/index.html";
-        }, 1500);
-    });
+        showAlert(
+            "error",
+            "Konfigurasi error",
+            "Supabase belum berhasil dimuat."
+        );
+
+        return null;
+    }
+
+    return window.supabaseClient;
 }
 
-/* ========================================
-   REGISTER
-======================================== */
 
-const registerForm = document.getElementById("registerForm");
+/* =========================================================
+   PASSWORD TOGGLE
+========================================================= */
 
-if (registerForm) {
-    registerForm.addEventListener("submit", async e => {
-        e.preventDefault();
+document
+    .querySelectorAll(".toggle-password")
+    .forEach(button => {
 
-        const name = document.getElementById("registerName").value.trim();
+        button.addEventListener(
+            "click",
+            () => {
 
-        const phone = document.getElementById("registerPhone").value.trim();
+                const input =
+                    button.parentElement
+                        ?.querySelector("input");
 
-        const email = document.getElementById("registerEmail").value.trim();
+                if (!input) {
+                    return;
+                }
 
-        const password = document.getElementById("registerPassword").value;
+                if (
+                    input.type === "password"
+                ) {
 
-        /* Validasi */
+                    input.type = "text";
 
-        if (!name || !phone || !email || !password) {
-            showAlert(
-                "warning",
-                "Data belum lengkap",
-                "Silakan lengkapi semua data terlebih dahulu."
-            );
+                    button.textContent = "🙈";
 
-            return;
-        }
+                } else {
 
-        /* Password */
+                    input.type = "password";
 
-        if (password.length < 6) {
-            showAlert(
-                "warning",
-                "Password terlalu pendek",
-                "Password minimal terdiri dari 6 karakter."
-            );
-
-            return;
-        }
-
-        /* Loading */
-
-        const button = registerForm.querySelector(".btn-primary");
-
-        const originalText = button.textContent;
-
-        button.disabled = true;
-        button.textContent = "Mendaftar...";
-
-        /* Register Supabase */
-
-        const { error } = await supabaseClient.auth.signUp({
-            email,
-            password,
-
-            options: {
-                data: {
-                    name,
-                    phone
+                    button.textContent = "👁";
                 }
             }
-        });
-
-        button.disabled = false;
-        button.textContent = originalText;
-
-        /* Error */
-
-        if (error) {
-            showAlert("error", "Pendaftaran gagal", error.message);
-
-            return;
-        }
-
-        /* Success */
-
-        showAlert(
-            "success",
-            "Pendaftaran berhasil",
-            "Silakan cek email untuk melakukan verifikasi.",
-            3000
         );
-
-        setTimeout(() => {
-            window.location.href = "login.html";
-        }, 3000);
     });
+
+
+/* =========================================================
+   LOGIN
+========================================================= */
+
+const loginForm =
+    document.getElementById("loginForm");
+
+
+if (loginForm) {
+
+    loginForm.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+
+            /* =====================================
+               CLIENT
+            ====================================== */
+
+            const client =
+                getSupabaseClient();
+
+            if (!client) {
+                return;
+            }
+
+
+            /* =====================================
+               FORM DATA
+            ====================================== */
+
+            const email =
+                document
+                    .getElementById("loginEmail")
+                    ?.value
+                    .trim();
+
+            const password =
+                document
+                    .getElementById("loginPassword")
+                    ?.value;
+
+
+            /* =====================================
+               VALIDATION
+            ====================================== */
+
+            if (!email || !password) {
+
+                showAlert(
+                    "warning",
+                    "Data belum lengkap",
+                    "Silakan isi email dan password."
+                );
+
+                return;
+            }
+
+
+            /* =====================================
+               BUTTON
+            ====================================== */
+
+            const button =
+                loginForm.querySelector(
+                    ".btn-primary"
+                );
+
+            const originalText =
+                button
+                    ? button.textContent
+                    : "Masuk";
+
+
+            if (button) {
+
+                button.disabled = true;
+
+                button.textContent =
+                    "Memproses...";
+            }
+
+
+            try {
+
+                /* =================================
+                   SUPABASE LOGIN
+                ================================= */
+
+                const {
+                    data,
+                    error
+                } =
+                    await client.auth
+                        .signInWithPassword({
+                            email,
+                            password
+                        });
+
+
+                /* =================================
+                   ERROR
+                ================================= */
+
+                if (error) {
+
+                    console.error(
+                        "Login error:",
+                        error
+                    );
+
+                    showAlert(
+                        "error",
+                        "Login gagal",
+                        error.message
+                    );
+
+                    return;
+                }
+
+
+                /* =================================
+                   SUCCESS
+                ================================= */
+
+                console.log(
+                    "Login berhasil:",
+                    data.user
+                );
+
+                showAlert(
+                    "success",
+                    "Login berhasil",
+                    "Selamat datang kembali. Mengalihkan ke dashboard...",
+                    1500
+                );
+
+
+                setTimeout(() => {
+
+                    window.location.href =
+                        "dashboard/index.html";
+
+                }, 1500);
+
+
+            } catch (error) {
+
+                console.error(
+                    "Login exception:",
+                    error
+                );
+
+                showAlert(
+                    "error",
+                    "Terjadi kesalahan",
+                    "Tidak dapat memproses login."
+                );
+
+            } finally {
+
+                if (button) {
+
+                    button.disabled = false;
+
+                    button.textContent =
+                        originalText;
+                }
+            }
+        }
+    );
+}
+
+
+/* =========================================================
+   REGISTER
+========================================================= */
+
+const registerForm =
+    document.getElementById("registerForm");
+
+
+if (registerForm) {
+
+    registerForm.addEventListener(
+        "submit",
+        async event => {
+
+            event.preventDefault();
+
+
+            /* =====================================
+               CLIENT
+            ====================================== */
+
+            const client =
+                getSupabaseClient();
+
+            if (!client) {
+                return;
+            }
+
+
+            /* =====================================
+               FORM DATA
+            ====================================== */
+
+            const name =
+                document
+                    .getElementById("registerName")
+                    ?.value
+                    .trim();
+
+            const phone =
+                document
+                    .getElementById("registerPhone")
+                    ?.value
+                    .trim();
+
+            const email =
+                document
+                    .getElementById("registerEmail")
+                    ?.value
+                    .trim();
+
+            const password =
+                document
+                    .getElementById("registerPassword")
+                    ?.value;
+
+
+            /* =====================================
+               VALIDATION
+            ====================================== */
+
+            if (
+                !name ||
+                !phone ||
+                !email ||
+                !password
+            ) {
+
+                showAlert(
+                    "warning",
+                    "Data belum lengkap",
+                    "Silakan lengkapi semua data terlebih dahulu."
+                );
+
+                return;
+            }
+
+
+            /* =====================================
+               PASSWORD
+            ====================================== */
+
+            if (password.length < 6) {
+
+                showAlert(
+                    "warning",
+                    "Password terlalu pendek",
+                    "Password minimal terdiri dari 6 karakter."
+                );
+
+                return;
+            }
+
+
+            /* =====================================
+               BUTTON
+            ====================================== */
+
+            const button =
+                registerForm.querySelector(
+                    ".btn-primary"
+                );
+
+            const originalText =
+                button
+                    ? button.textContent
+                    : "Daftar";
+
+
+            if (button) {
+
+                button.disabled = true;
+
+                button.textContent =
+                    "Mendaftar...";
+            }
+
+
+            try {
+
+                /* =================================
+                   SUPABASE REGISTER
+                ================================= */
+
+                const {
+                    data,
+                    error
+                } =
+                    await client.auth.signUp({
+
+                        email,
+
+                        password,
+
+                        options: {
+
+                            data: {
+                                name,
+                                phone
+                            }
+                        }
+                    });
+
+
+                /* =================================
+                   ERROR
+                ================================= */
+
+                if (error) {
+
+                    console.error(
+                        "Register error:",
+                        error
+                    );
+
+                    showAlert(
+                        "error",
+                        "Pendaftaran gagal",
+                        error.message
+                    );
+
+                    return;
+                }
+
+
+                /* =================================
+                   SUCCESS
+                ================================= */
+
+                console.log(
+                    "Register berhasil:",
+                    data
+                );
+
+
+                showAlert(
+                    "success",
+                    "Pendaftaran berhasil",
+                    "Silakan cek email untuk melakukan verifikasi.",
+                    3000
+                );
+
+
+                setTimeout(() => {
+
+                    window.location.href =
+                        "login.html";
+
+                }, 3000);
+
+
+            } catch (error) {
+
+                console.error(
+                    "Register exception:",
+                    error
+                );
+
+                showAlert(
+                    "error",
+                    "Terjadi kesalahan",
+                    "Tidak dapat memproses pendaftaran."
+                );
+
+            } finally {
+
+                if (button) {
+
+                    button.disabled = false;
+
+                    button.textContent =
+                        originalText;
+                }
+            }
+        }
+    );
 }

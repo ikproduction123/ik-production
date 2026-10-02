@@ -1,970 +1,616 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-    <meta charset="UTF-8" />
+    <head>
+        <meta charset="UTF-8" />
 
-    <meta
-        name="viewport"
-        content="width=device-width, initial-scale=1.0"
-    />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-    <meta
-        name="description"
-        content="Dashboard IK-Pro.My.Id - Kelola undangan digital Anda."
-    />
+        <meta
+            name="description"
+            content="Dashboard IK-Pro.My.Id - Kelola undangan digital Anda."
+        />
 
-    <meta
-        name="theme-color"
-        content="#1E3A5F"
-    />
+        <meta name="theme-color" content="#1E3A5F" />
 
-    <title>Dashboard - IK-Pro.My.Id</title>
+        <title>Dashboard - IK-Pro.My.Id</title>
 
-    <!-- Favicon -->
-    <link
-        rel="icon"
-        type="image/png"
-        href="../assets/images/favicon.png"
-    />
+        <!-- Favicon -->
+        <link rel="icon" type="image/png" href="../assets/images/favicon.png" />
 
-    <!-- Icons -->
-    <link
-        rel="stylesheet"
-        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
-    />
+        <!-- Icons -->
+        <link
+            rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+        />
 
-    <!-- Dashboard CSS -->
-    <link
-        rel="stylesheet"
-        href="assets/css/dashboard.css"
-    />
+        <!-- Dashboard CSS -->
+        <link rel="stylesheet" href="assets/css/dashboard.css" />
+    </head>
 
-    <!-- Supabase JS -->
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-</head>
-
-<body>
-
-    <!-- =========================================
+    <body>
+        <!-- =========================================
          APP
     ========================================== -->
-    <div class="dashboard-app">
-
-        <!-- =====================================
+        <div class="dashboard-app">
+            <!-- =====================================
              SIDEBAR OVERLAY
         ====================================== -->
-        <div
-            class="sidebar-overlay"
-            id="sidebarOverlay"
-        ></div>
+            <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-
-        <!-- =====================================
+            <!-- =====================================
              SIDEBAR
         ====================================== -->
-        <aside
-            class="sidebar"
-            id="sidebar"
-        >
-
-            <!-- Sidebar Header -->
-            <div class="sidebar-header">
-
-                <a
-                    href="../index.html"
-                    class="sidebar-logo"
-                >
-                    <span class="logo-main">IK</span>
-                    <span class="logo-divider">-</span>
-                    <span class="logo-pro">Pro</span>
-                    <span class="logo-domain">.My.Id</span>
-                </a>
-
-                <button
-                    type="button"
-                    class="sidebar-close"
-                    id="sidebarClose"
-                    aria-label="Tutup menu"
-                >
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
-
-            </div>
-
-
-            <!-- Sidebar Menu -->
-            <nav
-                class="sidebar-nav"
-                aria-label="Menu Dashboard"
-            >
-
-                <!-- Main -->
-                <div class="nav-section">
-
-                    <span class="nav-title">
-                        MENU UTAMA
-                    </span>
-
-                    <a
-                        href="index.html"
-                        class="nav-link active"
-                    >
-                        <i class="fa-solid fa-chart-line"></i>
-                        <span>Dashboard</span>
+            <aside class="sidebar" id="sidebar">
+                <!-- Sidebar Header -->
+                <div class="sidebar-header">
+                    <a href="../index.html" class="sidebar-logo">
+                        <span class="logo-main">IK</span>
+                        <span class="logo-divider">-</span>
+                        <span class="logo-pro">Pro</span>
+                        <span class="logo-domain">.My.Id</span>
                     </a>
 
-                    <a
-                        href="#"
-                        class="nav-link"
-                        data-page="invitations"
-                    >
-                        <i class="fa-solid fa-envelope-open-text"></i>
-                        <span>Undangan Saya</span>
-                    </a>
-
-                    <a
-                        href="#"
-                        class="nav-link"
-                        data-page="create-invitation"
-                    >
-                        <i class="fa-solid fa-plus"></i>
-                        <span>Buat Undangan</span>
-                    </a>
-
-                </div>
-
-
-                <!-- Management -->
-                <div class="nav-section">
-
-                    <span class="nav-title">
-                        MANAJEMEN
-                    </span>
-
-                    <a
-                        href="#"
-                        class="nav-link"
-                        data-page="guests"
-                    >
-                        <i class="fa-solid fa-users"></i>
-                        <span>Daftar Tamu</span>
-                    </a>
-
-                    <a
-                        href="#"
-                        class="nav-link"
-                        data-page="rsvp"
-                    >
-                        <i class="fa-solid fa-clipboard-check"></i>
-                        <span>RSVP</span>
-                    </a>
-
-                    <a
-                        href="#"
-                        class="nav-link"
-                        data-page="wishes"
-                    >
-                        <i class="fa-solid fa-comments"></i>
-                        <span>Ucapan</span>
-                    </a>
-
-                </div>
-
-
-                <!-- Finance -->
-                <div class="nav-section">
-
-                    <span class="nav-title">
-                        TRANSAKSI
-                    </span>
-
-                    <a
-                        href="#"
-                        class="nav-link"
-                        data-page="transactions"
-                    >
-                        <i class="fa-solid fa-receipt"></i>
-                        <span>Transaksi</span>
-                    </a>
-
-                </div>
-
-
-                <!-- Account -->
-                <div class="nav-section">
-
-                    <span class="nav-title">
-                        AKUN
-                    </span>
-
-                    <a
-                        href="#"
-                        class="nav-link"
-                        data-page="profile"
-                    >
-                        <i class="fa-solid fa-user"></i>
-                        <span>Profil Saya</span>
-                    </a>
-
-                    <a
-                        href="#"
-                        class="nav-link"
-                        data-page="settings"
-                    >
-                        <i class="fa-solid fa-gear"></i>
-                        <span>Pengaturan</span>
-                    </a>
-
-                </div>
-
-            </nav>
-
-
-            <!-- Sidebar Bottom -->
-            <div class="sidebar-bottom">
-
-                <a
-                    href="../index.html"
-                    class="back-home"
-                >
-                    <i class="fa-solid fa-arrow-left"></i>
-                    <span>Kembali ke Website</span>
-                </a>
-
-                <button
-                    type="button"
-                    class="logout-button"
-                    id="logoutButton"
-                >
-                    <i class="fa-solid fa-right-from-bracket"></i>
-                    <span>Keluar</span>
-                </button>
-
-            </div>
-
-        </aside>
-
-
-        <!-- =====================================
-             MAIN AREA
-        ====================================== -->
-        <main class="main-area">
-
-
-            <!-- =================================
-                 TOPBAR
-            ================================== -->
-            <header class="topbar">
-
-                <!-- Mobile Menu -->
-                <button
-                    type="button"
-                    class="menu-toggle"
-                    id="menuToggle"
-                    aria-label="Buka menu"
-                    aria-expanded="false"
-                >
-                    <i class="fa-solid fa-bars"></i>
-                </button>
-
-
-                <!-- Page Title -->
-                <div class="topbar-title">
-
-                    <h1>
-                        Dashboard
-                    </h1>
-
-                    <p>
-                        Kelola undangan digital Anda
-                    </p>
-
-                </div>
-
-
-                <!-- Topbar Right -->
-                <div class="topbar-actions">
-
-                    <!-- Notification -->
                     <button
                         type="button"
-                        class="notification-button"
-                        id="notificationButton"
-                        aria-label="Notifikasi"
+                        class="sidebar-close"
+                        id="sidebarClose"
+                        aria-label="Tutup menu"
                     >
-
-                        <i class="fa-regular fa-bell"></i>
-
-                        <span
-                            class="notification-badge"
-                            id="notificationBadge"
-                        >
-                            0
-                        </span>
-
+                        <i class="fa-solid fa-xmark"></i>
                     </button>
-
-
-                    <!-- User -->
-                    <button
-                        type="button"
-                        class="user-menu"
-                        id="userMenu"
-                    >
-
-                        <div class="user-avatar">
-
-                            <span id="userInitial">
-                                U
-                            </span>
-
-                        </div>
-
-                        <div class="user-info">
-
-                            <strong id="userName">
-                                Memuat...
-                            </strong>
-
-                            <span id="userEmail">
-                                Memuat...
-                            </span>
-
-                        </div>
-
-                        <i class="fa-solid fa-chevron-down user-arrow"></i>
-
-                    </button>
-
                 </div>
 
-            </header>
+                <!-- Sidebar Menu -->
+                <nav class="sidebar-nav" aria-label="Menu Dashboard">
+                    <!-- Main -->
+                    <div class="nav-section">
+                        <span class="nav-title"> MENU UTAMA </span>
 
+                        <a href="index.html" class="nav-link active">
+                            <i class="fa-solid fa-chart-line"></i>
+                            <span>Dashboard</span>
+                        </a>
 
-            <!-- =================================
-                 CONTENT
-            ================================== -->
-            <div class="dashboard-content">
-
-
-                <!-- =================================
-                     WELCOME
-                ================================== -->
-                <section class="welcome-section">
-
-                    <div class="welcome-content">
-
-                        <span class="welcome-label">
-                            SELAMAT DATANG 👋
-                        </span>
-
-                        <h2>
-                            Halo,
-                            <span id="welcomeName">
-                                Pengguna
-                            </span>
-                        </h2>
-
-                        <p>
-                            Kelola undangan digital Anda dengan mudah
-                            dari satu tempat.
-                        </p>
-
-                    </div>
-
-
-                    <a
-                        href="#"
-                        class="primary-button"
-                        data-page="create-invitation"
-                    >
-                        <i class="fa-solid fa-plus"></i>
-                        <span>Buat Undangan</span>
-                    </a>
-
-                </section>
-
-
-                <!-- =================================
-                     STATISTICS
-                ================================== -->
-                <section
-                    class="stats-grid"
-                    aria-label="Statistik"
-                >
-
-                    <!-- Total -->
-                    <article class="stat-card">
-
-                        <div class="stat-icon">
+                        <a href="#" class="nav-link" data-page="invitations">
                             <i class="fa-solid fa-envelope-open-text"></i>
-                        </div>
+                            <span>Undangan Saya</span>
+                        </a>
 
-                        <div class="stat-content">
-
-                            <span>
-                                Total Undangan
-                            </span>
-
-                            <strong id="totalInvitations">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </article>
-
-
-                    <!-- Published -->
-                    <article class="stat-card">
-
-                        <div class="stat-icon">
-                            <i class="fa-solid fa-circle-check"></i>
-                        </div>
-
-                        <div class="stat-content">
-
-                            <span>
-                                Undangan Aktif
-                            </span>
-
-                            <strong id="publishedInvitations">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </article>
-
-
-                    <!-- Draft -->
-                    <article class="stat-card">
-
-                        <div class="stat-icon">
-                            <i class="fa-solid fa-file-pen"></i>
-                        </div>
-
-                        <div class="stat-content">
-
-                            <span>
-                                Draft
-                            </span>
-
-                            <strong id="draftInvitations">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </article>
-
-
-                    <!-- Transaction -->
-                    <article class="stat-card">
-
-                        <div class="stat-icon">
-                            <i class="fa-solid fa-wallet"></i>
-                        </div>
-
-                        <div class="stat-content">
-
-                            <span>
-                                Transaksi
-                            </span>
-
-                            <strong id="totalTransactions">
-                                0
-                            </strong>
-
-                        </div>
-
-                    </article>
-
-                </section>
-
-
-                <!-- =================================
-                     QUICK ACTION
-                ================================== -->
-                <section class="quick-section">
-
-                    <div class="section-heading">
-
-                        <div>
-                            <span class="section-label">
-                                AKSES CEPAT
-                            </span>
-
-                            <h2>
-                                Apa yang ingin Anda lakukan?
-                            </h2>
-                        </div>
-
-                    </div>
-
-
-                    <div class="quick-grid">
-
-                        <!-- Create -->
                         <a
                             href="#"
-                            class="quick-card"
+                            class="nav-link"
                             data-page="create-invitation"
                         >
-
-                            <div class="quick-icon">
-                                <i class="fa-solid fa-plus"></i>
-                            </div>
-
-                            <div class="quick-content">
-
-                                <h3>
-                                    Buat Undangan
-                                </h3>
-
-                                <p>
-                                    Buat undangan digital baru.
-                                </p>
-
-                            </div>
-
-                            <i class="fa-solid fa-arrow-right quick-arrow"></i>
-
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Buat Undangan</span>
                         </a>
-
-
-                        <!-- Invitations -->
-                        <a
-                            href="#"
-                            class="quick-card"
-                            data-page="invitations"
-                        >
-
-                            <div class="quick-icon">
-                                <i class="fa-solid fa-envelope"></i>
-                            </div>
-
-                            <div class="quick-content">
-
-                                <h3>
-                                    Undangan Saya
-                                </h3>
-
-                                <p>
-                                    Lihat dan kelola undangan Anda.
-                                </p>
-
-                            </div>
-
-                            <i class="fa-solid fa-arrow-right quick-arrow"></i>
-
-                        </a>
-
-
-                        <!-- Guests -->
-                        <a
-                            href="#"
-                            class="quick-card"
-                            data-page="guests"
-                        >
-
-                            <div class="quick-icon">
-                                <i class="fa-solid fa-users"></i>
-                            </div>
-
-                            <div class="quick-content">
-
-                                <h3>
-                                    Kelola Tamu
-                                </h3>
-
-                                <p>
-                                    Kelola daftar tamu undangan.
-                                </p>
-
-                            </div>
-
-                            <i class="fa-solid fa-arrow-right quick-arrow"></i>
-
-                        </a>
-
-
-                        <!-- Profile -->
-                        <a
-                            href="#"
-                            class="quick-card"
-                            data-page="profile"
-                        >
-
-                            <div class="quick-icon">
-                                <i class="fa-solid fa-user"></i>
-                            </div>
-
-                            <div class="quick-content">
-
-                                <h3>
-                                    Profil Saya
-                                </h3>
-
-                                <p>
-                                    Kelola informasi akun Anda.
-                                </p>
-
-                            </div>
-
-                            <i class="fa-solid fa-arrow-right quick-arrow"></i>
-
-                        </a>
-
                     </div>
 
-                </section>
+                    <!-- Management -->
+                    <div class="nav-section">
+                        <span class="nav-title"> MANAJEMEN </span>
 
+                        <a href="#" class="nav-link" data-page="guests">
+                            <i class="fa-solid fa-users"></i>
+                            <span>Daftar Tamu</span>
+                        </a>
+
+                        <a href="#" class="nav-link" data-page="rsvp">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                            <span>RSVP</span>
+                        </a>
+
+                        <a href="#" class="nav-link" data-page="wishes">
+                            <i class="fa-solid fa-comments"></i>
+                            <span>Ucapan</span>
+                        </a>
+                    </div>
+
+                    <!-- Finance -->
+                    <div class="nav-section">
+                        <span class="nav-title"> TRANSAKSI </span>
+
+                        <a href="#" class="nav-link" data-page="transactions">
+                            <i class="fa-solid fa-receipt"></i>
+                            <span>Transaksi</span>
+                        </a>
+                    </div>
+
+                    <!-- Account -->
+                    <div class="nav-section">
+                        <span class="nav-title"> AKUN </span>
+
+                        <a href="#" class="nav-link" data-page="profile">
+                            <i class="fa-solid fa-user"></i>
+                            <span>Profil Saya</span>
+                        </a>
+
+                        <a href="#" class="nav-link" data-page="settings">
+                            <i class="fa-solid fa-gear"></i>
+                            <span>Pengaturan</span>
+                        </a>
+                    </div>
+                </nav>
+
+                <!-- Sidebar Bottom -->
+                <div class="sidebar-bottom">
+                    <a href="../index.html" class="back-home">
+                        <i class="fa-solid fa-arrow-left"></i>
+                        <span>Kembali ke Website</span>
+                    </a>
+
+                    <button
+                        type="button"
+                        class="logout-button"
+                        id="logoutButton"
+                    >
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <span>Keluar</span>
+                    </button>
+                </div>
+            </aside>
+
+            <!-- =====================================
+             MAIN AREA
+        ====================================== -->
+            <main class="main-area">
+                <!-- =================================
+                 TOPBAR
+            ================================== -->
+                <header class="topbar">
+                    <!-- Mobile Menu -->
+                    <button
+                        type="button"
+                        class="menu-toggle"
+                        id="menuToggle"
+                        aria-label="Buka menu"
+                        aria-expanded="false"
+                    >
+                        <i class="fa-solid fa-bars"></i>
+                    </button>
+
+                    <!-- Page Title -->
+                    <div class="topbar-title">
+                        <h1>Dashboard</h1>
+
+                        <p>Kelola undangan digital Anda</p>
+                    </div>
+
+                    <!-- Topbar Right -->
+                    <div class="topbar-actions">
+                        <!-- Notification -->
+                        <button
+                            type="button"
+                            class="notification-button"
+                            id="notificationButton"
+                            aria-label="Notifikasi"
+                        >
+                            <i class="fa-regular fa-bell"></i>
+
+                            <span
+                                class="notification-badge"
+                                id="notificationBadge"
+                            >
+                                0
+                            </span>
+                        </button>
+
+                        <!-- User -->
+                        <button type="button" class="user-menu" id="userMenu">
+                            <div class="user-avatar">
+                                <span id="userInitial"> U </span>
+                            </div>
+
+                            <div class="user-info">
+                                <strong id="userName"> Memuat... </strong>
+
+                                <span id="userEmail"> Memuat... </span>
+                            </div>
+
+                            <i class="fa-solid fa-chevron-down user-arrow"></i>
+                        </button>
+                    </div>
+                </header>
 
                 <!-- =================================
-                     INVITATIONS
+                 CONTENT
+            ================================== -->
+                <div class="dashboard-content">
+                    <!-- =================================
+                     WELCOME
                 ================================== -->
-                <section class="invitations-section">
-
-                    <div class="section-heading">
-
-                        <div>
-
-                            <span class="section-label">
-                                UNDANGAN
+                    <section class="welcome-section">
+                        <div class="welcome-content">
+                            <span class="welcome-label">
+                                SELAMAT DATANG 👋
                             </span>
 
                             <h2>
-                                Undangan Terbaru
+                                Halo,
+                                <span id="welcomeName"> Pengguna </span>
                             </h2>
 
+                            <p>
+                                Kelola undangan digital Anda dengan mudah dari
+                                satu tempat.
+                            </p>
                         </div>
-
 
                         <a
                             href="#"
-                            class="view-all"
-                            data-page="invitations"
+                            class="primary-button"
+                            data-page="create-invitation"
                         >
-                            Lihat Semua
-                            <i class="fa-solid fa-arrow-right"></i>
+                            <i class="fa-solid fa-plus"></i>
+                            <span>Buat Undangan</span>
                         </a>
+                    </section>
 
-                    </div>
-
-
-                    <!-- Invitation List -->
-                    <div
-                        class="invitation-list"
-                        id="invitationList"
-                    >
-
-                        <!-- Loading -->
-                        <div
-                            class="loading-state"
-                            id="invitationLoading"
-                        >
-
-                            <div class="loading-spinner"></div>
-
-                            <p>
-                                Memuat undangan...
-                            </p>
-
-                        </div>
-
-
-                        <!-- Empty -->
-                        <div
-                            class="empty-state"
-                            id="invitationEmpty"
-                            hidden
-                        >
-
-                            <div class="empty-icon">
-                                <i class="fa-regular fa-envelope"></i>
+                    <!-- =================================
+                     STATISTICS
+                ================================== -->
+                    <section class="stats-grid" aria-label="Statistik">
+                        <!-- Total -->
+                        <article class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fa-solid fa-envelope-open-text"></i>
                             </div>
 
-                            <h3>
-                                Belum ada undangan
-                            </h3>
+                            <div class="stat-content">
+                                <span> Total Undangan </span>
 
-                            <p>
-                                Anda belum membuat undangan digital.
-                            </p>
+                                <strong id="totalInvitations"> 0 </strong>
+                            </div>
+                        </article>
+
+                        <!-- Published -->
+                        <article class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+
+                            <div class="stat-content">
+                                <span> Undangan Aktif </span>
+
+                                <strong id="publishedInvitations"> 0 </strong>
+                            </div>
+                        </article>
+
+                        <!-- Draft -->
+                        <article class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fa-solid fa-file-pen"></i>
+                            </div>
+
+                            <div class="stat-content">
+                                <span> Draft </span>
+
+                                <strong id="draftInvitations"> 0 </strong>
+                            </div>
+                        </article>
+
+                        <!-- Transaction -->
+                        <article class="stat-card">
+                            <div class="stat-icon">
+                                <i class="fa-solid fa-wallet"></i>
+                            </div>
+
+                            <div class="stat-content">
+                                <span> Transaksi </span>
+
+                                <strong id="totalTransactions"> 0 </strong>
+                            </div>
+                        </article>
+                    </section>
+
+                    <!-- =================================
+                     QUICK ACTION
+                ================================== -->
+                    <section class="quick-section">
+                        <div class="section-heading">
+                            <div>
+                                <span class="section-label"> AKSES CEPAT </span>
+
+                                <h2>Apa yang ingin Anda lakukan?</h2>
+                            </div>
+                        </div>
+
+                        <div class="quick-grid">
+                            <!-- Create -->
+                            <a
+                                href="#"
+                                class="quick-card"
+                                data-page="create-invitation"
+                            >
+                                <div class="quick-icon">
+                                    <i class="fa-solid fa-plus"></i>
+                                </div>
+
+                                <div class="quick-content">
+                                    <h3>Buat Undangan</h3>
+
+                                    <p>Buat undangan digital baru.</p>
+                                </div>
+
+                                <i
+                                    class="fa-solid fa-arrow-right quick-arrow"
+                                ></i>
+                            </a>
+
+                            <!-- Invitations -->
+                            <a
+                                href="#"
+                                class="quick-card"
+                                data-page="invitations"
+                            >
+                                <div class="quick-icon">
+                                    <i class="fa-solid fa-envelope"></i>
+                                </div>
+
+                                <div class="quick-content">
+                                    <h3>Undangan Saya</h3>
+
+                                    <p>Lihat dan kelola undangan Anda.</p>
+                                </div>
+
+                                <i
+                                    class="fa-solid fa-arrow-right quick-arrow"
+                                ></i>
+                            </a>
+
+                            <!-- Guests -->
+                            <a href="#" class="quick-card" data-page="guests">
+                                <div class="quick-icon">
+                                    <i class="fa-solid fa-users"></i>
+                                </div>
+
+                                <div class="quick-content">
+                                    <h3>Kelola Tamu</h3>
+
+                                    <p>Kelola daftar tamu undangan.</p>
+                                </div>
+
+                                <i
+                                    class="fa-solid fa-arrow-right quick-arrow"
+                                ></i>
+                            </a>
+
+                            <!-- Profile -->
+                            <a href="#" class="quick-card" data-page="profile">
+                                <div class="quick-icon">
+                                    <i class="fa-solid fa-user"></i>
+                                </div>
+
+                                <div class="quick-content">
+                                    <h3>Profil Saya</h3>
+
+                                    <p>Kelola informasi akun Anda.</p>
+                                </div>
+
+                                <i
+                                    class="fa-solid fa-arrow-right quick-arrow"
+                                ></i>
+                            </a>
+                        </div>
+                    </section>
+
+                    <!-- =================================
+                     INVITATIONS
+                ================================== -->
+                    <section class="invitations-section">
+                        <div class="section-heading">
+                            <div>
+                                <span class="section-label"> UNDANGAN </span>
+
+                                <h2>Undangan Terbaru</h2>
+                            </div>
 
                             <a
                                 href="#"
-                                class="primary-button"
-                                data-page="create-invitation"
+                                class="view-all"
+                                data-page="invitations"
                             >
-                                <i class="fa-solid fa-plus"></i>
-                                Buat Undangan Pertama
+                                Lihat Semua
+                                <i class="fa-solid fa-arrow-right"></i>
                             </a>
-
                         </div>
 
+                        <!-- Invitation List -->
+                        <div class="invitation-list" id="invitationList">
+                            <!-- Loading -->
+                            <div class="loading-state" id="invitationLoading">
+                                <div class="loading-spinner"></div>
 
-                        <!--
-                            Data undangan dari Supabase
-                            akan dimasukkan oleh dashboard.js
-                        -->
-
-                    </div>
-
-                </section>
-
-
-                <!-- =================================
-                     RECENT TRANSACTIONS
-                ================================== -->
-                <section class="transactions-section">
-
-                    <div class="section-heading">
-
-                        <div>
-
-                            <span class="section-label">
-                                PEMBAYARAN
-                            </span>
-
-                            <h2>
-                                Transaksi Terbaru
-                            </h2>
-
-                        </div>
-
-
-                        <a
-                            href="#"
-                            class="view-all"
-                            data-page="transactions"
-                        >
-                            Lihat Semua
-                            <i class="fa-solid fa-arrow-right"></i>
-                        </a>
-
-                    </div>
-
-
-                    <div
-                        class="transaction-list"
-                        id="transactionList"
-                    >
-
-                        <!-- Loading -->
-                        <div
-                            class="loading-state"
-                            id="transactionLoading"
-                        >
-
-                            <div class="loading-spinner"></div>
-
-                            <p>
-                                Memuat transaksi...
-                            </p>
-
-                        </div>
-
-
-                        <!-- Empty -->
-                        <div
-                            class="empty-state"
-                            id="transactionEmpty"
-                            hidden
-                        >
-
-                            <div class="empty-icon">
-                                <i class="fa-solid fa-receipt"></i>
+                                <p>Memuat undangan...</p>
                             </div>
 
-                            <h3>
-                                Belum ada transaksi
-                            </h3>
+                            <!-- Empty -->
+                            <div
+                                class="empty-state"
+                                id="invitationEmpty"
+                                hidden
+                            >
+                                <div class="empty-icon">
+                                    <i class="fa-regular fa-envelope"></i>
+                                </div>
 
-                            <p>
-                                Riwayat transaksi Anda akan muncul di sini.
-                            </p>
+                                <h3>Belum ada undangan</h3>
 
+                                <p>Anda belum membuat undangan digital.</p>
+
+                                <a
+                                    href="#"
+                                    class="primary-button"
+                                    data-page="create-invitation"
+                                >
+                                    <i class="fa-solid fa-plus"></i>
+                                    Buat Undangan Pertama
+                                </a>
+                            </div>
+
+                            <!--
+                            Data undangan dari Supabase
+                            akan dimasukkan oleh dashboard.js
+                        --></div>
+                    </section>
+
+                    <!-- =================================
+                     RECENT TRANSACTIONS
+                ================================== -->
+                    <section class="transactions-section">
+                        <div class="section-heading">
+                            <div>
+                                <span class="section-label"> PEMBAYARAN </span>
+
+                                <h2>Transaksi Terbaru</h2>
+                            </div>
+
+                            <a
+                                href="#"
+                                class="view-all"
+                                data-page="transactions"
+                            >
+                                Lihat Semua
+                                <i class="fa-solid fa-arrow-right"></i>
+                            </a>
                         </div>
 
-                    </div>
+                        <div class="transaction-list" id="transactionList">
+                            <!-- Loading -->
+                            <div class="loading-state" id="transactionLoading">
+                                <div class="loading-spinner"></div>
 
-                </section>
+                                <p>Memuat transaksi...</p>
+                            </div>
 
+                            <!-- Empty -->
+                            <div
+                                class="empty-state"
+                                id="transactionEmpty"
+                                hidden
+                            >
+                                <div class="empty-icon">
+                                    <i class="fa-solid fa-receipt"></i>
+                                </div>
 
-            </div>
+                                <h3>Belum ada transaksi</h3>
 
-
-            <!-- =================================
-                 FOOTER
-            ================================== -->
-            <footer class="dashboard-footer">
-
-                <p>
-                    &copy;
-                    <span id="currentYear"></span>
-                    IK-Pro.My.Id.
-                    Semua hak dilindungi.
-                </p>
-
-                <div class="footer-links">
-
-                    <a href="../index.html">
-                        Website
-                    </a>
-
-                    <a href="#">
-                        Bantuan
-                    </a>
-
-                    <a href="#">
-                        Kebijakan Privasi
-                    </a>
-
+                                <p>
+                                    Riwayat transaksi Anda akan muncul di sini.
+                                </p>
+                            </div>
+                        </div>
+                    </section>
                 </div>
 
-            </footer>
+                <!-- =================================
+                 FOOTER
+            ================================== -->
+                <footer class="dashboard-footer">
+                    <p>
+                        &copy;
+                        <span id="currentYear"></span>
+                        IK-Pro.My.Id. Semua hak dilindungi.
+                    </p>
 
-        </main>
+                    <div class="footer-links">
+                        <a href="../index.html"> Website </a>
 
-    </div>
+                        <a href="#"> Bantuan </a>
 
+                        <a href="#"> Kebijakan Privasi </a>
+                    </div>
+                </footer>
+            </main>
+        </div>
 
-    <!-- =========================================
+        <!-- =========================================
          USER DROPDOWN
     ========================================== -->
-    <div
-        class="user-dropdown"
-        id="userDropdown"
-        hidden
-    >
+        <div class="user-dropdown" id="userDropdown" hidden>
+            <div class="dropdown-user">
+                <div class="user-avatar">
+                    <span id="dropdownInitial"> U </span>
+                </div>
 
-        <div class="dropdown-user">
+                <div>
+                    <strong id="dropdownName"> Pengguna </strong>
 
-            <div class="user-avatar">
-
-                <span id="dropdownInitial">
-                    U
-                </span>
-
+                    <span id="dropdownEmail"> email@example.com </span>
+                </div>
             </div>
 
-            <div>
+            <div class="dropdown-divider"></div>
 
-                <strong id="dropdownName">
-                    Pengguna
-                </strong>
+            <a href="#" data-page="profile">
+                <i class="fa-solid fa-user"></i>
+                Profil Saya
+            </a>
 
-                <span id="dropdownEmail">
-                    email@example.com
-                </span>
+            <a href="#" data-page="settings">
+                <i class="fa-solid fa-gear"></i>
+                Pengaturan
+            </a>
 
-            </div>
+            <div class="dropdown-divider"></div>
 
+            <button type="button" id="dropdownLogout">
+                <i class="fa-solid fa-right-from-bracket"></i>
+                Keluar
+            </button>
         </div>
 
-
-        <div class="dropdown-divider"></div>
-
-
-        <a
-            href="#"
-            data-page="profile"
-        >
-            <i class="fa-solid fa-user"></i>
-            Profil Saya
-        </a>
-
-        <a
-            href="#"
-            data-page="settings"
-        >
-            <i class="fa-solid fa-gear"></i>
-            Pengaturan
-        </a>
-
-
-        <div class="dropdown-divider"></div>
-
-
-        <button
-            type="button"
-            id="dropdownLogout"
-        >
-            <i class="fa-solid fa-right-from-bracket"></i>
-            Keluar
-        </button>
-
-    </div>
-
-
-    <!-- =========================================
+        <!-- =========================================
          NOTIFICATION PANEL
     ========================================== -->
-    <div
-        class="notification-panel"
-        id="notificationPanel"
-        hidden
-    >
+        <div class="notification-panel" id="notificationPanel" hidden>
+            <div class="notification-header">
+                <h3>Notifikasi</h3>
 
-        <div class="notification-header">
-
-            <h3>
-                Notifikasi
-            </h3>
-
-            <button
-                type="button"
-                id="closeNotification"
-                aria-label="Tutup notifikasi"
-            >
-                <i class="fa-solid fa-xmark"></i>
-            </button>
-
-        </div>
-
-
-        <div
-            class="notification-content"
-            id="notificationContent"
-        >
-
-            <div class="empty-notification">
-
-                <i class="fa-regular fa-bell"></i>
-
-                <p>
-                    Belum ada notifikasi.
-                </p>
-
+                <button
+                    type="button"
+                    id="closeNotification"
+                    aria-label="Tutup notifikasi"
+                >
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
             </div>
 
+            <div class="notification-content" id="notificationContent">
+                <div class="empty-notification">
+                    <i class="fa-regular fa-bell"></i>
+
+                    <p>Belum ada notifikasi.</p>
+                </div>
+            </div>
         </div>
 
-    </div>
-
-
-    <!-- =========================================
+        <!-- =========================================
          TOAST CONTAINER
     ========================================== -->
-    <div
-        class="toast-container"
-        id="toastContainer"
-        aria-live="polite"
-        aria-atomic="true"
-    ></div>
+        <div
+            class="toast-container"
+            id="toastContainer"
+            aria-live="polite"
+            aria-atomic="true"
+        ></div>
+
+<!-- =========================================
+     JAVASCRIPT
+========================================== -->
+
+<!-- Supabase Library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<!-- Supabase Configuration -->
+<script src="../assets/js/supabase.js"></script>
+
+<!-- Authentication -->
+<script src="../assets/js/auth.js"></script>
+
+<!-- Dashboard -->
+<script src="assets/js/dashboard.js"></script>
 
 
-    <!-- =========================================
-         DASHBOARD JAVASCRIPT
-    ========================================== -->
-
-    <!-- Auth -->
-    <script src="../assets/js/auth.js"></script>
-
-    <!-- Dashboard -->
-    <script src="assets/js/dashboard.js"></script>
-
-</body>
+    </body>
 </html>

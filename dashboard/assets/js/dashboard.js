@@ -9,6 +9,7 @@
 ========================================================= */
 
 let currentUser = null;
+
 let currentProfile = null;
 
 
@@ -16,18 +17,49 @@ let currentProfile = null;
    DOM READY
 ========================================================= */
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener(
+    "DOMContentLoaded",
+    async () => {
 
-    initializeYear();
-    initializeSidebar();
-    initializeUserMenu();
-    initializeNotifications();
-    initializeNavigation();
-    initializeLogout();
+        initializeYear();
 
-    await initializeDashboard();
+        initializeSidebar();
 
-});
+        initializeUserMenu();
+
+        initializeNotifications();
+
+        initializeNavigation();
+
+        initializeLogout();
+
+        await initializeDashboard();
+    }
+);
+
+
+/* =========================================================
+   GET SUPABASE CLIENT
+========================================================= */
+
+function getSupabaseClient() {
+
+    if (!window.supabaseClient) {
+
+        console.error(
+            "Supabase client tidak ditemukan."
+        );
+
+        showToast(
+            "Supabase belum berhasil dimuat.",
+            "error"
+        );
+
+        return null;
+    }
+
+    return window.supabaseClient;
+}
 
 
 /* =========================================================
@@ -38,34 +70,23 @@ async function initializeDashboard() {
 
     try {
 
-        /*
-         * Pastikan Supabase client tersedia
-         * dari ../assets/js/auth.js
-         */
+        const client =
+            getSupabaseClient();
 
-        if (typeof supabaseClient === "undefined") {
-
-            console.error(
-                "supabaseClient tidak ditemukan."
-            );
-
-            showToast(
-                "Konfigurasi Supabase tidak ditemukan.",
-                "error"
-            );
-
+        if (!client) {
             return;
         }
 
 
         /* =========================================
-           CHECK LOGIN
+           CHECK USER
         ========================================== */
 
         const {
             data,
             error
-        } = await supabaseClient.auth.getUser();
+        } =
+            await client.auth.getUser();
 
 
         if (error) {
@@ -81,7 +102,10 @@ async function initializeDashboard() {
         }
 
 
-        if (!data || !data.user) {
+        if (
+            !data ||
+            !data.user
+        ) {
 
             redirectToLogin();
 
@@ -93,7 +117,14 @@ async function initializeDashboard() {
            SAVE USER
         ========================================== */
 
-        currentUser = data.user;
+        currentUser =
+            data.user;
+
+
+        console.log(
+            "User login:",
+            currentUser
+        );
 
 
         /* =========================================
@@ -104,21 +135,26 @@ async function initializeDashboard() {
 
 
         /* =========================================
-           UPDATE USER UI
+           UPDATE UI
         ========================================== */
 
         updateUserUI();
 
 
         /* =========================================
-           LOAD DASHBOARD DATA
+           LOAD DATA
         ========================================== */
 
         await Promise.all([
+
             loadInvitationStatistics(),
+
             loadRecentInvitations(),
+
             loadRecentTransactions(),
+
             loadNotificationCount()
+
         ]);
 
 
@@ -133,19 +169,24 @@ async function initializeDashboard() {
             "Terjadi kesalahan saat memuat dashboard.",
             "error"
         );
-
     }
-
 }
 
 
 /* =========================================================
-   LOAD USER PROFILE
+   LOAD PROFILE
 ========================================================= */
 
 async function loadUserProfile() {
 
     if (!currentUser) {
+        return;
+    }
+
+    const client =
+        getSupabaseClient();
+
+    if (!client) {
         return;
     }
 
@@ -155,11 +196,15 @@ async function loadUserProfile() {
         const {
             data,
             error
-        } = await supabaseClient
-            .from("profiles")
-            .select("*")
-            .eq("id", currentUser.id)
-            .maybeSingle();
+        } =
+            await client
+                .from("profiles")
+                .select("*")
+                .eq(
+                    "id",
+                    currentUser.id
+                )
+                .maybeSingle();
 
 
         if (error) {
@@ -173,7 +218,8 @@ async function loadUserProfile() {
         }
 
 
-        currentProfile = data;
+        currentProfile =
+            data;
 
 
     } catch (error) {
@@ -182,9 +228,7 @@ async function loadUserProfile() {
             "Profile error:",
             error
         );
-
     }
-
 }
 
 
@@ -199,26 +243,27 @@ function updateUserUI() {
     }
 
 
-    /*
-     * Prioritas nama:
-     *
-     * 1. profiles.name
-     * 2. metadata full_name
-     * 3. metadata name
-     * 4. email
-     */
-
     const name =
+
         currentProfile?.name ||
-        currentUser.user_metadata?.full_name ||
-        currentUser.user_metadata?.name ||
-        currentUser.email?.split("@")[0] ||
+
+        currentUser
+            .user_metadata
+            ?.full_name ||
+
+        currentUser
+            .user_metadata
+            ?.name ||
+
+        currentUser
+            .email
+            ?.split("@")[0] ||
+
         "Pengguna";
 
 
     const email =
         currentUser.email ||
-        currentProfile?.email ||
         "-";
 
 
@@ -274,29 +319,25 @@ function updateUserUI() {
         "dropdownInitial",
         initial
     );
-
 }
 
 
 /* =========================================================
-   INITIAL YEAR
+   YEAR
 ========================================================= */
 
 function initializeYear() {
 
-    const yearElement =
+    const element =
         document.getElementById(
             "currentYear"
         );
 
+    if (element) {
 
-    if (yearElement) {
-
-        yearElement.textContent =
+        element.textContent =
             new Date().getFullYear();
-
     }
-
 }
 
 
@@ -336,29 +377,24 @@ function initializeSidebar() {
        OPEN
     ========================================== */
 
-    if (menuToggle) {
+    menuToggle?.addEventListener(
+        "click",
+        () => {
 
-        menuToggle.addEventListener(
-            "click",
-            () => {
+            sidebar.classList.add(
+                "active"
+            );
 
-                sidebar.classList.add(
-                    "active"
-                );
+            overlay?.classList.add(
+                "active"
+            );
 
-                overlay?.classList.add(
-                    "active"
-                );
-
-                menuToggle.setAttribute(
-                    "aria-expanded",
-                    "true"
-                );
-
-            }
-        );
-
-    }
+            menuToggle.setAttribute(
+                "aria-expanded",
+                "true"
+            );
+        }
+    );
 
 
     /* =========================================
@@ -379,7 +415,6 @@ function initializeSidebar() {
             "aria-expanded",
             "false"
         );
-
     }
 
 
@@ -388,16 +423,11 @@ function initializeSidebar() {
         closeSidebar
     );
 
-
     overlay?.addEventListener(
         "click",
         closeSidebar
     );
 
-
-    /*
-     * Tutup sidebar setelah memilih menu
-     */
 
     document
         .querySelectorAll(
@@ -409,9 +439,7 @@ function initializeSidebar() {
                 "click",
                 closeSidebar
             );
-
         });
-
 }
 
 
@@ -432,7 +460,10 @@ function initializeUserMenu() {
         );
 
 
-    if (!userMenu || !dropdown) {
+    if (
+        !userMenu ||
+        !dropdown
+    ) {
         return;
     }
 
@@ -464,9 +495,7 @@ function initializeUserMenu() {
                     "hidden",
                     ""
                 );
-
             }
-
         }
     );
 
@@ -476,7 +505,6 @@ function initializeUserMenu() {
         event => {
 
             event.stopPropagation();
-
         }
     );
 
@@ -485,19 +513,15 @@ function initializeUserMenu() {
         "click",
         () => {
 
-            dropdown.setAttribute(
-                "hidden",
-                ""
-            );
+            closeUserDropdown();
 
         }
     );
-
 }
 
 
 /* =========================================================
-   NOTIFICATIONS
+   NOTIFICATION
 ========================================================= */
 
 function initializeNotifications() {
@@ -518,7 +542,10 @@ function initializeNotifications() {
         );
 
 
-    if (!button || !panel) {
+    if (
+        !button ||
+        !panel
+    ) {
         return;
     }
 
@@ -528,7 +555,6 @@ function initializeNotifications() {
         event => {
 
             event.stopPropagation();
-
 
             const isHidden =
                 panel.hasAttribute(
@@ -551,9 +577,7 @@ function initializeNotifications() {
                     "hidden",
                     ""
                 );
-
             }
-
         }
     );
 
@@ -582,7 +606,6 @@ function initializeNotifications() {
 
         }
     );
-
 }
 
 
@@ -592,17 +615,14 @@ function initializeNotifications() {
 
 function closeUserDropdown() {
 
-    const dropdown =
-        document.getElementById(
+    document
+        .getElementById(
             "userDropdown"
+        )
+        ?.setAttribute(
+            "hidden",
+            ""
         );
-
-
-    dropdown?.setAttribute(
-        "hidden",
-        ""
-    );
-
 }
 
 
@@ -612,17 +632,14 @@ function closeUserDropdown() {
 
 function closeNotificationPanel() {
 
-    const panel =
-        document.getElementById(
+    document
+        .getElementById(
             "notificationPanel"
+        )
+        ?.setAttribute(
+            "hidden",
+            ""
         );
-
-
-    panel?.setAttribute(
-        "hidden",
-        ""
-    );
-
 }
 
 
@@ -644,25 +661,17 @@ function initializeNavigation() {
 
                     event.preventDefault();
 
-
                     const page =
                         element.dataset.page;
-
 
                     if (!page) {
                         return;
                     }
 
-
-                    handleNavigation(
-                        page
-                    );
-
+                    handleNavigation(page);
                 }
             );
-
         });
-
 }
 
 
@@ -672,41 +681,31 @@ function initializeNavigation() {
 
 function handleNavigation(page) {
 
-    /*
-     * Untuk tahap sekarang,
-     * halaman selain dashboard belum dibuat.
-     *
-     * Nanti masing-masing akan diarahkan
-     * ke halaman sebenarnya.
-     */
-
-
     const pages = {
 
-        "invitations":
+        invitations:
             "invitations/index.html",
 
         "create-invitation":
             "create/index.html",
 
-        "guests":
+        guests:
             "guests/index.html",
 
-        "rsvp":
+        rsvp:
             "rsvp/index.html",
 
-        "wishes":
+        wishes:
             "wishes/index.html",
 
-        "transactions":
+        transactions:
             "transactions/index.html",
 
-        "profile":
+        profile:
             "profile/index.html",
 
-        "settings":
+        settings:
             "settings/index.html"
-
     };
 
 
@@ -727,12 +726,11 @@ function handleNavigation(page) {
 
     window.location.href =
         target;
-
 }
 
 
 /* =========================================================
-   LOAD INVITATION STATISTICS
+   INVITATION STATISTICS
 ========================================================= */
 
 async function loadInvitationStatistics() {
@@ -742,20 +740,29 @@ async function loadInvitationStatistics() {
     }
 
 
+    const client =
+        getSupabaseClient();
+
+    if (!client) {
+        return;
+    }
+
+
     try {
 
         const {
             data,
             error
-        } = await supabaseClient
-            .from("invitations")
-            .select(
-                "id,status"
-            )
-            .eq(
-                "user_id",
-                currentUser.id
-            );
+        } =
+            await client
+                .from("invitations")
+                .select(
+                    "id,status"
+                )
+                .eq(
+                    "user_id",
+                    currentUser.id
+                );
 
 
         if (error) {
@@ -815,14 +822,12 @@ async function loadInvitationStatistics() {
             "Invitation statistics error:",
             error
         );
-
     }
-
 }
 
 
 /* =========================================================
-   LOAD RECENT INVITATIONS
+   RECENT INVITATIONS
 ========================================================= */
 
 async function loadRecentInvitations() {
@@ -843,7 +848,18 @@ async function loadRecentInvitations() {
         );
 
 
-    if (!list) {
+    if (
+        !list ||
+        !currentUser
+    ) {
+        return;
+    }
+
+
+    const client =
+        getSupabaseClient();
+
+    if (!client) {
         return;
     }
 
@@ -853,20 +869,21 @@ async function loadRecentInvitations() {
         const {
             data,
             error
-        } = await supabaseClient
-            .from("invitations")
-            .select("*")
-            .eq(
-                "user_id",
-                currentUser.id
-            )
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            )
-            .limit(5);
+        } =
+            await client
+                .from("invitations")
+                .select("*")
+                .eq(
+                    "user_id",
+                    currentUser.id
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                )
+                .limit(5);
 
 
         if (error) {
@@ -895,7 +912,9 @@ async function loadRecentInvitations() {
             data || [];
 
 
-        if (invitations.length === 0) {
+        if (
+            invitations.length === 0
+        ) {
 
             empty?.removeAttribute(
                 "hidden"
@@ -919,11 +938,9 @@ async function loadRecentInvitations() {
                         invitation
                     );
 
-
                 list.appendChild(
                     element
                 );
-
             }
         );
 
@@ -939,9 +956,7 @@ async function loadRecentInvitations() {
             "hidden",
             ""
         );
-
     }
-
 }
 
 
@@ -958,28 +973,26 @@ function createInvitationElement(
             "article"
         );
 
-
     article.className =
         "invitation-item";
 
+
+    /* =========================================
+       COVER
+    ========================================== */
 
     const cover =
         document.createElement(
             "div"
         );
 
-
     cover.className =
         "invitation-cover";
 
 
-    /*
-     * Kalau nanti tabel invitations
-     * memiliki cover_url,
-     * gambar akan otomatis digunakan.
-     */
-
-    if (invitation.cover_url) {
+    if (
+        invitation.cover_url
+    ) {
 
         const image =
             document.createElement(
@@ -1010,7 +1023,6 @@ function createInvitationElement(
         cover.appendChild(
             icon
         );
-
     }
 
 
@@ -1034,9 +1046,13 @@ function createInvitationElement(
 
 
     title.textContent =
+
         invitation.title ||
+
         invitation.name ||
+
         invitation.slug ||
+
         "Undangan Tanpa Judul";
 
 
@@ -1056,7 +1072,6 @@ function createInvitationElement(
         document.createElement(
             "div"
         );
-
 
     meta.className =
         "invitation-meta";
@@ -1087,7 +1102,6 @@ function createInvitationElement(
         status
     );
 
-
     info.appendChild(
         title
     );
@@ -1110,14 +1124,13 @@ function createInvitationElement(
             "div"
         );
 
-
     actions.className =
         "invitation-actions";
 
 
-    /*
-     * Lihat
-     */
+    /* =========================================
+       VIEW
+    ========================================== */
 
     if (
         statusValue ===
@@ -1138,7 +1151,6 @@ function createInvitationElement(
                 openInvitation(
                     invitation
                 );
-
             }
         );
 
@@ -1146,13 +1158,12 @@ function createInvitationElement(
         actions.appendChild(
             viewButton
         );
-
     }
 
 
-    /*
-     * Edit
-     */
+    /* =========================================
+       EDIT
+    ========================================== */
 
     const editButton =
         createIconButton(
@@ -1180,7 +1191,6 @@ function createInvitationElement(
                 `../dashboard/edit/?id=${encodeURIComponent(
                     invitation.id
                 )}`;
-
         }
     );
 
@@ -1204,12 +1214,11 @@ function createInvitationElement(
 
 
     return article;
-
 }
 
 
 /* =========================================================
-   CREATE ICON BUTTON
+   ICON BUTTON
 ========================================================= */
 
 function createIconButton(
@@ -1222,18 +1231,14 @@ function createIconButton(
             "button"
         );
 
-
     button.type =
         "button";
-
 
     button.className =
         "icon-button";
 
-
     button.title =
         label;
-
 
     button.setAttribute(
         "aria-label",
@@ -1246,7 +1251,6 @@ function createIconButton(
             "i"
         );
 
-
     iconElement.className =
         `fa-solid fa-${icon}`;
 
@@ -1257,7 +1261,6 @@ function createIconButton(
 
 
     return button;
-
 }
 
 
@@ -1269,7 +1272,9 @@ function openInvitation(
     invitation
 ) {
 
-    if (!invitation?.slug) {
+    if (
+        !invitation?.slug
+    ) {
 
         showToast(
             "Slug undangan belum tersedia.",
@@ -1280,12 +1285,6 @@ function openInvitation(
     }
 
 
-    /*
-     * Format public invitation:
-     *
-     * /slug/
-     */
-
     window.open(
         `../${encodeURIComponent(
             invitation.slug
@@ -1293,7 +1292,6 @@ function openInvitation(
         "_blank",
         "noopener,noreferrer"
     );
-
 }
 
 
@@ -1324,7 +1322,6 @@ function getStatusLabel(
 
         rejected:
             "Ditolak"
-
     };
 
 
@@ -1332,12 +1329,11 @@ function getStatusLabel(
         labels[status] ||
         status
     );
-
 }
 
 
 /* =========================================================
-   LOAD RECENT TRANSACTIONS
+   RECENT TRANSACTIONS
 ========================================================= */
 
 async function loadRecentTransactions() {
@@ -1358,7 +1354,18 @@ async function loadRecentTransactions() {
         );
 
 
-    if (!list || !currentUser) {
+    if (
+        !list ||
+        !currentUser
+    ) {
+        return;
+    }
+
+
+    const client =
+        getSupabaseClient();
+
+    if (!client) {
         return;
     }
 
@@ -1368,20 +1375,21 @@ async function loadRecentTransactions() {
         const {
             data,
             error
-        } = await supabaseClient
-            .from("transactions")
-            .select("*")
-            .eq(
-                "user_id",
-                currentUser.id
-            )
-            .order(
-                "created_at",
-                {
-                    ascending: false
-                }
-            )
-            .limit(5);
+        } =
+            await client
+                .from("transactions")
+                .select("*")
+                .eq(
+                    "user_id",
+                    currentUser.id
+                )
+                .order(
+                    "created_at",
+                    {
+                        ascending: false
+                    }
+                )
+                .limit(5);
 
 
         if (error) {
@@ -1410,10 +1418,17 @@ async function loadRecentTransactions() {
             data || [];
 
 
-        if (transactions.length === 0) {
+        if (
+            transactions.length === 0
+        ) {
 
             empty?.removeAttribute(
                 "hidden"
+            );
+
+            setText(
+                "totalTransactions",
+                "0"
             );
 
             return;
@@ -1434,14 +1449,17 @@ async function loadRecentTransactions() {
                         transaction
                     );
 
-
                 list.appendChild(
                     element
                 );
-
             }
         );
 
+
+        /*
+         * Sementara menampilkan jumlah
+         * transaksi yang berhasil diambil.
+         */
 
         setText(
             "totalTransactions",
@@ -1460,9 +1478,7 @@ async function loadRecentTransactions() {
             "hidden",
             ""
         );
-
     }
-
 }
 
 
@@ -1479,7 +1495,6 @@ function createTransactionElement(
             "article"
         );
 
-
     article.className =
         "transaction-item";
 
@@ -1493,7 +1508,6 @@ function createTransactionElement(
             "div"
         );
 
-
     iconWrapper.className =
         "transaction-icon";
 
@@ -1502,7 +1516,6 @@ function createTransactionElement(
         document.createElement(
             "i"
         );
-
 
     icon.className =
         "fa-solid fa-receipt";
@@ -1522,7 +1535,6 @@ function createTransactionElement(
             "div"
         );
 
-
     info.className =
         "transaction-info";
 
@@ -1534,8 +1546,11 @@ function createTransactionElement(
 
 
     title.textContent =
+
         transaction.description ||
+
         transaction.invoice_number ||
+
         "Transaksi Undangan";
 
 
@@ -1568,7 +1583,6 @@ function createTransactionElement(
         document.createElement(
             "div"
         );
-
 
     amount.className =
         "transaction-amount";
@@ -1607,6 +1621,10 @@ function createTransactionElement(
         );
 
 
+    /* =========================================
+       APPEND
+    ========================================== */
+
     article.appendChild(
         iconWrapper
     );
@@ -1625,29 +1643,19 @@ function createTransactionElement(
 
 
     return article;
-
 }
 
 
 /* =========================================================
-   LOAD NOTIFICATION COUNT
+   NOTIFICATION COUNT
 ========================================================= */
 
 async function loadNotificationCount() {
-
-    /*
-     * Untuk sekarang notification badge
-     * dibuat 0.
-     *
-     * Sistem notifikasi dapat kita sambungkan
-     * setelah struktur notification dibuat.
-     */
 
     setText(
         "notificationBadge",
         "0"
     );
-
 }
 
 
@@ -1673,12 +1681,10 @@ function initializeLogout() {
         handleLogout
     );
 
-
     dropdownLogout?.addEventListener(
         "click",
         handleLogout
     );
-
 }
 
 
@@ -1687,6 +1693,14 @@ function initializeLogout() {
 ========================================================= */
 
 async function handleLogout() {
+
+    const client =
+        getSupabaseClient();
+
+    if (!client) {
+        return;
+    }
+
 
     try {
 
@@ -1703,7 +1717,8 @@ async function handleLogout() {
 
         const {
             error
-        } = await supabaseClient.auth.signOut();
+        } =
+            await client.auth.signOut();
 
 
         if (error) {
@@ -1737,9 +1752,7 @@ async function handleLogout() {
             "Terjadi kesalahan saat keluar.",
             "error"
         );
-
     }
-
 }
 
 
@@ -1751,7 +1764,6 @@ function redirectToLogin() {
 
     window.location.href =
         "../login.html";
-
 }
 
 
@@ -1772,9 +1784,7 @@ function setText(
 
         element.textContent =
             value ?? "";
-
     }
-
 }
 
 
@@ -1795,7 +1805,6 @@ function getInitial(
         .trim()
         .charAt(0)
         .toUpperCase();
-
 }
 
 
@@ -1823,7 +1832,6 @@ function formatDate(
     ) {
 
         return "-";
-
     }
 
 
@@ -1835,7 +1843,6 @@ function formatDate(
             year: "numeric"
         }
     );
-
 }
 
 
@@ -1856,7 +1863,6 @@ function formatCurrency(
     ) {
 
         return "Rp 0";
-
     }
 
 
@@ -1868,7 +1874,6 @@ function formatCurrency(
             maximumFractionDigits: 0
         }
     ).format(number);
-
 }
 
 
@@ -1925,7 +1930,6 @@ function showToast(
 
         info:
             "fa-circle-info"
-
     };
 
 
@@ -1970,6 +1974,7 @@ function showToast(
     close.className =
         "toast-close";
 
+
     close.setAttribute(
         "aria-label",
         "Tutup"
@@ -1989,6 +1994,10 @@ function showToast(
         }
     );
 
+
+    /* =========================================
+       APPEND
+    ========================================== */
 
     toast.appendChild(
         icon
@@ -2020,7 +2029,6 @@ function showToast(
         },
         4000
     );
-
 }
 
 
@@ -2028,31 +2036,26 @@ function showToast(
    AUTH STATE LISTENER
 ========================================================= */
 
-if (
-    typeof supabaseClient !==
-    "undefined"
-) {
+if (window.supabaseClient) {
 
-    supabaseClient.auth.onAuthStateChange(
-        (event, session) => {
+    window.supabaseClient.auth
+        .onAuthStateChange(
+            (event, session) => {
 
-            console.log(
-                "Auth event:",
-                event
-            );
+                console.log(
+                    "Auth event:",
+                    event
+                );
 
 
-            if (
-                event ===
-                "SIGNED_OUT"
-            ) {
+                if (
+                    event ===
+                    "SIGNED_OUT"
+                ) {
 
-                window.location.href =
-                    "../login.html";
-
+                    window.location.href =
+                        "../login.html";
+                }
             }
-
-        }
-    );
-
+        );
 }
