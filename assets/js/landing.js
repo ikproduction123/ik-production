@@ -1,11 +1,11 @@
 /* =========================================================
-IK-Pro.My.Id
-LANDING PAGE JAVASCRIPT
+   IK-Pro.My.Id
+   LANDING PAGE JAVASCRIPT
 ========================================================= */
 
 
 /* =========================================================
-PACKAGE DATA
+   PACKAGE DATA
 ========================================================= */
 
 const packageData = {
@@ -34,1587 +34,749 @@ const packageData = {
 
 
 /* =========================================================
-THEME DATA
+   FALLBACK THEME DATA
 ========================================================= */
 
-const themeData = {
+const fallbackThemeData = [
 
-    /* =====================================================
-    PERNIKAHAN
-    ====================================================== */
+    /* =========================
+       MOTION
+    ========================== */
 
-    pernikahan: [
+    {
+        category: "pernikahan",
+        package: "motion",
+        slug: "vintage-brown",
+        name: "Vintage Brown",
+        image: "/templates/motion/vintage-brown/assets/cover.jpg",
+        preview: "/templates/motion/vintage-brown/"
+    },
 
-        /* =========================
-        MOTION
-        ========================== */
+    {
+        category: "pernikahan",
+        package: "motion",
+        slug: "cinematic-love",
+        name: "Cinematic Love",
+        image: "/templates/motion/cinematic-love/assets/cover.jpg",
+        preview: "/templates/motion/cinematic-love/"
+    },
 
-        {
-            slug: "vintage-brown",
-            name: "Vintage Brown",
-            package: "motion"
-        },
+    {
+        category: "pernikahan",
+        package: "motion",
+        slug: "luxury-motion",
+        name: "Luxury Motion",
+        image: "/templates/motion/luxury-motion/assets/cover.jpg",
+        preview: "/templates/motion/luxury-motion/"
+    },
 
-        {
-            slug: "cinematic-love",
-            name: "Cinematic Love",
-            package: "motion"
-        },
+    {
+        category: "pernikahan",
+        package: "motion",
+        slug: "parallax-flower",
+        name: "Parallax Flower",
+        image: "/templates/motion/parallax-flower/assets/cover.jpg",
+        preview: "/templates/motion/parallax-flower/"
+    },
 
-        {
-            slug: "luxury-motion",
-            name: "Luxury Motion",
-            package: "motion"
-        },
-
-        {
-            slug: "parallax-flower",
-            name: "Parallax Flower",
-            package: "motion"
-        },
-
-        {
-            slug: "cinematic-black",
-            name: "Cinematic Black",
-            package: "motion"
-        },
-
-
-        /* =========================
-        LUXURY
-        ========================== */
-
-        {
-            slug: "velvet-garden",
-            name: "Velvet Garden",
-            package: "luxury"
-        },
-
-        {
-            slug: "royal-black",
-            name: "Royal Black",
-            package: "luxury"
-        },
-
-        {
-            slug: "luxury-marble",
-            name: "Luxury Marble",
-            package: "luxury"
-        },
-
-        {
-            slug: "golden-night",
-            name: "Golden Night",
-            package: "luxury"
-        },
-
-        {
-            slug: "luxury-emerald",
-            name: "Luxury Emerald",
-            package: "luxury"
-        },
-
-        {
-            slug: "premium-floral",
-            name: "Premium Floral",
-            package: "luxury"
-        },
+    {
+        category: "pernikahan",
+        package: "motion",
+        slug: "cinematic-black",
+        name: "Cinematic Black",
+        image: "/templates/motion/cinematic-black/assets/cover.jpg",
+        preview: "/templates/motion/cinematic-black/"
+    },
 
 
-        /* =========================
-        PREMIUM
-        ========================== */
+    /* =========================
+       LUXURY
+    ========================== */
 
-        {
-            slug: "romantic-garden",
-            name: "Romantic Garden",
-            package: "premium"
-        },
+    {
+        category: "pernikahan",
+        package: "luxury",
+        slug: "velvet-garden",
+        name: "Velvet Garden",
+        image: "/templates/luxury/velvet-garden/assets/cover.jpg",
+        preview: "/templates/luxury/velvet-garden/"
+    },
 
-        {
-            slug: "soft-pink",
-            name: "Soft Pink",
-            package: "premium"
-        },
+    {
+        category: "pernikahan",
+        package: "luxury",
+        slug: "royal-black",
+        name: "Royal Black",
+        image: "/templates/luxury/royal-black/assets/cover.jpg",
+        preview: "/templates/luxury/royal-black/"
+    },
 
-        {
-            slug: "modern-gold",
-            name: "Modern Gold",
-            package: "premium"
-        },
+    {
+        category: "pernikahan",
+        package: "luxury",
+        slug: "luxury-marble",
+        name: "Luxury Marble",
+        image: "/templates/luxury/luxury-marble/assets/cover.jpg",
+        preview: "/templates/luxury/luxury-marble/"
+    },
 
-        {
-            slug: "botanical-green",
-            name: "Botanical Green",
-            package: "premium"
-        },
+    {
+        category: "pernikahan",
+        package: "luxury",
+        slug: "golden-night",
+        name: "Golden Night",
+        image: "/templates/luxury/golden-night/assets/cover.jpg",
+        preview: "/templates/luxury/golden-night/"
+    },
 
-        {
-            slug: "cream-luxury",
-            name: "Cream Luxury",
-            package: "premium"
-        },
+    {
+        category: "pernikahan",
+        package: "luxury",
+        slug: "luxury-emerald",
+        name: "Luxury Emerald",
+        image: "/templates/luxury/luxury-emerald/assets/cover.jpg",
+        preview: "/templates/luxury/luxury-emerald/"
+    },
 
-
-        /* =========================
-        BASIC
-        ========================== */
-
-        {
-            slug: "simple-white",
-            name: "Simple White",
-            package: "basic"
-        },
-
-        {
-            slug: "floral-basic",
-            name: "Floral Basic",
-            package: "basic"
-        },
-
-        {
-            slug: "elegant-basic",
-            name: "Elegant Basic",
-            package: "basic"
-        }
-
-    ],
-
-
-    /* =====================================================
-    ACARA LAIN
-    ====================================================== */
-
-    acaraLain: [
-
-        {
-            slug: "khitanan",
-            name: "Khitanan",
-            package: null
-        },
-
-        {
-            slug: "aqiqah",
-            name: "Aqiqah",
-            package: null
-        },
-
-        {
-            slug: "ulang-tahun",
-            name: "Ulang Tahun",
-            package: null
-        },
-
-        {
-            slug: "wisuda",
-            name: "Wisuda",
-            package: null
-        },
-
-        {
-            slug: "gathering",
-            name: "Gathering",
-            package: null
-        }
-
-    ],
+    {
+        category: "pernikahan",
+        package: "luxury",
+        slug: "premium-floral",
+        name: "Premium Floral",
+        image: "/templates/luxury/premium-floral/assets/cover.jpg",
+        preview: "/templates/luxury/premium-floral/"
+    },
 
 
-    /* =====================================================
-    UNDANGAN CETAK
-    ====================================================== */
+    /* =========================
+       PREMIUM
+    ========================== */
 
-    undanganCetak: [
+    {
+        category: "pernikahan",
+        package: "premium",
+        slug: "romantic-garden",
+        name: "Romantic Garden",
+        image: "/templates/premium/romantic-garden/assets/cover.jpg",
+        preview: "/templates/premium/romantic-garden/"
+    },
 
-        {
-            slug: "cetak-premium",
-            name: "Cetak Premium",
-            package: null
-        }
+    {
+        category: "pernikahan",
+        package: "premium",
+        slug: "soft-pink",
+        name: "Soft Pink",
+        image: "/templates/premium/soft-pink/assets/cover.jpg",
+        preview: "/templates/premium/soft-pink/"
+    },
 
-    ]
+    {
+        category: "pernikahan",
+        package: "premium",
+        slug: "modern-gold",
+        name: "Modern Gold",
+        image: "/templates/premium/modern-gold/assets/cover.jpg",
+        preview: "/templates/premium/modern-gold/"
+    },
+
+    {
+        category: "pernikahan",
+        package: "premium",
+        slug: "botanical-green",
+        name: "Botanical Green",
+        image: "/templates/premium/botanical-green/assets/cover.jpg",
+        preview: "/templates/premium/botanical-green/"
+    },
+
+    {
+        category: "pernikahan",
+        package: "premium",
+        slug: "cream-luxury",
+        name: "Cream Luxury",
+        image: "/templates/premium/cream-luxury/assets/cover.jpg",
+        preview: "/templates/premium/cream-luxury/"
+    },
+
+
+    /* =========================
+       BASIC
+    ========================== */
+
+    {
+        category: "pernikahan",
+        package: "basic",
+        slug: "simple-white",
+        name: "Simple White",
+        image: "/templates/basic/simple-white/assets/cover.jpg",
+        preview: "/templates/basic/simple-white/"
+    },
+
+    {
+        category: "pernikahan",
+        package: "basic",
+        slug: "floral-basic",
+        name: "Floral Basic",
+        image: "/templates/basic/floral-basic/assets/cover.jpg",
+        preview: "/templates/basic/floral-basic/"
+    },
+
+    {
+        category: "pernikahan",
+        package: "basic",
+        slug: "elegant-basic",
+        name: "Elegant Basic",
+        image: "/templates/basic/elegant-basic/assets/cover.jpg",
+        preview: "/templates/basic/elegant-basic/"
+    },
+
+
+    /* =========================
+       ACARA LAIN
+    ========================== */
+
+    {
+        category: "acaraLain",
+        package: null,
+        slug: "khitanan",
+        name: "Khitanan",
+        image: "/assets/images/themes/acara-lain/khitanan.jpg",
+        preview: "#"
+    },
+
+    {
+        category: "acaraLain",
+        package: null,
+        slug: "aqiqah",
+        name: "Aqiqah",
+        image: "/assets/images/themes/acara-lain/aqiqah.jpg",
+        preview: "#"
+    },
+
+    {
+        category: "acaraLain",
+        package: null,
+        slug: "ulang-tahun",
+        name: "Ulang Tahun",
+        image: "/assets/images/themes/acara-lain/ulang-tahun.jpg",
+        preview: "#"
+    },
+
+    {
+        category: "acaraLain",
+        package: null,
+        slug: "wisuda",
+        name: "Wisuda",
+        image: "/assets/images/themes/acara-lain/wisuda.jpg",
+        preview: "#"
+    },
+
+    {
+        category: "acaraLain",
+        package: null,
+        slug: "gathering",
+        name: "Gathering",
+        image: "/assets/images/themes/acara-lain/gathering.jpg",
+        preview: "#"
+    },
+
+
+    /* =========================
+       CETAK
+    ========================== */
+
+    {
+        category: "undanganCetak",
+        package: null,
+        slug: "cetak-premium",
+        name: "Cetak Premium",
+        image: "/assets/images/themes/cetak/cetak-premium.jpg",
+        preview: "#"
+    }
+
+];
+
+
+let themeData = [...fallbackThemeData];
+
+
+/* =========================================================
+   STATE
+========================================================= */
+
+const state = {
+
+    category: "pernikahan",
+
+    package: "all"
 
 };
 
 
 /* =========================================================
-STATE
-========================================================= */
-
-let currentCategory = "pernikahan";
-
-let currentPackage = "all";
-
-
-/* =========================================================
-DOM READY
+   DOM READY
 ========================================================= */
 
 document.addEventListener(
     "DOMContentLoaded",
     () => {
 
-        initThemeSystem();
+        initHeader();
 
         initNavigation();
 
-        initSmoothScroll();
+        initThemeTabs();
 
-        initMobileNavigation();
+        initFAQ();
 
         initCurrentYear();
 
-        initHashNavigation();
+        renderThemes();
+
+        handleInitialHash();
 
     }
 );
 
 
 /* =========================================================
-THEME SYSTEM
+   HEADER
 ========================================================= */
 
-function initThemeSystem() {
+function initHeader() {
 
-    const mainCategoryButtons =
-        document.querySelectorAll(
-            "[data-main-category]"
-        );
+    const header =
+        document.getElementById("siteHeader");
 
-    const packageButtons =
-        document.querySelectorAll(
-            "[data-package]"
-        );
-
-
-    /* =====================================================
-    MAIN CATEGORY BUTTON
-    ====================================================== */
-
-    mainCategoryButtons.forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    const category =
-                        button.dataset.mainCategory;
-
-                    selectMainCategory(
-                        category
-                    );
-
-                }
-            );
-
-        }
-    );
-
-
-    /* =====================================================
-    PACKAGE BUTTON
-    ====================================================== */
-
-    packageButtons.forEach(
-        button => {
-
-            button.addEventListener(
-                "click",
-                () => {
-
-                    const packageName =
-                        button.dataset.package;
-
-                    selectPackage(
-                        packageName
-                    );
-
-                }
-            );
-
-        }
-    );
-
-
-    /* =====================================================
-    INITIAL STATE
-    ====================================================== */
-
-    selectMainCategory(
-        currentCategory,
-        false
-    );
-
-}
-
-
-/* =========================================================
-SELECT MAIN CATEGORY
-========================================================= */
-
-function selectMainCategory(
-    category,
-    updateHash = true
-) {
-
-    /* =====================================================
-    VALIDATE CATEGORY
-    ====================================================== */
-
-    if (
-        !Object.prototype.hasOwnProperty.call(
-            themeData,
-            category
-        )
-    ) {
-
-        console.warn(
-            "Kategori tidak ditemukan:",
-            category
-        );
-
+    if (!header) {
         return;
     }
 
 
-    /* =====================================================
-    UPDATE STATE
-    ====================================================== */
+    function updateHeader() {
 
-    currentCategory = category;
+        if (window.scrollY > 20) {
 
+            header.classList.add("is-scrolled");
 
-    /* =====================================================
-    PERNIKAHAN
-    ====================================================== */
+        } else {
 
-    if (
-        currentCategory === "pernikahan"
-    ) {
-
-        currentPackage = "all";
-
-    } else {
-
-        /*
-        Acara Lain dan Undangan Cetak
-        tidak memiliki package filter.
-        */
-
-        currentPackage = "all";
-
-    }
-
-
-    /* =====================================================
-    UPDATE UI
-    ====================================================== */
-
-    updateMainCategoryButtons();
-
-    updatePackageButtons();
-
-    updateSubCategory();
-
-
-    /* =====================================================
-    RENDER
-    ====================================================== */
-
-    renderThemes();
-
-
-    /* =====================================================
-    HASH
-    ====================================================== */
-
-    if (updateHash) {
-
-        history.replaceState(
-            null,
-            "",
-            "#tema"
-        );
-
-    }
-
-}
-
-
-/* =========================================================
-SELECT PACKAGE
-========================================================= */
-
-function selectPackage(
-    packageName
-) {
-
-    /* =====================================================
-    PACKAGE HANYA UNTUK PERNIKAHAN
-    ====================================================== */
-
-    if (
-        currentCategory !== "pernikahan"
-    ) {
-
-        return;
-    }
-
-
-    /* =====================================================
-    VALID PACKAGE
-    ====================================================== */
-
-    const validPackages = [
-        "all",
-        "motion",
-        "luxury",
-        "premium",
-        "basic"
-    ];
-
-
-    if (
-        !validPackages.includes(
-            packageName
-        )
-    ) {
-
-        return;
-    }
-
-
-    /* =====================================================
-    UPDATE STATE
-    ====================================================== */
-
-    currentPackage = packageName;
-
-
-    /* =====================================================
-    UPDATE UI
-    ====================================================== */
-
-    updatePackageButtons();
-
-
-    /* =====================================================
-    RENDER
-    ====================================================== */
-
-    renderThemes();
-
-}
-
-
-/* =========================================================
-UPDATE MAIN CATEGORY BUTTONS
-========================================================= */
-
-function updateMainCategoryButtons() {
-
-    const buttons =
-        document.querySelectorAll(
-            "[data-main-category]"
-        );
-
-
-    buttons.forEach(
-        button => {
-
-            const isActive =
-                button.dataset.mainCategory ===
-                currentCategory;
-
-
-            button.classList.toggle(
-                "active",
-                isActive
-            );
-
-
-            button.setAttribute(
-                "aria-selected",
-                String(isActive)
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-UPDATE PACKAGE BUTTONS
-========================================================= */
-
-function updatePackageButtons() {
-
-    const buttons =
-        document.querySelectorAll(
-            "[data-package]"
-        );
-
-
-    buttons.forEach(
-        button => {
-
-            const isActive =
-                currentPackage ===
-                button.dataset.package;
-
-
-            button.classList.toggle(
-                "active",
-                isActive
-            );
-
-
-            button.setAttribute(
-                "aria-selected",
-                String(isActive)
-            );
-
-        }
-    );
-
-}
-
-
-/* =========================================================
-UPDATE SUB CATEGORY
-========================================================= */
-
-function updateSubCategory() {
-
-    const subTabs =
-        document.querySelector(
-            '[data-sub-tabs="pernikahan"]'
-        );
-
-
-    if (!subTabs) {
-        return;
-    }
-
-
-    /* =====================================================
-    PERNIKAHAN
-    ====================================================== */
-
-    if (
-        currentCategory === "pernikahan"
-    ) {
-
-        subTabs.hidden = false;
-
-        subTabs.setAttribute(
-            "aria-hidden",
-            "false"
-        );
-
-        subTabs.classList.add(
-            "is-visible"
-        );
-
-        return;
-    }
-
-
-    /* =====================================================
-    ACARA LAIN / CETAK
-    ====================================================== */
-
-    subTabs.hidden = true;
-
-    subTabs.setAttribute(
-        "aria-hidden",
-        "true"
-    );
-
-    subTabs.classList.remove(
-        "is-visible"
-    );
-
-}
-
-
-/* =========================================================
-GET FILTERED THEMES
-========================================================= */
-
-function getFilteredThemes() {
-
-    const themes =
-        themeData[currentCategory] || [];
-
-
-    /* =====================================================
-    ACARA LAIN / CETAK
-    ====================================================== */
-
-    if (
-        currentCategory !== "pernikahan"
-    ) {
-
-        return themes;
-
-    }
-
-
-    /* =====================================================
-    SEMUA
-    ====================================================== */
-
-    if (
-        currentPackage === "all"
-    ) {
-
-        return themes;
-
-    }
-
-
-    /* =====================================================
-    FILTER PACKAGE
-    ====================================================== */
-
-    return themes.filter(
-        theme =>
-            theme.package ===
-            currentPackage
-    );
-
-}
-
-
-/* =========================================================
-RENDER THEMES
-========================================================= */
-
-function renderThemes() {
-
-    const themeGrid =
-        document.getElementById(
-            "themeGrid"
-        );
-
-    const themeEmpty =
-        document.getElementById(
-            "themeEmpty"
-        );
-
-
-    if (!themeGrid) {
-        return;
-    }
-
-
-    /* =====================================================
-    GET THEMES
-    ====================================================== */
-
-    const themes =
-        getFilteredThemes();
-
-
-    /* =====================================================
-    CLEAR
-    ====================================================== */
-
-    themeGrid.innerHTML = "";
-
-
-    /* =====================================================
-    EMPTY
-    ====================================================== */
-
-    if (
-        themes.length === 0
-    ) {
-
-        if (themeEmpty) {
-
-            themeEmpty.hidden = false;
+            header.classList.remove("is-scrolled");
 
         }
 
-        return;
-
     }
 
 
-    if (themeEmpty) {
+    updateHeader();
 
-        themeEmpty.hidden = true;
 
-    }
-
-
-    /* =====================================================
-    RENDER
-    ====================================================== */
-
-    const fragment =
-        document.createDocumentFragment();
-
-
-    themes.forEach(
-        theme => {
-
-            const card =
-                createThemeCard(
-                    theme
-                );
-
-            fragment.appendChild(
-                card
-            );
-
-        }
-    );
-
-
-    themeGrid.appendChild(
-        fragment
-    );
-
-}
-
-
-/* =========================================================
-CREATE THEME CARD
-========================================================= */
-
-function createThemeCard(
-    theme
-) {
-
-    const article =
-        document.createElement(
-            "article"
-        );
-
-
-    article.className =
-        "theme-card";
-
-
-    /* =====================================================
-    DATA
-    ====================================================== */
-
-    const imageUrl =
-        getThemeImage(
-            theme
-        );
-
-    const previewUrl =
-        getThemePreviewUrl(
-            theme
-        );
-
-    const orderUrl =
-        createOrderUrl(
-            theme
-        );
-
-    const packageName =
-        getPackageName(
-            theme
-        );
-
-    const price =
-        getThemePrice(
-            theme
-        );
-
-
-    /* =====================================================
-    CARD HTML
-    ====================================================== */
-
-    article.innerHTML = `
-
-        <div class="theme-image">
-
-            <img
-                src="${escapeHTML(imageUrl)}"
-                alt="Tema ${escapeHTML(theme.name)}"
-                loading="lazy"
-            >
-
-            <span class="theme-package">
-                ${escapeHTML(packageName)}
-            </span>
-
-        </div>
-
-
-        <div class="theme-info">
-
-            <h3 class="theme-name">
-                ${escapeHTML(theme.name)}
-            </h3>
-
-
-            <p class="theme-price">
-                ${formatPrice(price)}
-            </p>
-
-
-            <div class="theme-actions">
-
-                <a
-                    href="${escapeHTML(previewUrl)}"
-                    class="btn theme-preview-btn"
-                    ${previewUrl !== "#" ? 'target="_blank" rel="noopener noreferrer"' : ""}
-                >
-                    Preview
-                </a>
-
-
-                <a
-                    href="${escapeHTML(orderUrl)}"
-                    class="btn theme-order-btn"
-                >
-                    Order
-                </a>
-
-            </div>
-
-        </div>
-
-    `;
-
-
-    /* =====================================================
-    IMAGE FALLBACK
-    ====================================================== */
-
-    const image =
-        article.querySelector(
-            ".theme-image img"
-        );
-
-
-    if (image) {
-
-        image.addEventListener(
-            "error",
-            () => {
-
-                if (
-                    image.dataset.fallbackApplied
-                ) {
-
-                    return;
-
-                }
-
-
-                image.dataset.fallbackApplied =
-                    "true";
-
-
-                image.src =
-                    "/assets/images/theme-placeholder.jpg";
-
-            }
-        );
-
-    }
-
-
-    return article;
-
-}
-
-
-/* =========================================================
-GET THEME IMAGE
-========================================================= */
-
-function getThemeImage(
-    theme
-) {
-
-    /* =====================================================
-    PERNIKAHAN
-    ====================================================== */
-
-    if (
-        currentCategory === "pernikahan"
-    ) {
-
-        return (
-            `/templates/${theme.package}/` +
-            `${theme.slug}/assets/cover.jpg`
-        );
-
-    }
-
-
-    /* =====================================================
-    ACARA LAIN
-    ====================================================== */
-
-    if (
-        currentCategory === "acaraLain"
-    ) {
-
-        return (
-            "/assets/images/themes/" +
-            "acara-lain/" +
-            `${theme.slug}.jpg`
-        );
-
-    }
-
-
-    /* =====================================================
-    UNDANGAN CETAK
-    ====================================================== */
-
-    if (
-        currentCategory === "undanganCetak"
-    ) {
-
-        return (
-            "/assets/images/themes/" +
-            "cetak/" +
-            `${theme.slug}.jpg`
-        );
-
-    }
-
-
-    return (
-        "/assets/images/" +
-        "theme-placeholder.jpg"
-    );
-
-}
-
-
-/* =========================================================
-GET THEME PREVIEW URL
-========================================================= */
-
-function getThemePreviewUrl(
-    theme
-) {
-
-    /* =====================================================
-    PERNIKAHAN
-    ====================================================== */
-
-    if (
-        currentCategory === "pernikahan"
-    ) {
-
-        return (
-            `/templates/${theme.package}/` +
-            `${theme.slug}/`
-        );
-
-    }
-
-
-    /*
-    Acara Lain dan Cetak belum memiliki
-    template preview website.
-    */
-
-    return "#";
-
-}
-
-
-/* =========================================================
-GET PACKAGE NAME
-========================================================= */
-
-function getPackageName(
-    theme
-) {
-
-    if (
-        theme.package
-    ) {
-
-        return (
-            packageData[
-                theme.package
-            ]?.name ||
-            "Tema"
-        );
-
-    }
-
-
-    if (
-        currentCategory === "acaraLain"
-    ) {
-
-        return "Acara Lain";
-
-    }
-
-
-    if (
-        currentCategory === "undanganCetak"
-    ) {
-
-        return "Cetak";
-
-    }
-
-
-    return "Tema";
-
-}
-
-
-/* =========================================================
-GET THEME PRICE
-========================================================= */
-
-function getThemePrice(
-    theme
-) {
-
-    if (
-        !theme.package
-    ) {
-
-        return null;
-
-    }
-
-
-    return (
-        packageData[
-            theme.package
-        ]?.price ??
-        null
-    );
-
-}
-
-
-/* =========================================================
-FORMAT PRICE
-========================================================= */
-
-function formatPrice(
-    price
-) {
-
-    if (
-        price === null ||
-        price === undefined
-    ) {
-
-        return "Hubungi Kami";
-
-    }
-
-
-    return new Intl.NumberFormat(
-        "id-ID",
+    window.addEventListener(
+        "scroll",
+        updateHeader,
         {
-            style: "currency",
-            currency: "IDR",
-            maximumFractionDigits: 0
+            passive: true
         }
-    ).format(price);
-
-}
-
-
-/* =========================================================
-CREATE ORDER URL
-========================================================= */
-
-function createOrderUrl(
-    theme
-) {
-
-    const params =
-        new URLSearchParams();
-
-
-    /* =====================================================
-    PACKAGE
-    ====================================================== */
-
-    if (
-        theme.package
-    ) {
-
-        params.set(
-            "package",
-            theme.package
-        );
-
-    }
-
-
-    /* =====================================================
-    THEME
-    ====================================================== */
-
-    if (
-        theme.slug
-    ) {
-
-        params.set(
-            "theme",
-            theme.slug
-        );
-
-    }
-
-
-    /* =====================================================
-    CATEGORY
-    ====================================================== */
-
-    params.set(
-        "category",
-        currentCategory
-    );
-
-
-    return (
-        `/register.html?${params.toString()}`
     );
 
 }
 
 
 /* =========================================================
-ESCAPE HTML
-========================================================= */
-
-function escapeHTML(
-    value
-) {
-
-    if (
-        value === null ||
-        value === undefined
-    ) {
-
-        return "";
-
-    }
-
-
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
-
-}
-
-
-/* =========================================================
-NAVIGATION
+   NAVIGATION
 ========================================================= */
 
 function initNavigation() {
 
     const navLinks =
-        document.querySelectorAll(
-            "[data-nav]"
-        );
+        document.querySelectorAll("[data-nav]");
 
-
-    if (
-        !navLinks.length
-    ) {
-
+    if (!navLinks.length) {
         return;
-
     }
 
 
-    const sections = [];
+    /*
+     * CLICK NAVIGATION
+     */
+
+    navLinks.forEach((link) => {
+
+        link.addEventListener(
+            "click",
+            (event) => {
+
+                const targetId =
+                    link.dataset.nav;
+
+                const target =
+                    document.getElementById(targetId);
 
 
-    /* =====================================================
-    REGISTER LINKS
-    ====================================================== */
-
-    navLinks.forEach(
-        link => {
-
-            const targetId =
-                link.dataset.nav;
+                if (!target) {
+                    return;
+                }
 
 
-            const section =
-                document.getElementById(
+                event.preventDefault();
+
+
+                scrollToSection(
                     targetId
                 );
 
-
-            if (section) {
-
-                sections.push({
-                    link,
-                    section
-                });
-
             }
+        );
+
+    });
 
 
-            link.addEventListener(
-                "click",
-                event => {
+    /*
+     * ACTIVE NAVIGATION
+     */
 
-                    const target =
-                        document.getElementById(
-                            targetId
+    const sectionIds = [
+
+        "beranda",
+        "fitur",
+        "tema",
+        "harga",
+        "faq"
+
+    ];
+
+
+    const sections = sectionIds
+
+        .map((id) =>
+            document.getElementById(id)
+        )
+
+        .filter(Boolean);
+
+
+    if (!sections.length) {
+        return;
+    }
+
+
+    const observer =
+        new IntersectionObserver(
+            (entries) => {
+
+                /*
+                 * Pilih section yang paling
+                 * terlihat di viewport.
+                 */
+
+                const visibleSections =
+                    entries
+                        .filter(
+                            (entry) =>
+                                entry.isIntersecting
+                        )
+                        .sort(
+                            (a, b) =>
+                                b.intersectionRatio -
+                                a.intersectionRatio
                         );
 
 
-                    if (!target) {
-
-                        return;
-
-                    }
-
-
-                    event.preventDefault();
-
-
-                    target.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start"
-                    });
-
-
-                    history.replaceState(
-                        null,
-                        "",
-                        `#${targetId}`
-                    );
-
-
-                    closeMobileNavigation();
-
+                if (!visibleSections.length) {
+                    return;
                 }
-            );
+
+
+                const activeId =
+                    visibleSections[0]
+                        .target
+                        .id;
+
+
+                setActiveNavigation(
+                    activeId
+                );
+
+            },
+            {
+                root: null,
+
+                rootMargin:
+                    "-25% 0px -55% 0px",
+
+                threshold: [
+                    0,
+                    0.25,
+                    0.5,
+                    0.75,
+                    1
+                ]
+
+            }
+        );
+
+
+    sections.forEach(
+        (section) => {
+
+            observer.observe(section);
 
         }
     );
 
 
-    /* =====================================================
-    INTERSECTION OBSERVER
-    ====================================================== */
+    /*
+     * FALLBACK SCROLL CHECK
+     *
+     * Ini membantu ketika browser
+     * memiliki perilaku IntersectionObserver
+     * yang berbeda antara localhost dan production.
+     */
 
-    if (
-        "IntersectionObserver" in window
-    ) {
-
-        const observer =
-            new IntersectionObserver(
-                entries => {
-
-                    entries.forEach(
-                        entry => {
-
-                            if (
-                                !entry.isIntersecting
-                            ) {
-
-                                return;
-
-                            }
+    let scrollTimer = null;
 
 
-                            const currentId =
-                                entry.target.id;
+    window.addEventListener(
+        "scroll",
+        () => {
+
+            if (scrollTimer) {
+                return;
+            }
 
 
-                            navLinks.forEach(
-                                link => {
+            scrollTimer =
+                requestAnimationFrame(
+                    () => {
 
-                                    link.classList.toggle(
-                                        "active",
-                                        link.dataset.nav ===
-                                            currentId
-                                    );
+                        updateNavigationByScroll();
 
-                                }
-                            );
+                        scrollTimer = null;
 
-                        }
-                    );
+                    }
+                );
 
-                },
-                {
-                    threshold: 0.2,
+        },
+        {
+            passive: true
+        }
+    );
 
-                    rootMargin:
-                        "-20% 0px -55% 0px"
-                }
+}
+
+
+/* =========================================================
+   SCROLL TO SECTION
+========================================================= */
+
+function scrollToSection(
+    targetId
+) {
+
+    const target =
+        document.getElementById(targetId);
+
+
+    if (!target) {
+        return;
+    }
+
+
+    const headerOffset =
+        window.innerWidth <= 850
+            ? 82
+            : 90;
+
+
+    const targetPosition =
+        target.getBoundingClientRect().top +
+        window.scrollY -
+        headerOffset;
+
+
+    window.scrollTo({
+
+        top: Math.max(
+            0,
+            targetPosition
+        ),
+
+        behavior: "smooth"
+
+    });
+
+
+    /*
+     * Update URL tanpa reload.
+     */
+
+    try {
+
+        history.pushState(
+            null,
+            "",
+            `#${targetId}`
+        );
+
+    } catch (error) {
+
+        console.warn(
+            "History API tidak tersedia.",
+            error
+        );
+
+    }
+
+
+    setActiveNavigation(
+        targetId
+    );
+
+}
+
+
+/* =========================================================
+   ACTIVE NAVIGATION
+========================================================= */
+
+function setActiveNavigation(
+    activeId
+) {
+
+    document
+        .querySelectorAll("[data-nav]")
+        .forEach((link) => {
+
+            const isActive =
+                link.dataset.nav === activeId;
+
+
+            link.classList.toggle(
+                "active",
+                isActive
             );
 
 
-        sections.forEach(
-            item => {
+            if (
+                link.getAttribute("role") ===
+                "tab"
+            ) {
 
-                observer.observe(
-                    item.section
+                link.setAttribute(
+                    "aria-selected",
+                    String(isActive)
                 );
 
             }
-        );
 
-    }
+        });
 
 }
 
 
 /* =========================================================
-SMOOTH SCROLL
+   NAVIGATION BY SCROLL
 ========================================================= */
 
-function initSmoothScroll() {
+function updateNavigationByScroll() {
 
-    /*
-    Navigation utama sudah ditangani
-    oleh initNavigation().
-    Fungsi ini hanya menangani anchor
-    lain yang belum memiliki data-nav.
-    */
+    const sectionIds = [
 
-    const anchors =
-        document.querySelectorAll(
-            'a[href^="#"]:not([data-nav])'
-        );
+        "beranda",
+        "fitur",
+        "tema",
+        "harga",
+        "faq"
+
+    ];
 
 
-    anchors.forEach(
-        anchor => {
-
-            anchor.addEventListener(
-                "click",
-                event => {
-
-                    const href =
-                        anchor.getAttribute(
-                            "href"
-                        );
+    const offset =
+        window.innerWidth <= 850
+            ? 110
+            : 120;
 
 
-                    if (
-                        !href ||
-                        href === "#"
-                    ) {
-
-                        return;
-
-                    }
+    let currentId =
+        "beranda";
 
 
-                    const target =
-                        document.querySelector(
-                            href
-                        );
+    sectionIds.forEach(
+        (id) => {
+
+            const section =
+                document.getElementById(id);
 
 
-                    if (!target) {
-
-                        return;
-
-                    }
+            if (!section) {
+                return;
+            }
 
 
-                    event.preventDefault();
+            const rect =
+                section.getBoundingClientRect();
 
 
-                    target.scrollIntoView({
-                        behavior: "smooth",
-                        block: "start"
-                    });
+            if (
+                rect.top <= offset &&
+                rect.bottom > offset
+            ) {
 
-                }
-            );
+                currentId = id;
+
+            }
 
         }
     );
 
-}
 
-
-/* =========================================================
-MOBILE NAVIGATION
-========================================================= */
-
-function initMobileNavigation() {
-
-    const mobileLinks =
-        document.querySelectorAll(
-            "[data-mobile-nav]"
-        );
-
-
-    mobileLinks.forEach(
-        link => {
-
-            link.addEventListener(
-                "click",
-                () => {
-
-                    closeMobileNavigation();
-
-                }
-            );
-
-        }
+    setActiveNavigation(
+        currentId
     );
 
 }
 
 
 /* =========================================================
-CLOSE MOBILE NAVIGATION
+   INITIAL HASH
 ========================================================= */
 
-function closeMobileNavigation() {
-
-    const mobileNav =
-        document.getElementById(
-            "mobileBottomNav"
-        );
-
-
-    if (!mobileNav) {
-
-        return;
-
-    }
-
-
-    mobileNav.classList.remove(
-        "is-open"
-    );
-
-}
-
-
-/* =========================================================
-CURRENT YEAR
-========================================================= */
-
-function initCurrentYear() {
-
-    const yearElement =
-        document.getElementById(
-            "currentYear"
-        );
-
-
-    if (!yearElement) {
-
-        return;
-
-    }
-
-
-    yearElement.textContent =
-        new Date().getFullYear();
-
-}
-
-
-/* =========================================================
-HASH NAVIGATION
-========================================================= */
-
-function initHashNavigation() {
+function handleInitialHash() {
 
     const hash =
         window.location.hash;
 
 
     if (!hash) {
-
         return;
-
     }
-
-
-    const hashMap = {
-
-        "#beranda": "beranda",
-
-        "#fitur": "fitur",
-
-        "#tema": "tema",
-
-        "#harga": "harga",
-
-        "#faq": "faq"
-
-    };
 
 
     const targetId =
-        hashMap[hash];
-
-
-    if (!targetId) {
-
-        return;
-
-    }
+        hash.substring(1);
 
 
     const target =
-        document.getElementById(
-            targetId
-        );
+        document.getElementById(targetId);
 
 
     if (!target) {
-
         return;
-
     }
 
 
-    setTimeout(
+    /*
+     * Browser terkadang melakukan native
+     * hash scrolling sebelum CSS/JS selesai.
+     *
+     * Kita koreksi setelah halaman siap.
+     */
+
+    window.setTimeout(
         () => {
 
-            target.scrollIntoView({
-                behavior: "smooth",
-                block: "start"
-            });
+            scrollToSection(
+                targetId
+            );
 
         },
         100
@@ -1624,59 +786,712 @@ function initHashNavigation() {
 
 
 /* =========================================================
-PUBLIC API
+   THEME TABS
+========================================================= */
+
+function initThemeTabs() {
+
+    const mainTabs =
+        document.querySelectorAll(
+            ".theme-main-tab"
+        );
+
+
+    const subTabs =
+        document.querySelectorAll(
+            ".theme-sub-tab"
+        );
+
+
+    const subTabsContainer =
+        document.getElementById(
+            "themeSubTabs"
+        );
+
+
+    /*
+     * MAIN CATEGORY
+     */
+
+    mainTabs.forEach(
+        (button) => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const category =
+                        button.dataset.category;
+
+
+                    if (!category) {
+                        return;
+                    }
+
+
+                    state.category =
+                        category;
+
+
+                    /*
+                     * Update active main tab
+                     */
+
+                    mainTabs.forEach(
+                        (item) => {
+
+                            const active =
+                                item === button;
+
+
+                            item.classList.toggle(
+                                "active",
+                                active
+                            );
+
+
+                            item.setAttribute(
+                                "aria-selected",
+                                String(active)
+                            );
+
+                        }
+                    );
+
+
+                    /*
+                     * PERNIKAHAN
+                     *
+                     * Tampilkan sub tab.
+                     */
+
+                    if (
+                        category ===
+                        "pernikahan"
+                    ) {
+
+                        if (subTabsContainer) {
+
+                            subTabsContainer.hidden =
+                                false;
+
+                            subTabsContainer
+                                .setAttribute(
+                                    "aria-hidden",
+                                    "false"
+                                );
+
+                        }
+
+
+                        state.package =
+                            "all";
+
+
+                        subTabs.forEach(
+                            (item) => {
+
+                                const active =
+                                    item.dataset.package ===
+                                    "all";
+
+
+                                item.classList.toggle(
+                                    "active",
+                                    active
+                                );
+
+
+                                item.setAttribute(
+                                    "aria-selected",
+                                    String(active)
+                                );
+
+                            }
+                        );
+
+                    }
+
+
+                    /*
+                     * ACARA LAIN
+                     * CETAK
+                     *
+                     * Sembunyikan sub tab.
+                     */
+
+                    else {
+
+                        if (subTabsContainer) {
+
+                            subTabsContainer.hidden =
+                                true;
+
+                            subTabsContainer
+                                .setAttribute(
+                                    "aria-hidden",
+                                    "true"
+                                );
+
+                        }
+
+
+                        state.package =
+                            "all";
+
+                    }
+
+
+                    renderThemes();
+
+                }
+            );
+
+        }
+    );
+
+
+    /*
+     * SUB CATEGORY
+     */
+
+    subTabs.forEach(
+        (button) => {
+
+            button.addEventListener(
+                "click",
+                () => {
+
+                    const packageName =
+                        button.dataset.package;
+
+
+                    if (!packageName) {
+                        return;
+                    }
+
+
+                    state.package =
+                        packageName;
+
+
+                    subTabs.forEach(
+                        (item) => {
+
+                            const active =
+                                item === button;
+
+
+                            item.classList.toggle(
+                                "active",
+                                active
+                            );
+
+
+                            item.setAttribute(
+                                "aria-selected",
+                                String(active)
+                            );
+
+                        }
+                    );
+
+
+                    renderThemes();
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   RENDER THEMES
+========================================================= */
+
+function renderThemes() {
+
+    const grid =
+        document.getElementById(
+            "themeGrid"
+        );
+
+
+    const empty =
+        document.getElementById(
+            "themeEmpty"
+        );
+
+
+    if (!grid) {
+        return;
+    }
+
+
+    let filtered =
+        themeData.filter(
+            (theme) =>
+                theme.category ===
+                state.category
+        );
+
+
+    /*
+     * Filter package hanya untuk
+     * kategori pernikahan.
+     */
+
+    if (
+        state.category ===
+        "pernikahan" &&
+        state.package !== "all"
+    ) {
+
+        filtered =
+            filtered.filter(
+                (theme) =>
+                    theme.package ===
+                    state.package
+            );
+
+    }
+
+
+    grid.innerHTML = "";
+
+
+    if (!filtered.length) {
+
+        if (empty) {
+            empty.hidden = false;
+        }
+
+        return;
+
+    }
+
+
+    if (empty) {
+        empty.hidden = true;
+    }
+
+
+    const fragment =
+        document.createDocumentFragment();
+
+
+    filtered.forEach(
+        (theme) => {
+
+            fragment.appendChild(
+                createThemeCard(theme)
+            );
+
+        }
+    );
+
+
+    grid.appendChild(
+        fragment
+    );
+
+}
+
+
+/* =========================================================
+   CREATE THEME CARD
+========================================================= */
+
+function createThemeCard(
+    theme
+) {
+
+    const article =
+        document.createElement("article");
+
+
+    article.className =
+        "theme-card";
+
+
+    const imageWrap =
+        document.createElement("div");
+
+
+    imageWrap.className =
+        "theme-image-wrap";
+
+
+    const image =
+        document.createElement("img");
+
+
+    image.className =
+        "theme-image";
+
+
+    image.src =
+        theme.image || "";
+
+
+    image.alt =
+        `${theme.name} — IK-Pro.My.Id`;
+
+
+    image.loading =
+        "lazy";
+
+
+    image.addEventListener(
+        "error",
+        () => {
+
+            imageWrap.classList.add(
+                "image-error"
+            );
+
+            image.removeAttribute(
+                "src"
+            );
+
+        }
+    );
+
+
+    imageWrap.appendChild(
+        image
+    );
+
+
+    if (theme.package) {
+
+        const packageBadge =
+            document.createElement("span");
+
+
+        packageBadge.className =
+            "theme-package";
+
+
+        packageBadge.textContent =
+            packageData[
+                theme.package
+            ]?.name ||
+            theme.package;
+
+
+        imageWrap.appendChild(
+            packageBadge
+        );
+
+    }
+
+
+    const content =
+        document.createElement("div");
+
+
+    content.className =
+        "theme-content";
+
+
+    const title =
+        document.createElement("h3");
+
+
+    title.textContent =
+        theme.name;
+
+
+    const price =
+        document.createElement("div");
+
+
+    price.className =
+        "theme-price";
+
+
+    if (
+        theme.package &&
+        packageData[theme.package]
+    ) {
+
+        price.textContent =
+            formatRupiah(
+                packageData[
+                    theme.package
+                ].price
+            );
+
+    } else {
+
+        price.textContent =
+            "Hubungi Kami";
+
+    }
+
+
+    const actions =
+        document.createElement("div");
+
+
+    actions.className =
+        "theme-actions";
+
+
+    /*
+     * PREVIEW
+     */
+
+    const preview =
+        document.createElement("a");
+
+
+    preview.className =
+        "theme-button theme-preview-button";
+
+
+    preview.textContent =
+        "Preview";
+
+
+    const previewUrl =
+        theme.preview || "#";
+
+
+    if (previewUrl === "#") {
+
+        preview.href =
+            "#";
+
+        preview.classList.add(
+            "is-disabled"
+        );
+
+        preview.setAttribute(
+            "aria-disabled",
+            "true"
+        );
+
+        preview.addEventListener(
+            "click",
+            (event) => {
+
+                event.preventDefault();
+
+            }
+        );
+
+    } else {
+
+        preview.href =
+            previewUrl;
+
+        preview.target =
+            "_self";
+
+    }
+
+
+    /*
+     * ORDER
+     */
+
+    const order =
+        document.createElement("a");
+
+
+    order.className =
+        "theme-button theme-order-button";
+
+
+    order.textContent =
+        "Order";
+
+
+    const params =
+        new URLSearchParams();
+
+
+    if (theme.category) {
+
+        params.set(
+            "category",
+            theme.category
+        );
+
+    }
+
+
+    if (theme.package) {
+
+        params.set(
+            "package",
+            theme.package
+        );
+
+    }
+
+
+    if (theme.slug) {
+
+        params.set(
+            "theme",
+            theme.slug
+        );
+
+    }
+
+
+    order.href =
+        `/register.html?${params.toString()}`;
+
+
+    actions.appendChild(
+        preview
+    );
+
+    actions.appendChild(
+        order
+    );
+
+
+    content.appendChild(
+        title
+    );
+
+    content.appendChild(
+        price
+    );
+
+    content.appendChild(
+        actions
+    );
+
+
+    article.appendChild(
+        imageWrap
+    );
+
+    article.appendChild(
+        content
+    );
+
+
+    return article;
+
+}
+
+
+/* =========================================================
+   FORMAT RUPIAH
+========================================================= */
+
+function formatRupiah(
+    number
+) {
+
+    return new Intl.NumberFormat(
+        "id-ID",
+        {
+            style: "currency",
+            currency: "IDR",
+            maximumFractionDigits: 0
+        }
+    ).format(number);
+
+}
+
+
+/* =========================================================
+   FAQ
+========================================================= */
+
+function initFAQ() {
+
+    const items =
+        document.querySelectorAll(
+            ".faq-item"
+        );
+
+
+    items.forEach(
+        (item) => {
+
+            item.addEventListener(
+                "toggle",
+                () => {
+
+                    if (!item.open) {
+                        return;
+                    }
+
+
+                    items.forEach(
+                        (other) => {
+
+                            if (
+                                other !== item &&
+                                other.open
+                            ) {
+
+                                other.open =
+                                    false;
+
+                            }
+
+                        }
+                    );
+
+                }
+            );
+
+        }
+    );
+
+}
+
+
+/* =========================================================
+   CURRENT YEAR
+========================================================= */
+
+function initCurrentYear() {
+
+    const year =
+        document.getElementById(
+            "currentYear"
+        );
+
+
+    if (!year) {
+        return;
+    }
+
+
+    year.textContent =
+        new Date().getFullYear();
+
+}
+
+
+/* =========================================================
+   PUBLIC API
 ========================================================= */
 
 window.IKProLanding = {
 
-    getThemes() {
+    scrollToSection,
 
-        return themeData;
+    setActiveNavigation,
 
-    },
+    renderThemes,
 
+    state,
 
-    getPackages() {
-
-        return packageData;
-
-    },
-
-
-    selectCategory(
-        category
-    ) {
-
-        selectMainCategory(
-            category
-        );
-
-    },
-
-
-    selectPackage(
-        packageName
-    ) {
-
-        selectPackage(
-            packageName
-        );
-
-    },
-
-
-    getCurrentState() {
-
-        return {
-
-            category:
-                currentCategory,
-
-            package:
-                currentPackage
-
-        };
-
-    }
+    packageData
 
 };
