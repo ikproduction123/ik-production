@@ -8,6 +8,8 @@ import { ProtectedRoute } from '../components/layout/ProtectedRoute';
 import DashboardLayout from '../components/layout/DashboardLayout';
 import Overview from '../pages/client/Overview';
 import MyInvitations from '../pages/client/MyInvitations';
+import NewInvitation from '../pages/client/NewInvitation';
+import Editor from '../pages/client/Editor';
 
 export const router = createBrowserRouter([
   {
@@ -30,7 +32,8 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <Overview /> },
       { path: "invitations", element: <MyInvitations /> },
-      { path: "invitations/new", element: <div>Halaman Pilih Paket & Tema (WIP)</div> },
+      { path: "invitations/new", element: <NewInvitation /> },
+      { path: "invitations/:id/edit", element: <Editor /> },
       { path: "transactions", element: <div>Halaman Transaksi (WIP)</div> },
       { path: "settings", element: <div>Pengaturan Profil (WIP)</div> },
     ]
