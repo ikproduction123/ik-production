@@ -31,11 +31,9 @@ export default function Editor() {
 
   useEffect(() => {
     const fetchEditorData = async () => {
-      // Ambil daftar lagu preset
       const { data: tracksData } = await supabase.from('music_tracks').select('*').order('title');
       if (tracksData) setMusicTracks(tracksData);
 
-      // Ambil data mempelai
       const { data: coupleData } = await supabase.from('couples').select('*').eq('invitation_id', id).single();
       if (coupleData) {
         setCouple({
@@ -44,14 +42,12 @@ export default function Editor() {
         });
       }
 
-      // Ambil data undangan
       const { data: invData } = await supabase.from('invitations').select('*').eq('id', id).single();
       if (invData) {
         setInvitation({
           title: invData.title || '', cover_img: invData.cover_img || '', meta_title: invData.meta_title || '', meta_description: invData.meta_description || '', meta_img: invData.meta_img || '', music_url: invData.music_url || '', slug: invData.slug || ''
         });
         
-        // Tentukan radio button aktif berdasarkan URL musik
         if (invData.music_url) {
           const isPreset = tracksData?.some(t => t.url === invData.music_url);
           setMusicSource(isPreset ? 'preset' : 'upload');
@@ -179,7 +175,7 @@ export default function Editor() {
               <input type="text" name="title" value={invitation.title} onChange={handleInvitationChange} placeholder="Contoh: The Wedding of Romeo & Juliet" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} />
             </div>
 
-            {/* SEKSI MUSIK (BARU) */}
+            {/* SEKSI MUSIK */}
             <div style={{ marginBottom: '1.5rem', padding: '1rem', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--bg-primary)' }}>
               <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', fontSize: '1rem', fontWeight: 'bold' }}>
                 <Music size={20} color="var(--primary)" /> Musik Latar
@@ -210,6 +206,16 @@ export default function Editor() {
                     {uploading.music ? 'Mengunggah Audio...' : 'Pilih File Audio (Max 5MB)'}
                   </button>
                   {invitation.music_url && <span style={{ fontSize: '0.85rem', color: 'var(--success)' }}>✔ Audio telah terpilih</span>}
+                </div>
+              )}
+
+              {/* PEMUTAR MUSIK PREVIEW */}
+              {invitation.music_url && (
+                <div style={{ marginTop: '1.5rem', padding: '1rem', backgroundColor: '#fff', borderRadius: 'var(--radius-sm)', border: '1px dashed var(--border)' }}>
+                  <p style={{ margin: '0 0 0.5rem 0', fontSize: '0.9rem', fontWeight: 'bold' }}>Preview Musik Latar:</p>
+                  <audio controls src={invitation.music_url} style={{ width: '100%', height: '40px', outline: 'none' }}>
+                    Browser Anda tidak mendukung elemen audio.
+                  </audio>
                 </div>
               )}
             </div>
@@ -251,7 +257,7 @@ export default function Editor() {
           </div>
           
           <div style={{ marginTop: '2rem', textAlign: 'right' }}>
-            <button type="submit" disabled={saving} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2rem', backgroundColor: 'var(--success)', color: '#fff', border: 'none', borderRadius: 'var(--radius-sm)', fontWeight: 'bold', cursor: 'pointer' }}>
+            <button type="submit" disabled={saving || uploading.cover || uploading.meta || uploading.music} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2rem', backgroundColor: 'var(--success)', color: '#fff', border: 'none', borderRadius: 'var(--radius-sm)', fontWeight: 'bold', cursor: 'pointer' }}>
               <Save size={20} /> {saving ? 'Menyimpan...' : 'Simpan Pengaturan'}
             </button>
           </div>
@@ -261,6 +267,7 @@ export default function Editor() {
       {/* TAB MEMPELAI */}
       {activeTab === 'mempelai' && (
         <form onSubmit={handleSaveMempelai}>
+          {/* ... (Konten Mempelai tetap sama) ... */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
             <div style={{ backgroundColor: 'var(--surface)', padding: '2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
               <h2 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', color: 'var(--warning)' }}>Mempelai Pria</h2>
