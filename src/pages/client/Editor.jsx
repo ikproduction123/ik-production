@@ -9,26 +9,32 @@ export default function Editor() {
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('pengaturan');
   const [message, setMessage] = useState({ text: '', type: '' });
-  const [uploading, setUploading] = useState({ groom: false, bride: false, cover: false, meta: false });
+  const [uploading, setUploading] = useState({ groom: false, bride: false, cover: false, meta: false, music: false });
 
   const groomFileInput = useRef(null);
   const brideFileInput = useRef(null);
   const coverFileInput = useRef(null);
   const metaFileInput = useRef(null);
+  const musicFileInput = useRef(null);
 
-  // State Mempelai
+  const [musicTracks, setMusicTracks] = useState([]);
+  const [musicSource, setMusicSource] = useState('preset'); // 'preset' atau 'upload'
+
   const [couple, setCouple] = useState({
     groom_name: '', groom_fullname: '', groom_father: '', groom_mother: '', groom_instagram: '', groom_photo: '',
     bride_name: '', bride_fullname: '', bride_father: '', bride_mother: '', bride_instagram: '', bride_photo: ''
   });
 
-  // State Undangan (Pengaturan Umum & SEO)
   const [invitation, setInvitation] = useState({
     title: '', cover_img: '', meta_title: '', meta_description: '', meta_img: '', music_url: '', slug: ''
   });
 
   useEffect(() => {
     const fetchEditorData = async () => {
+      // Ambil daftar lagu preset
+      const { data: tracksData } = await supabase.from('music_tracks').select('*').order('title');
+      if (tracksData) setMusicTracks(tracksData);
+
       // Ambil data mempelai
       const { data: coupleData } = await supabase.from('couples').select('*').eq('invitation_id', id).single();
       if (coupleData) {
@@ -44,6 +50,12 @@ export default function Editor() {
         setInvitation({
           title: invData.title || '', cover_img: invData.cover_img || '', meta_title: invData.meta_title || '', meta_description: invData.meta_description || '', meta_img: invData.meta_img || '', music_url: invData.music_url || '', slug: invData.slug || ''
         });
+        
+        // Tentukan radio button aktif berdasarkan URL musik
+        if (invData.music_url) {
+          const isPreset = tracksData?.some(t => t.url === invData.music_url);
+          setMusicSource(isPreset ? 'preset' : 'upload');
+        }
       }
       setLoading(false);
     };
@@ -54,21 +66,21 @@ export default function Editor() {
   const handleCoupleChange = (e) => setCouple(prev => ({ ...prev, [e.target.name]: e.target.value }));
   const handleInvitationChange = (e) => setInvitation(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handlePhotoUpload = async (e, type, tableRef) => {
+  const handleFileUpload = async (e, type, tableRef, maxMb, folder) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    if (file.size > 2 * 1024 * 1024) {
-      setMessage({ text: 'Ukuran foto maksimal 2MB', type: 'error' });
+    if (file.size > maxMb * 1024 * 1024) {
+      setMessage({ text: `Ukuran file maksimal ${maxMb}MB`, type: 'error' });
       return;
     }
 
     setUploading(prev => ({ ...prev, [type]: true }));
-    setMessage({ text: 'Mengunggah foto...', type: 'info' });
+    setMessage({ text: 'Mengunggah file...', type: 'info' });
 
     const fileExt = file.name.split('.').pop();
     const fileName = `${id}_${type}.${fileExt}`; 
-    const filePath = `${tableRef}/${fileName}`;
+    const filePath = `${folder}/${fileName}`;
 
     const { error: uploadError } = await supabase.storage.from('invitation-assets').upload(filePath, file, { upsert: true });
 
@@ -84,10 +96,10 @@ export default function Editor() {
     if (tableRef === 'couples') {
       setCouple(prev => ({ ...prev, [`${type}_photo`]: cacheBusterUrl }));
     } else {
-      setInvitation(prev => ({ ...prev, [`${type}_img`]: cacheBusterUrl }));
+      setInvitation(prev => ({ ...prev, [type === 'music' ? 'music_url' : `${type}_img`]: cacheBusterUrl }));
     }
     
-    setMessage({ text: 'Foto berhasil diunggah! Klik Simpan untuk memperbarui.', type: 'success' });
+    setMessage({ text: 'File berhasil diunggah! Klik Simpan untuk memperbarui.', type: 'success' });
     setUploading(prev => ({ ...prev, [type]: false }));
   };
 
@@ -161,25 +173,55 @@ export default function Editor() {
         <form onSubmit={handleSavePengaturan}>
           <div style={{ backgroundColor: 'var(--surface)', padding: '2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', marginBottom: '1.5rem' }}>
             <h2 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', color: 'var(--warning)' }}>Informasi Dasar</h2>
+            
             <div style={{ marginBottom: '1rem' }}>
               <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 'bold' }}>Judul Undangan (Header)</label>
               <input type="text" name="title" value={invitation.title} onChange={handleInvitationChange} placeholder="Contoh: The Wedding of Romeo & Juliet" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} />
             </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 'bold' }}>Link Musik Latar (URL)</label>
-              <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                <Music size={20} color="var(--primary)" />
-                <input type="url" name="music_url" value={invitation.music_url} onChange={handleInvitationChange} placeholder="https://contoh.com/musik.mp3" style={{ flex: 1, padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} />
+
+            {/* SEKSI MUSIK (BARU) */}
+            <div style={{ marginBottom: '1.5rem', padding: '1rem', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm)', backgroundColor: 'var(--bg-primary)' }}>
+              <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem', fontSize: '1rem', fontWeight: 'bold' }}>
+                <Music size={20} color="var(--primary)" /> Musik Latar
+              </label>
+              
+              <div style={{ display: 'flex', gap: '2rem', marginBottom: '1rem' }}>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                  <input type="radio" checked={musicSource === 'preset'} onChange={() => { setMusicSource('preset'); setInvitation(prev => ({...prev, music_url: ''})); }} />
+                  Pilih dari Galeri Lagu
+                </label>
+                <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                  <input type="radio" checked={musicSource === 'upload'} onChange={() => { setMusicSource('upload'); setInvitation(prev => ({...prev, music_url: ''})); }} />
+                  Upload Musik Sendiri
+                </label>
               </div>
+
+              {musicSource === 'preset' ? (
+                <select name="music_url" value={invitation.music_url} onChange={handleInvitationChange} style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', backgroundColor: '#fff' }}>
+                  <option value="">-- Pilih Lagu --</option>
+                  {musicTracks.map(track => (
+                    <option key={track.id} value={track.url}>{track.title} - {track.artist}</option>
+                  ))}
+                </select>
+              ) : (
+                <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+                  <input type="file" accept="audio/mpeg, audio/mp3, audio/wav" ref={musicFileInput} onChange={(e) => handleFileUpload(e, 'music', 'invitations', 5, 'music')} style={{ display: 'none' }} />
+                  <button type="button" onClick={() => musicFileInput.current.click()} disabled={uploading.music} style={{ padding: '0.8rem 1.2rem', background: '#fff', border: '1px solid var(--primary)', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontWeight: 'bold' }}>
+                    {uploading.music ? 'Mengunggah Audio...' : 'Pilih File Audio (Max 5MB)'}
+                  </button>
+                  {invitation.music_url && <span style={{ fontSize: '0.85rem', color: 'var(--success)' }}>✔ Audio telah terpilih</span>}
+                </div>
+              )}
             </div>
+
             <div style={{ marginBottom: '1rem' }}>
               <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 'bold' }}>Cover Undangan Depan</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                <div style={{ width: '150px', height: '200px', backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                <div style={{ width: '150px', height: '200px', backgroundColor: 'var(--surface)', borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {invitation.cover_img ? <img src={invitation.cover_img} alt="Cover" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <ImageIcon size={32} color="gray" />}
                 </div>
                 <div>
-                  <input type="file" accept="image/png, image/jpeg, image/webp" ref={coverFileInput} onChange={(e) => handlePhotoUpload(e, 'cover', 'invitations')} style={{ display: 'none' }} />
+                  <input type="file" accept="image/png, image/jpeg, image/webp" ref={coverFileInput} onChange={(e) => handleFileUpload(e, 'cover', 'invitations', 2, 'invitations')} style={{ display: 'none' }} />
                   <button type="button" onClick={() => coverFileInput.current.click()} disabled={uploading.cover} style={{ padding: '0.6rem 1.2rem', background: 'transparent', border: '1px solid var(--primary)', borderRadius: 'var(--radius-sm)', cursor: 'pointer' }}>
                     {uploading.cover ? 'Mengunggah...' : 'Pilih Foto Cover'}
                   </button>
@@ -190,23 +232,16 @@ export default function Editor() {
 
           <div style={{ backgroundColor: 'var(--surface)', padding: '2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
             <h2 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', color: 'var(--warning)' }}>SEO & Metadata (Link Preview)</h2>
-            <p style={{ fontSize: '0.9rem', color: 'gray', marginBottom: '1.5rem' }}>Informasi ini akan muncul saat undangan dibagikan di WhatsApp, Facebook, dll.</p>
+            <div style={{ marginBottom: '1rem' }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Meta Title</label><input type="text" name="meta_title" value={invitation.meta_title} onChange={handleInvitationChange} style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
+            <div style={{ marginBottom: '1rem' }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Meta Description</label><textarea name="meta_description" value={invitation.meta_description} onChange={handleInvitationChange} rows="3" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}></textarea></div>
             <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Meta Title</label>
-              <input type="text" name="meta_title" value={invitation.meta_title} onChange={handleInvitationChange} placeholder="Undangan Pernikahan Romeo & Juliet" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} />
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Meta Description</label>
-              <textarea name="meta_description" value={invitation.meta_description} onChange={handleInvitationChange} placeholder="Kami mengundang Bapak/Ibu untuk hadir di acara pernikahan kami..." rows="3" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}></textarea>
-            </div>
-            <div style={{ marginBottom: '1rem' }}>
-              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Thumbnail Preview (Rekomendasi: 1200x630px)</label>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Thumbnail Preview (1200x630px)</label>
               <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <div style={{ width: '200px', height: '105px', backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   {invitation.meta_img ? <img src={invitation.meta_img} alt="Meta Thumbnail" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <ImageIcon size={24} color="gray" />}
                 </div>
                 <div>
-                  <input type="file" accept="image/png, image/jpeg, image/webp" ref={metaFileInput} onChange={(e) => handlePhotoUpload(e, 'meta', 'invitations')} style={{ display: 'none' }} />
+                  <input type="file" accept="image/png, image/jpeg, image/webp" ref={metaFileInput} onChange={(e) => handleFileUpload(e, 'meta', 'invitations', 2, 'invitations')} style={{ display: 'none' }} />
                   <button type="button" onClick={() => metaFileInput.current.click()} disabled={uploading.meta} style={{ padding: '0.6rem 1.2rem', background: 'transparent', border: '1px solid var(--primary)', borderRadius: 'var(--radius-sm)', cursor: 'pointer' }}>
                     {uploading.meta ? 'Mengunggah...' : 'Upload Meta Image'}
                   </button>
@@ -216,7 +251,7 @@ export default function Editor() {
           </div>
           
           <div style={{ marginTop: '2rem', textAlign: 'right' }}>
-            <button type="submit" disabled={saving || uploading.cover || uploading.meta} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2rem', backgroundColor: 'var(--success)', color: '#fff', border: 'none', borderRadius: 'var(--radius-sm)', fontWeight: 'bold', cursor: 'pointer' }}>
+            <button type="submit" disabled={saving} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2rem', backgroundColor: 'var(--success)', color: '#fff', border: 'none', borderRadius: 'var(--radius-sm)', fontWeight: 'bold', cursor: 'pointer' }}>
               <Save size={20} /> {saving ? 'Menyimpan...' : 'Simpan Pengaturan'}
             </button>
           </div>
@@ -226,7 +261,6 @@ export default function Editor() {
       {/* TAB MEMPELAI */}
       {activeTab === 'mempelai' && (
         <form onSubmit={handleSaveMempelai}>
-          {/* ... KONTEN FORM MEMPELAI TETAP SAMA SEPERTI SEBELUMNYA ... */}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
             <div style={{ backgroundColor: 'var(--surface)', padding: '2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
               <h2 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', color: 'var(--warning)' }}>Mempelai Pria</h2>
@@ -234,7 +268,7 @@ export default function Editor() {
                 <div style={{ width: '120px', height: '120px', borderRadius: '50%', backgroundColor: 'var(--bg-primary)', marginBottom: '1rem', overflow: 'hidden', border: '3px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'gray' }}>
                   {couple.groom_photo ? <img src={couple.groom_photo} alt="Pria" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <User size={40} />}
                 </div>
-                <input type="file" accept="image/png, image/jpeg, image/webp" ref={groomFileInput} onChange={(e) => handlePhotoUpload(e, 'groom', 'couples')} style={{ display: 'none' }} />
+                <input type="file" accept="image/png, image/jpeg, image/webp" ref={groomFileInput} onChange={(e) => handleFileUpload(e, 'groom', 'couples', 2, 'couples')} style={{ display: 'none' }} />
                 <button type="button" onClick={() => groomFileInput.current.click()} disabled={uploading.groom} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--primary)', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontSize: '0.9rem' }}>
                   <Upload size={16} /> {uploading.groom ? 'Mengunggah...' : 'Pilih Foto'}
                 </button>
@@ -252,7 +286,7 @@ export default function Editor() {
                 <div style={{ width: '120px', height: '120px', borderRadius: '50%', backgroundColor: 'var(--bg-primary)', marginBottom: '1rem', overflow: 'hidden', border: '3px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'gray' }}>
                   {couple.bride_photo ? <img src={couple.bride_photo} alt="Wanita" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <User size={40} />}
                 </div>
-                <input type="file" accept="image/png, image/jpeg, image/webp" ref={brideFileInput} onChange={(e) => handlePhotoUpload(e, 'bride', 'couples')} style={{ display: 'none' }} />
+                <input type="file" accept="image/png, image/jpeg, image/webp" ref={brideFileInput} onChange={(e) => handleFileUpload(e, 'bride', 'couples', 2, 'couples')} style={{ display: 'none' }} />
                 <button type="button" onClick={() => brideFileInput.current.click()} disabled={uploading.bride} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--primary)', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontSize: '0.9rem' }}>
                   <Upload size={16} /> {uploading.bride ? 'Mengunggah...' : 'Pilih Foto'}
                 </button>
