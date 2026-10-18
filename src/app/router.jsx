@@ -1,10 +1,11 @@
 import { createBrowserRouter } from 'react-router-dom';
+import PublicLayout from '../components/layout/PublicLayout';
+import LandingPage from '../pages/public/LandingPage';
 import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
 import { ProtectedRoute } from '../components/layout/ProtectedRoute';
 import { useAuth } from '../features/auth/AuthContext';
 
-// Komponen sementara untuk Dashboard
 const DashboardTemp = () => {
   const { user, role, logout } = useAuth();
   return (
@@ -17,7 +18,13 @@ const DashboardTemp = () => {
 };
 
 export const router = createBrowserRouter([
-  { path: "/", element: <div>Landing Page IK-Pro.My.Id (WIP)</div> },
+  {
+    path: "/",
+    element: <PublicLayout />,
+    children: [
+      { index: true, element: <LandingPage /> }
+    ]
+  },
   { path: "/login", element: <Login /> },
   { path: "/register", element: <Register /> },
   { 
