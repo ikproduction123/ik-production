@@ -13,7 +13,8 @@ export default function PublicLayout() {
         </Link>
         <nav style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
           <a href="#fitur" style={{ textDecoration: 'none', color: 'var(--text-primary)' }}>Fitur</a>
-          <a href="#harga" style={{ textDecoration: 'none', color: 'var(--text-primary)' }}>Harga</a>
+          <a href="/themes" style={{ textDecoration: 'none', color: 'var(--text-primary)' }}>Tema</a>
+          <a href="/#harga" style={{ textDecoration: 'none', color: 'var(--text-primary)' }}>Harga</a>
           {user ? (
             <Link to="/dashboard" style={{ padding: '0.5rem 1rem', background: 'var(--primary)', color: 'var(--text-primary)', borderRadius: 'var(--radius-sm)', textDecoration: 'none', fontWeight: 'bold' }}>Dashboard</Link>
           ) : (

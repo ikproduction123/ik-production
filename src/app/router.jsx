@@ -1,6 +1,7 @@
 import { createBrowserRouter } from 'react-router-dom';
 import PublicLayout from '../components/layout/PublicLayout';
 import LandingPage from '../pages/public/LandingPage';
+import ThemesGallery from '../pages/public/ThemesGallery';
 import Login from '../pages/auth/Login';
 import Register from '../pages/auth/Register';
 import { ProtectedRoute } from '../components/layout/ProtectedRoute';
@@ -22,7 +23,8 @@ export const router = createBrowserRouter([
     path: "/",
     element: <PublicLayout />,
     children: [
-      { index: true, element: <LandingPage /> }
+      { index: true, element: <LandingPage /> },
+      { path: "themes", element: <ThemesGallery /> }
     ]
   },
   { path: "/login", element: <Login /> },
