@@ -39,11 +39,11 @@ export const AuthProvider = ({ children }) => {
 
   const login = (email, password) => supabase.auth.signInWithPassword({ email, password });
   
-  const register = (email, password, fullName) => 
+  const register = (email, password, fullName, phone) => 
     supabase.auth.signUp({ 
       email, 
       password, 
-      options: { data: { full_name: fullName } } 
+      options: { data: { full_name: fullName, phone: phone } } 
     });
     
   const logout = () => supabase.auth.signOut();
