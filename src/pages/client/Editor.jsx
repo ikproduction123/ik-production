@@ -1,7 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Save, ArrowLeft, User, Calendar, Image as ImageIcon, Settings } from 'lucide-react';
+import { Save, ArrowLeft, User, Calendar, Image as ImageIcon, Settings, Upload } from 'lucide-react';
 
 export default function Editor() {
   const { id } = useParams();
@@ -9,16 +9,18 @@ export default function Editor() {
   const [saving, setSaving] = useState(false);
   const [activeTab, setActiveTab] = useState('mempelai');
   const [message, setMessage] = useState({ text: '', type: '' });
+  const [uploading, setUploading] = useState({ groom: false, bride: false });
 
-  // State untuk form mempelai
+  const groomFileInput = useRef(null);
+  const brideFileInput = useRef(null);
+
   const [couple, setCouple] = useState({
-    groom_name: '', groom_fullname: '', groom_father: '', groom_mother: '', groom_instagram: '',
-    bride_name: '', bride_fullname: '', bride_father: '', bride_mother: '', bride_instagram: ''
+    groom_name: '', groom_fullname: '', groom_father: '', groom_mother: '', groom_instagram: '', groom_photo: '',
+    bride_name: '', bride_fullname: '', bride_father: '', bride_mother: '', bride_instagram: '', bride_photo: ''
   });
 
   useEffect(() => {
     const fetchInvitationData = async () => {
-      // Ambil data pasangan (couple) yang terhubung dengan undangan ini
       const { data, error } = await supabase
         .from('couples')
         .select('*')
@@ -32,11 +34,13 @@ export default function Editor() {
           groom_father: data.groom_father || '',
           groom_mother: data.groom_mother || '',
           groom_instagram: data.groom_instagram || '',
+          groom_photo: data.groom_photo || '',
           bride_name: data.bride_name || '',
           bride_fullname: data.bride_fullname || '',
           bride_father: data.bride_father || '',
           bride_mother: data.bride_mother || '',
-          bride_instagram: data.bride_instagram || ''
+          bride_instagram: data.bride_instagram || '',
+          bride_photo: data.bride_photo || ''
         });
       }
       setLoading(false);
@@ -48,6 +52,45 @@ export default function Editor() {
   const handleChange = (e) => {
     const { name, value } = e.target;
     setCouple(prev => ({ ...prev, [name]: value }));
+  };
+
+  const handlePhotoUpload = async (e, type) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // Validasi ukuran maksimal 2MB
+    if (file.size > 2 * 1024 * 1024) {
+      setMessage({ text: 'Ukuran foto maksimal 2MB', type: 'error' });
+      return;
+    }
+
+    setUploading(prev => ({ ...prev, [type]: true }));
+    setMessage({ text: 'Mengunggah foto...', type: 'info' });
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${id}_${type}.${fileExt}`; // Menimpa foto lama dengan nama file statis per role
+    const filePath = `couples/${fileName}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('invitation-assets')
+      .upload(filePath, file, { upsert: true });
+
+    if (uploadError) {
+      setMessage({ text: 'Gagal mengunggah foto: ' + uploadError.message, type: 'error' });
+      setUploading(prev => ({ ...prev, [type]: false }));
+      return;
+    }
+
+    const { data: { publicUrl } } = supabase.storage
+      .from('invitation-assets')
+      .getPublicUrl(filePath);
+
+    // Cache buster agar browser tidak memuat foto lama dari cache
+    const cacheBusterUrl = `${publicUrl}?t=${new Date().getTime()}`;
+
+    setCouple(prev => ({ ...prev, [`${type}_photo`]: cacheBusterUrl }));
+    setMessage({ text: 'Foto berhasil diunggah! Jangan lupa klik Simpan.', type: 'success' });
+    setUploading(prev => ({ ...prev, [type]: false }));
   };
 
   const handleSaveMempelai = async (e) => {
@@ -64,7 +107,6 @@ export default function Editor() {
       setMessage({ text: 'Gagal menyimpan data: ' + error.message, type: 'error' });
     } else {
       setMessage({ text: 'Data mempelai berhasil disimpan!', type: 'success' });
-      // Hapus pesan sukses setelah 3 detik
       setTimeout(() => setMessage({ text: '', type: '' }), 3000);
     }
     setSaving(false);
@@ -74,7 +116,6 @@ export default function Editor() {
 
   return (
     <div style={{ maxWidth: '900px', margin: '0 auto' }}>
-      {/* Header Editor */}
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
           <Link to="/dashboard/invitations" style={{ color: 'var(--text-primary)' }}><ArrowLeft size={24} /></Link>
@@ -85,7 +126,6 @@ export default function Editor() {
         </Link>
       </div>
 
-      {/* Navigasi Tab */}
       <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '2rem', borderBottom: '2px solid var(--border)' }}>
         {[
           { id: 'mempelai', label: 'Mempelai', icon: <User size={18} /> },
@@ -103,14 +143,12 @@ export default function Editor() {
         ))}
       </div>
 
-      {/* Notifikasi */}
       {message.text && (
-        <div style={{ padding: '1rem', marginBottom: '1.5rem', borderRadius: 'var(--radius-sm)', backgroundColor: message.type === 'success' ? '#e0f2f1' : '#ffebee', color: message.type === 'success' ? 'var(--success)' : 'var(--danger)' }}>
+        <div style={{ padding: '1rem', marginBottom: '1.5rem', borderRadius: 'var(--radius-sm)', backgroundColor: message.type === 'success' || message.type === 'info' ? '#e0f2f1' : '#ffebee', color: message.type === 'success' || message.type === 'info' ? 'var(--success)' : 'var(--danger)' }}>
           {message.text}
         </div>
       )}
 
-      {/* Konten Tab Mempelai */}
       {activeTab === 'mempelai' && (
         <form onSubmit={handleSaveMempelai}>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', gap: '2rem' }}>
@@ -119,6 +157,16 @@ export default function Editor() {
             <div style={{ backgroundColor: 'var(--surface)', padding: '2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
               <h2 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', color: 'var(--warning)' }}>Mempelai Pria</h2>
               
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <div style={{ width: '120px', height: '120px', borderRadius: '50%', backgroundColor: 'var(--bg-primary)', marginBottom: '1rem', overflow: 'hidden', border: '3px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'gray' }}>
+                  {couple.groom_photo ? <img src={couple.groom_photo} alt="Pria" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <User size={40} />}
+                </div>
+                <input type="file" accept="image/png, image/jpeg, image/webp" ref={groomFileInput} onChange={(e) => handlePhotoUpload(e, 'groom')} style={{ display: 'none' }} />
+                <button type="button" onClick={() => groomFileInput.current.click()} disabled={uploading.groom} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--primary)', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontSize: '0.9rem' }}>
+                  <Upload size={16} /> {uploading.groom ? 'Mengunggah...' : 'Pilih Foto'}
+                </button>
+              </div>
+
               <div style={{ marginBottom: '1rem' }}>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Nama Panggilan</label>
                 <input type="text" name="groom_name" value={couple.groom_name} onChange={handleChange} placeholder="Contoh: Romeo" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} />
@@ -145,6 +193,16 @@ export default function Editor() {
             <div style={{ backgroundColor: 'var(--surface)', padding: '2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
               <h2 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', color: 'var(--warning)' }}>Mempelai Wanita</h2>
               
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginBottom: '1.5rem' }}>
+                <div style={{ width: '120px', height: '120px', borderRadius: '50%', backgroundColor: 'var(--bg-primary)', marginBottom: '1rem', overflow: 'hidden', border: '3px solid var(--border)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'gray' }}>
+                  {couple.bride_photo ? <img src={couple.bride_photo} alt="Wanita" style={{ width: '100%', height: '100%', objectFit: 'cover' }} /> : <User size={40} />}
+                </div>
+                <input type="file" accept="image/png, image/jpeg, image/webp" ref={brideFileInput} onChange={(e) => handlePhotoUpload(e, 'bride')} style={{ display: 'none' }} />
+                <button type="button" onClick={() => brideFileInput.current.click()} disabled={uploading.bride} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem 1rem', background: 'transparent', border: '1px solid var(--primary)', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontSize: '0.9rem' }}>
+                  <Upload size={16} /> {uploading.bride ? 'Mengunggah...' : 'Pilih Foto'}
+                </button>
+              </div>
+
               <div style={{ marginBottom: '1rem' }}>
                 <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Nama Panggilan</label>
                 <input type="text" name="bride_name" value={couple.bride_name} onChange={handleChange} placeholder="Contoh: Juliet" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} />
@@ -170,14 +228,13 @@ export default function Editor() {
           </div>
           
           <div style={{ marginTop: '2rem', textAlign: 'right' }}>
-            <button type="submit" disabled={saving} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2rem', backgroundColor: 'var(--success)', color: '#fff', border: 'none', borderRadius: 'var(--radius-sm)', fontWeight: 'bold', cursor: 'pointer' }}>
+            <button type="submit" disabled={saving || uploading.groom || uploading.bride} style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', padding: '1rem 2rem', backgroundColor: 'var(--success)', color: '#fff', border: 'none', borderRadius: 'var(--radius-sm)', fontWeight: 'bold', cursor: 'pointer' }}>
               <Save size={20} /> {saving ? 'Menyimpan...' : 'Simpan Data Mempelai'}
             </button>
           </div>
         </form>
       )}
 
-      {/* Tab Lainnya (WIP) */}
       {activeTab !== 'mempelai' && (
         <div style={{ backgroundColor: 'var(--surface)', padding: '3rem', textAlign: 'center', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
           <p>Fitur untuk tab <strong>{activeTab}</strong> akan segera diimplementasikan pada tahap selanjutnya.</p>
