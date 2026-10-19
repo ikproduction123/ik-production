@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Save, ArrowLeft, User, Calendar, Image as ImageIcon, Settings, Upload, Music, Plus, Trash2, MapPin } from 'lucide-react';
+import { Save, ArrowLeft, User, Calendar, Image as ImageIcon, Settings, Upload, Music, Plus, Trash2, MapPin, X, MessageSquare } from 'lucide-react';
 import { useAuth } from '../../features/auth/AuthContext';
 
 export default function Editor() {
@@ -9,9 +9,9 @@ export default function Editor() {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState('acara'); 
+  const [activeTab, setActiveTab] = useState('kutipan'); // Pindah default ke kutipan untuk testing
   const [message, setMessage] = useState({ text: '', type: '' });
-  const [uploading, setUploading] = useState({ groom: false, bride: false, cover: false, meta: false, music: false });
+  const [uploading, setUploading] = useState({ groom: false, bride: false, cover: false, meta: false, music: false, gallery: false });
   const [isMobile, setIsMobile] = useState(false);
 
   const groomFileInput = useRef(null);
@@ -19,9 +19,11 @@ export default function Editor() {
   const coverFileInput = useRef(null);
   const metaFileInput = useRef(null);
   const musicFileInput = useRef(null);
+  const galleryFileInput = useRef(null);
 
   const [musicTracks, setMusicTracks] = useState([]);
   const [musicSource, setMusicSource] = useState('preset');
+  const [presetQuotes, setPresetQuotes] = useState([]); // State untuk pilihan kutipan
 
   const [couple, setCouple] = useState({
     groom_name: '', groom_fullname: '', groom_father: '', groom_mother: '', groom_instagram: '', groom_photo: '',
@@ -29,10 +31,12 @@ export default function Editor() {
   });
 
   const [invitation, setInvitation] = useState({
-    title: '', cover_img: '', meta_title: '', meta_description: '', meta_img: '', music_url: '', slug: ''
+    title: '', cover_img: '', meta_title: '', meta_description: '', meta_img: '', music_url: '', slug: '', 
+    quote_text: '', quote_author: '' // Tambahan state kutipan
   });
 
   const [events, setEvents] = useState([]);
+  const [gallery, setGallery] = useState([]);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
@@ -43,9 +47,14 @@ export default function Editor() {
 
   useEffect(() => {
     const fetchEditorData = async () => {
+      // Ambil Preset Data (Musik & Kutipan)
       const { data: tracksData } = await supabase.from('music_tracks').select('*').order('title');
       if (tracksData) setMusicTracks(tracksData);
 
+      const { data: quotesData } = await supabase.from('quotes_preset').select('*').order('created_at', { ascending: true });
+      if (quotesData) setPresetQuotes(quotesData);
+
+      // Ambil Data Mempelai
       const { data: coupleData } = await supabase.from('couples').select('*').eq('invitation_id', id).single();
       if (coupleData) {
         setCouple({
@@ -54,10 +63,12 @@ export default function Editor() {
         });
       }
 
+      // Ambil Data Undangan
       const { data: invData } = await supabase.from('invitations').select('*').eq('id', id).single();
       if (invData) {
         setInvitation({
-          title: invData.title || '', cover_img: invData.cover_img || '', meta_title: invData.meta_title || '', meta_description: invData.meta_description || '', meta_img: invData.meta_img || '', music_url: invData.music_url || '', slug: invData.slug || ''
+          title: invData.title || '', cover_img: invData.cover_img || '', meta_title: invData.meta_title || '', meta_description: invData.meta_description || '', meta_img: invData.meta_img || '', music_url: invData.music_url || '', slug: invData.slug || '',
+          quote_text: invData.quote_text || '', quote_author: invData.quote_author || ''
         });
         if (invData.music_url) {
           const isPreset = tracksData?.some(t => t.url === invData.music_url);
@@ -66,9 +77,10 @@ export default function Editor() {
       }
 
       const { data: eventsData } = await supabase.from('events').select('*').eq('invitation_id', id).order('created_at', { ascending: true });
-      if (eventsData) {
-        setEvents(eventsData);
-      }
+      if (eventsData) setEvents(eventsData);
+
+      const { data: galleryData } = await supabase.from('galleries').select('*').eq('invitation_id', id).order('created_at', { ascending: true });
+      if (galleryData) setGallery(galleryData);
 
       setLoading(false);
     };
@@ -79,105 +91,67 @@ export default function Editor() {
   const handleCoupleChange = (e) => setCouple(prev => ({ ...prev, [e.target.name]: e.target.value }));
   const handleInvitationChange = (e) => setInvitation(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const handleEventChange = (index, field, value) => {
-    const updatedEvents = [...events];
-    updatedEvents[index][field] = value;
-    setEvents(updatedEvents);
-  };
-
-  const addNewEvent = () => {
-    setEvents([...events, {
-      invitation_id: id,
-      user_id: user.id,
-      event_type: 'akad',
-      title: 'Akad Nikah',
-      event_date: '',
-      time_start: '',
-      time_end: '',
-      location_name: '',
-      address: '',
-      map_url: ''
-    }]);
-  };
-
+  // --- LOGIKA EVENT (Acara) ---
+  const handleEventChange = (index, field, value) => { const updatedEvents = [...events]; updatedEvents[index][field] = value; setEvents(updatedEvents); };
+  const addNewEvent = () => setEvents([...events, { invitation_id: id, user_id: user.id, event_type: 'akad', title: 'Akad Nikah', event_date: '', time_start: '', time_end: '', location_name: '', address: '', map_url: '' }]);
   const removeEvent = async (index) => {
     const eventToRemove = events[index];
-    if (eventToRemove.id) {
-      const { error } = await supabase.from('events').delete().eq('id', eventToRemove.id);
-      if (error) {
-        setMessage({ text: 'Gagal menghapus acara: ' + error.message, type: 'error' });
-        return;
-      }
-    }
-    const updatedEvents = events.filter((_, i) => i !== index);
-    setEvents(updatedEvents);
+    if (eventToRemove.id) { const { error } = await supabase.from('events').delete().eq('id', eventToRemove.id); if (error) { setMessage({ text: 'Gagal menghapus acara: ' + error.message, type: 'error' }); return; } }
+    setEvents(events.filter((_, i) => i !== index));
   };
-
-  // ----- PERBAIKAN LOGIKA SIMPAN ACARA -----
   const handleSaveAcara = async (e) => {
-    e.preventDefault();
-    setSaving(true);
-    setMessage({ text: '', type: '' });
-
-    if (events.length === 0) {
-      setMessage({ text: 'Tambahkan minimal satu acara.', type: 'error' });
-      setSaving(false);
-      return;
-    }
-
-    const eventsToUpdate = [];
-    const eventsToInsert = [];
-
-    // Pisahkan mana acara yang sudah ada di DB (punya ID) dan yang baru
+    e.preventDefault(); setSaving(true); setMessage({ text: '', type: '' });
+    if (events.length === 0) { setMessage({ text: 'Tambahkan minimal satu acara.', type: 'error' }); setSaving(false); return; }
+    const eventsToUpdate = []; const eventsToInsert = [];
     events.forEach(ev => {
       const { created_at, updated_at, ...cleanEvent } = ev; 
       if (!cleanEvent.event_date) cleanEvent.event_date = null;
-
-      if (cleanEvent.id) {
-        eventsToUpdate.push(cleanEvent);
-      } else {
-        // Hapus property id sepenuhnya agar Supabase generate UUID otomatis
-        delete cleanEvent.id; 
-        eventsToInsert.push(cleanEvent);
-      }
+      if (cleanEvent.id) eventsToUpdate.push(cleanEvent); else { delete cleanEvent.id; eventsToInsert.push(cleanEvent); }
     });
-
     let errorMsg = '';
-
-    // Simpan acara lama (Upsert)
-    if (eventsToUpdate.length > 0) {
-      const { error } = await supabase.from('events').upsert(eventsToUpdate);
-      if (error) errorMsg = error.message;
-    }
-
-    // Simpan acara baru (Insert)
-    if (!errorMsg && eventsToInsert.length > 0) {
-      const { error } = await supabase.from('events').insert(eventsToInsert);
-      if (error) errorMsg = error.message;
-    }
-
-    if (errorMsg) {
-      setMessage({ text: 'Gagal menyimpan data acara: ' + errorMsg, type: 'error' });
-    } else {
+    if (eventsToUpdate.length > 0) { const { error } = await supabase.from('events').upsert(eventsToUpdate); if (error) errorMsg = error.message; }
+    if (!errorMsg && eventsToInsert.length > 0) { const { error } = await supabase.from('events').insert(eventsToInsert); if (error) errorMsg = error.message; }
+    if (errorMsg) setMessage({ text: 'Gagal menyimpan data acara: ' + errorMsg, type: 'error' });
+    else {
       setMessage({ text: 'Rangkaian acara berhasil disimpan!', type: 'success' });
-      // Refresh state events dari server agar mendapat ID untuk event baru
       const { data } = await supabase.from('events').select('*').eq('invitation_id', id).order('created_at', { ascending: true });
       if (data) setEvents(data);
     }
-    setSaving(false);
+    setSaving(false); setTimeout(() => setMessage({ text: '', type: '' }), 3000);
+  };
+
+  // --- LOGIKA GALERI ---
+  const handleGalleryUpload = async (e) => {
+    const file = e.target.files[0]; if (!file) return;
+    if (file.size > 2 * 1024 * 1024) { setMessage({ text: 'Ukuran foto maksimal 2MB', type: 'error' }); return; }
+    setUploading(prev => ({ ...prev, gallery: true })); setMessage({ text: 'Mengunggah foto ke galeri...', type: 'info' });
+    const fileExt = file.name.split('.').pop(); const fileName = `${id}_${Date.now()}.${fileExt}`; const filePath = `galleries/${fileName}`;
+    const { error: uploadError } = await supabase.storage.from('invitation-assets').upload(filePath, file);
+    if (uploadError) { setMessage({ text: 'Gagal mengunggah: ' + uploadError.message, type: 'error' }); setUploading(prev => ({ ...prev, gallery: false })); return; }
+    const { data: { publicUrl } } = supabase.storage.from('invitation-assets').getPublicUrl(filePath);
+    const { error: dbError } = await supabase.from('galleries').insert([{ invitation_id: id, user_id: user.id, image_url: publicUrl }]);
+    if (dbError) { setMessage({ text: 'Gagal menyimpan ke database galeri: ' + dbError.message, type: 'error' }); } 
+    else {
+      setMessage({ text: 'Foto berhasil ditambahkan ke galeri!', type: 'success' });
+      const { data: galleryData } = await supabase.from('galleries').select('*').eq('invitation_id', id).order('created_at', { ascending: true });
+      if (galleryData) setGallery(galleryData);
+    }
+    setUploading(prev => ({ ...prev, gallery: false })); setTimeout(() => setMessage({ text: '', type: '' }), 3000);
+  };
+  const removeGalleryPhoto = async (photoId) => {
+    setMessage({ text: 'Menghapus foto...', type: 'info' });
+    const { error } = await supabase.from('galleries').delete().eq('id', photoId);
+    if (error) { setMessage({ text: 'Gagal menghapus foto: ' + error.message, type: 'error' }); } 
+    else { setGallery(gallery.filter(photo => photo.id !== photoId)); setMessage({ text: 'Foto berhasil dihapus.', type: 'success' }); }
     setTimeout(() => setMessage({ text: '', type: '' }), 3000);
   };
-  // -----------------------------------------
 
+  // --- LOGIKA UPLOAD UMUM ---
   const handleFileUpload = async (e, type, tableRef, maxMb, folder) => {
-    const file = e.target.files[0];
-    if (!file) return;
+    const file = e.target.files[0]; if (!file) return;
     if (file.size > maxMb * 1024 * 1024) { setMessage({ text: `Ukuran file maksimal ${maxMb}MB`, type: 'error' }); return; }
-    setUploading(prev => ({ ...prev, [type]: true }));
-    setMessage({ text: 'Mengunggah file...', type: 'info' });
-    const fileExt = file.name.split('.').pop();
-    const fileName = `${id}_${type}.${fileExt}`; 
-    const filePath = `${folder}/${fileName}`;
+    setUploading(prev => ({ ...prev, [type]: true })); setMessage({ text: 'Mengunggah file...', type: 'info' });
+    const fileExt = file.name.split('.').pop(); const fileName = `${id}_${type}.${fileExt}`; const filePath = `${folder}/${fileName}`;
     const { error: uploadError } = await supabase.storage.from('invitation-assets').upload(filePath, file, { upsert: true });
     if (uploadError) { setMessage({ text: 'Gagal mengunggah: ' + uploadError.message, type: 'error' }); setUploading(prev => ({ ...prev, [type]: false })); return; }
     const { data: { publicUrl } } = supabase.storage.from('invitation-assets').getPublicUrl(filePath);
@@ -188,24 +162,29 @@ export default function Editor() {
     setUploading(prev => ({ ...prev, [type]: false }));
   };
 
+  // --- PENYIMPANAN DATA UTAMA ---
   const handleSaveMempelai = async (e) => {
-    e.preventDefault();
-    setSaving(true);
+    e.preventDefault(); setSaving(true);
     const { error } = await supabase.from('couples').update(couple).eq('invitation_id', id);
     if (error) setMessage({ text: 'Gagal menyimpan: ' + error.message, type: 'error' });
     else setMessage({ text: 'Data mempelai berhasil disimpan!', type: 'success' });
-    setSaving(false);
-    setTimeout(() => setMessage({ text: '', type: '' }), 3000);
+    setSaving(false); setTimeout(() => setMessage({ text: '', type: '' }), 3000);
   };
 
   const handleSavePengaturan = async (e) => {
-    e.preventDefault();
-    setSaving(true);
+    e.preventDefault(); setSaving(true);
     const { error } = await supabase.from('invitations').update({ title: invitation.title, cover_img: invitation.cover_img, meta_title: invitation.meta_title, meta_description: invitation.meta_description, meta_img: invitation.meta_img, music_url: invitation.music_url }).eq('id', id);
     if (error) setMessage({ text: 'Gagal menyimpan pengaturan: ' + error.message, type: 'error' });
     else setMessage({ text: 'Pengaturan undangan berhasil disimpan!', type: 'success' });
-    setSaving(false);
-    setTimeout(() => setMessage({ text: '', type: '' }), 3000);
+    setSaving(false); setTimeout(() => setMessage({ text: '', type: '' }), 3000);
+  };
+
+  const handleSaveKutipan = async (e) => {
+    e.preventDefault(); setSaving(true);
+    const { error } = await supabase.from('invitations').update({ quote_text: invitation.quote_text, quote_author: invitation.quote_author }).eq('id', id);
+    if (error) setMessage({ text: 'Gagal menyimpan kutipan: ' + error.message, type: 'error' });
+    else setMessage({ text: 'Kata-kata / kutipan berhasil disimpan!', type: 'success' });
+    setSaving(false); setTimeout(() => setMessage({ text: '', type: '' }), 3000);
   };
 
   if (loading) return <div>Memuat editor...</div>;
@@ -228,9 +207,10 @@ export default function Editor() {
           { id: 'pengaturan', label: 'Pengaturan', icon: <Settings size={16} /> },
           { id: 'mempelai', label: 'Mempelai', icon: <User size={16} /> },
           { id: 'acara', label: 'Acara', icon: <Calendar size={16} /> },
+          { id: 'kutipan', label: 'Kutipan', icon: <MessageSquare size={16} /> },
           { id: 'galeri', label: 'Galeri', icon: <ImageIcon size={16} /> }
         ].map(tab => (
-          <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.8rem 1rem', background: 'transparent', border: 'none', borderBottom: activeTab === tab.id ? '3px solid var(--warning)' : '3px solid transparent', color: activeTab === tab.id ? 'var(--warning)' : 'var(--text-primary)', fontWeight: activeTab === tab.id ? 'bold' : 'normal', cursor: 'pointer', marginBottom: '-2px', flex: isMobile ? '1 1 45%' : 'none', justifyContent: isMobile ? 'center' : 'flex-start', fontSize: isMobile ? '0.85rem' : '1rem' }}>
+          <button key={tab.id} onClick={() => setActiveTab(tab.id)} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.8rem 1rem', background: 'transparent', border: 'none', borderBottom: activeTab === tab.id ? '3px solid var(--warning)' : '3px solid transparent', color: activeTab === tab.id ? 'var(--warning)' : 'var(--text-primary)', fontWeight: activeTab === tab.id ? 'bold' : 'normal', cursor: 'pointer', marginBottom: '-2px', flex: isMobile ? '1 1 30%' : 'none', justifyContent: isMobile ? 'center' : 'flex-start', fontSize: isMobile ? '0.85rem' : '1rem' }}>
             {tab.icon} {tab.label}
           </button>
         ))}
@@ -240,7 +220,7 @@ export default function Editor() {
         <div style={{ padding: '1rem', marginBottom: '1.5rem', borderRadius: 'var(--radius-sm)', backgroundColor: message.type === 'success' || message.type === 'info' ? '#e0f2f1' : '#ffebee', color: message.type === 'success' || message.type === 'info' ? 'var(--success)' : 'var(--danger)' }}>{message.text}</div>
       )}
 
-      {/* TAB PENGATURAN UMUM & SEO */}
+      {/* TAB PENGATURAN */}
       {activeTab === 'pengaturan' && (
          <form onSubmit={handleSavePengaturan}>
            <div style={{ backgroundColor: 'var(--surface)', padding: isMobile ? '1.5rem' : '2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', marginBottom: '1.5rem' }}>
@@ -377,91 +357,125 @@ export default function Editor() {
             <>
               {events.map((ev, index) => (
                 <div key={index} style={{ backgroundColor: 'var(--surface)', padding: isMobile ? '1.5rem' : '2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', marginBottom: '1.5rem', position: 'relative' }}>
-                  
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', borderBottom: '1px solid var(--border)', paddingBottom: '1rem' }}>
                     <h2 style={{ fontSize: '1.2rem', color: 'var(--warning)', margin: 0 }}>Acara #{index + 1}</h2>
                     <button type="button" onClick={() => removeEvent(index)} style={{ background: 'transparent', border: 'none', color: 'var(--danger)', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                       <Trash2 size={18} /> <span style={{ display: isMobile ? 'none' : 'inline' }}>Hapus</span>
                     </button>
                   </div>
-
                   <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.5rem' }}>
                     <div><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Judul Acara</label><input type="text" required value={ev.title || ''} onChange={(e) => handleEventChange(index, 'title', e.target.value)} placeholder="Contoh: Akad Nikah / Resepsi" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
-                    <div>
-                      <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Tipe Acara</label>
-                      <select value={ev.event_type || 'akad'} onChange={(e) => handleEventChange(index, 'event_type', e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', backgroundColor: '#fff' }}>
-                        <option value="akad">Akad Nikah / Pemberkatan</option>
-                        <option value="resepsi">Resepsi</option>
-                        <option value="lainnya">Lainnya (Unduh Mantu, dll)</option>
-                      </select>
-                    </div>
-                    
+                    <div><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Tipe Acara</label><select value={ev.event_type || 'akad'} onChange={(e) => handleEventChange(index, 'event_type', e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', backgroundColor: '#fff' }}><option value="akad">Akad Nikah / Pemberkatan</option><option value="resepsi">Resepsi</option><option value="lainnya">Lainnya (Unduh Mantu, dll)</option></select></div>
                     <div><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Tanggal</label><input type="text" required value={ev.event_date || ''} onChange={(e) => handleEventChange(index, 'event_date', e.target.value)} placeholder="Contoh: Sabtu, 24 Oktober 2026" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
-                    <div style={{ display: 'flex', gap: '1rem' }}>
-                      <div style={{ flex: 1 }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Waktu Mulai</label><input type="text" value={ev.time_start || ''} onChange={(e) => handleEventChange(index, 'time_start', e.target.value)} placeholder="08:00 WIB" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
-                      <div style={{ flex: 1 }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Selesai</label><input type="text" value={ev.time_end || ''} onChange={(e) => handleEventChange(index, 'time_end', e.target.value)} placeholder="Selesai" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
-                    </div>
-                    
-                    <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}>
-                      <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Nama Tempat / Gedung</label>
-                      <input type="text" required value={ev.location_name || ''} onChange={(e) => handleEventChange(index, 'location_name', e.target.value)} placeholder="Contoh: Gedung Serbaguna Senayan" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} />
-                    </div>
-                    <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}>
-                      <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Alamat Lengkap</label>
-                      <textarea required value={ev.address || ''} onChange={(e) => handleEventChange(index, 'address', e.target.value)} rows="2" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}></textarea>
-                    </div>
-                    
+                    <div style={{ display: 'flex', gap: '1rem' }}><div style={{ flex: 1 }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Waktu Mulai</label><input type="text" value={ev.time_start || ''} onChange={(e) => handleEventChange(index, 'time_start', e.target.value)} placeholder="08:00 WIB" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div><div style={{ flex: 1 }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Selesai</label><input type="text" value={ev.time_end || ''} onChange={(e) => handleEventChange(index, 'time_end', e.target.value)} placeholder="Selesai" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div></div>
+                    <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Nama Tempat / Gedung</label><input type="text" required value={ev.location_name || ''} onChange={(e) => handleEventChange(index, 'location_name', e.target.value)} placeholder="Contoh: Gedung Serbaguna Senayan" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
+                    <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Alamat Lengkap</label><textarea required value={ev.address || ''} onChange={(e) => handleEventChange(index, 'address', e.target.value)} rows="2" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}></textarea></div>
                     <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}>
                       <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Link Google Maps (URL)</label>
                       <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', backgroundColor: '#fff' }}>
                         <MapPin size={20} color="var(--primary)" style={{ marginLeft: '0.5rem' }} />
                         <input type="url" value={ev.map_url || ''} onChange={(e) => handleEventChange(index, 'map_url', e.target.value)} placeholder="https://maps.app.goo.gl/..." style={{ flex: 1, padding: '0.4rem', border: 'none', outline: 'none' }} />
                       </div>
-                      <small style={{ color: 'gray', display: 'block', marginTop: '0.5rem' }}>Link ini digunakan jika tamu mengklik tombol "Buka Peta".</small>
                     </div>
-
-                    {(ev.location_name || ev.address) && (
-                      <div style={{ gridColumn: isMobile ? '1' : '1 / span 2', marginTop: '0.5rem', padding: '1rem', backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-sm)', border: '1px dashed var(--border)' }}>
-                        <label style={{ display: 'block', marginBottom: '0.8rem', fontSize: '0.9rem', fontWeight: 'bold' }}>Preview Lokasi Peta:</label>
-                        <div style={{ width: '100%', height: '250px', borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--border)' }}>
-                          <iframe 
-                            width="100%" 
-                            height="100%" 
-                            style={{ border: 0 }} 
-                            loading="lazy" 
-                            allowFullScreen 
-                            src={`https://maps.google.com/maps?q=${encodeURIComponent((ev.location_name || '') + ' ' + (ev.address || ''))}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
-                          ></iframe>
-                        </div>
-                        <small style={{ color: 'var(--warning)', display: 'block', marginTop: '0.8rem', lineHeight: '1.4' }}>
-                          * Peta di atas otomatis mencari berdasarkan <b>Nama Tempat</b> dan <b>Alamat Lengkap</b> yang Anda ketik. Pastikan titik merah berada di lokasi yang benar.
-                        </small>
-                      </div>
-                    )}
-
                   </div>
                 </div>
               ))}
-
               <button type="button" onClick={addNewEvent} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.8rem 1.5rem', backgroundColor: 'transparent', border: '2px dashed var(--primary)', color: 'var(--text-primary)', borderRadius: 'var(--radius-sm)', cursor: 'pointer', fontWeight: 'bold', width: '100%', justifyContent: 'center' }}>
                 <Plus size={18} /> Tambah Acara Lain
               </button>
             </>
           )}
-
           <div style={{ marginTop: '2rem', textAlign: 'right', position: isMobile ? 'fixed' : 'static', bottom: isMobile ? '0' : 'auto', left: 0, right: 0, padding: isMobile ? '1rem' : '0', background: isMobile ? 'var(--surface)' : 'transparent', borderTop: isMobile ? '1px solid var(--border)' : 'none', zIndex: 10 }}>
             <button type="submit" disabled={saving} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '1rem 2rem', backgroundColor: 'var(--success)', color: '#fff', border: 'none', borderRadius: 'var(--radius-sm)', fontWeight: 'bold', cursor: 'pointer', width: isMobile ? '100%' : 'auto' }}>
-              <Save size={20} /> {saving ? 'Menyimpan...' : 'Simpan Data Acara'}
+              <Save size={20} /> Simpan Data Acara
             </button>
           </div>
         </form>
       )}
 
+      {/* TAB KUTIPAN (BARU) */}
+      {activeTab === 'kutipan' && (
+        <form onSubmit={handleSaveKutipan}>
+          <div style={{ backgroundColor: 'var(--surface)', padding: isMobile ? '1.5rem' : '2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', marginBottom: '1.5rem' }}>
+            <h2 style={{ fontSize: '1.2rem', marginBottom: '1rem', color: 'var(--warning)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <MessageSquare size={20} /> Kutipan / Kata Mutiara
+            </h2>
+            <p style={{ color: 'gray', fontSize: '0.9rem', marginBottom: '1.5rem' }}>
+              Pilih dari galeri kutipan kami atau tulis kata-kata mutiara Anda sendiri yang akan ditampilkan di halaman pembuka undangan.
+            </p>
+            
+            {/* Galeri Pilihan Kutipan */}
+            <div style={{ marginBottom: '2rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.8rem', fontSize: '0.9rem', fontWeight: 'bold' }}>Pilih dari Koleksi Kami (Opsional):</label>
+              <div style={{ display: 'flex', gap: '1rem', overflowX: 'auto', paddingBottom: '1rem' }}>
+                {presetQuotes.map((quote) => (
+                  <div 
+                    key={quote.id} 
+                    onClick={() => setInvitation({ ...invitation, quote_text: quote.text, quote_author: quote.author })}
+                    style={{ minWidth: '250px', backgroundColor: 'var(--bg-primary)', padding: '1.2rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', cursor: 'pointer', transition: 'border 0.2s', ...(invitation.quote_text === quote.text ? { borderColor: 'var(--primary)', boxShadow: '0 0 0 1px var(--primary)' } : {}) }}
+                  >
+                    <p style={{ fontSize: '0.85rem', fontStyle: 'italic', marginBottom: '0.5rem', lineHeight: '1.4' }}>"{quote.text.substring(0, 70)}..."</p>
+                    <p style={{ fontSize: '0.8rem', fontWeight: 'bold', color: 'var(--primary)' }}>- {quote.author}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ marginBottom: '1rem' }}>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 'bold' }}>Isi Kutipan / Teks Doa</label>
+              <textarea name="quote_text" value={invitation.quote_text} onChange={handleInvitationChange} rows="5" placeholder="Ketik kata-kata indah Anda di sini..." style={{ width: '100%', padding: '1rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', fontStyle: 'italic', lineHeight: '1.5' }}></textarea>
+            </div>
+            
+            <div>
+              <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 'bold' }}>Sumber / Nama Tokoh</label>
+              <input type="text" name="quote_author" value={invitation.quote_author} onChange={handleInvitationChange} placeholder="Contoh: Q.S. Ar-Rum: 21" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} />
+            </div>
+          </div>
+
+          <div style={{ marginTop: '2rem', textAlign: 'right', position: isMobile ? 'fixed' : 'static', bottom: isMobile ? '0' : 'auto', left: 0, right: 0, padding: isMobile ? '1rem' : '0', background: isMobile ? 'var(--surface)' : 'transparent', borderTop: isMobile ? '1px solid var(--border)' : 'none', zIndex: 10 }}>
+            <button type="submit" disabled={saving} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '1rem 2rem', backgroundColor: 'var(--success)', color: '#fff', border: 'none', borderRadius: 'var(--radius-sm)', fontWeight: 'bold', cursor: 'pointer', width: isMobile ? '100%' : 'auto' }}>
+              <Save size={20} /> Simpan Kutipan
+            </button>
+          </div>
+        </form>
+      )}
+
+      {/* TAB GALERI */}
       {activeTab === 'galeri' && (
-        <div style={{ backgroundColor: 'var(--surface)', padding: '3rem', textAlign: 'center', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
-          <p>Fitur untuk tab <strong>Galeri</strong> akan segera diimplementasikan.</p>
+        <div>
+          <div style={{ backgroundColor: 'var(--surface)', padding: isMobile ? '1.5rem' : '2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 style={{ fontSize: '1.2rem', color: 'var(--warning)', margin: 0 }}>Galeri Foto ({gallery.length})</h2>
+              
+              <div>
+                <input type="file" accept="image/png, image/jpeg, image/webp" ref={galleryFileInput} onChange={handleGalleryUpload} style={{ display: 'none' }} />
+                <button type="button" onClick={() => galleryFileInput.current.click()} disabled={uploading.gallery} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.6rem 1.2rem', backgroundColor: 'var(--primary)', color: 'var(--text-primary)', border: 'none', borderRadius: 'var(--radius-sm)', fontWeight: 'bold', cursor: 'pointer' }}>
+                  {uploading.gallery ? 'Mengunggah...' : <><Plus size={18} /> Tambah Foto</>}
+                </button>
+              </div>
+            </div>
+
+            {gallery.length === 0 ? (
+              <div style={{ padding: '3rem', textAlign: 'center', backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-sm)', border: '1px dashed var(--border)' }}>
+                <ImageIcon size={48} color="gray" style={{ marginBottom: '1rem' }} />
+                <p>Belum ada foto. Klik "Tambah Foto" untuk mulai mengunggah galeri pre-wedding.</p>
+              </div>
+            ) : (
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(150px, 1fr))', gap: '1rem' }}>
+                {gallery.map((photo) => (
+                  <div key={photo.id} style={{ position: 'relative', paddingTop: '100%', backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                    <img src={photo.image_url} alt="Gallery" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                    <button type="button" onClick={() => removeGalleryPhoto(photo.id)} style={{ position: 'absolute', top: '5px', right: '5px', padding: '0.4rem', backgroundColor: 'rgba(255,255,255,0.8)', border: 'none', borderRadius: '50%', color: 'var(--danger)', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                      <X size={16} />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
         </div>
       )}
+
     </div>
   );
 }
