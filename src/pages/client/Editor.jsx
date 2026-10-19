@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '../../lib/supabase';
-import { Save, ArrowLeft, User, Calendar, Image as ImageIcon, Settings, Upload, Music, Plus, Trash2 } from 'lucide-react';
+import { Save, ArrowLeft, User, Calendar, Image as ImageIcon, Settings, Upload, Music, Plus, Trash2, MapPin } from 'lucide-react';
 import { useAuth } from '../../features/auth/AuthContext';
 
 export default function Editor() {
@@ -212,6 +212,7 @@ export default function Editor() {
         <div style={{ padding: '1rem', marginBottom: '1.5rem', borderRadius: 'var(--radius-sm)', backgroundColor: message.type === 'success' || message.type === 'info' ? '#e0f2f1' : '#ffebee', color: message.type === 'success' || message.type === 'info' ? 'var(--success)' : 'var(--danger)' }}>{message.text}</div>
       )}
 
+      {/* TAB PENGATURAN UMUM & SEO */}
       {activeTab === 'pengaturan' && (
          <form onSubmit={handleSavePengaturan}>
            <div style={{ backgroundColor: 'var(--surface)', padding: isMobile ? '1.5rem' : '2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', marginBottom: '1.5rem' }}>
@@ -285,8 +286,10 @@ export default function Editor() {
        </form>
       )}
 
+      {/* TAB MEMPELAI */}
       {activeTab === 'mempelai' && (
         <form onSubmit={handleSaveMempelai}>
+          {/* ... [Form Pria dan Wanita] ... */}
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
             <div style={{ backgroundColor: 'var(--surface)', padding: isMobile ? '1.5rem' : '2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
               <h2 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', color: 'var(--warning)' }}>Mempelai Pria</h2>
@@ -332,10 +335,9 @@ export default function Editor() {
         </form>
       )}
 
-      {/* TAB ACARA */}
+      {/* TAB ACARA DENGAN PREVIEW MAPS */}
       {activeTab === 'acara' && (
         <form onSubmit={handleSaveAcara}>
-          
           {events.length === 0 ? (
             <div style={{ backgroundColor: 'var(--surface)', padding: '3rem', textAlign: 'center', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', marginBottom: '1.5rem' }}>
               <Calendar size={48} color="gray" style={{ marginBottom: '1rem' }} />
@@ -366,15 +368,51 @@ export default function Editor() {
                         <option value="lainnya">Lainnya (Unduh Mantu, dll)</option>
                       </select>
                     </div>
-                    {/* Input TEXT bebas untuk Tanggal dan Waktu */}
+                    
                     <div><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Tanggal</label><input type="text" required value={ev.event_date || ''} onChange={(e) => handleEventChange(index, 'event_date', e.target.value)} placeholder="Contoh: Sabtu, 24 Oktober 2026" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
                     <div style={{ display: 'flex', gap: '1rem' }}>
                       <div style={{ flex: 1 }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Waktu Mulai</label><input type="text" value={ev.time_start || ''} onChange={(e) => handleEventChange(index, 'time_start', e.target.value)} placeholder="08:00 WIB" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
                       <div style={{ flex: 1 }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Selesai</label><input type="text" value={ev.time_end || ''} onChange={(e) => handleEventChange(index, 'time_end', e.target.value)} placeholder="Selesai" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
                     </div>
-                    <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Nama Tempat / Gedung</label><input type="text" required value={ev.location_name || ''} onChange={(e) => handleEventChange(index, 'location_name', e.target.value)} placeholder="Contoh: Gedung Serbaguna Senayan" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
-                    <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Alamat Lengkap</label><textarea required value={ev.address || ''} onChange={(e) => handleEventChange(index, 'address', e.target.value)} rows="2" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}></textarea></div>
-                    <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Link Google Maps (URL)</label><input type="url" value={ev.map_url || ''} onChange={(e) => handleEventChange(index, 'map_url', e.target.value)} placeholder="https://maps.app.goo.gl/..." style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
+                    
+                    <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}>
+                      <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Nama Tempat / Gedung</label>
+                      <input type="text" required value={ev.location_name || ''} onChange={(e) => handleEventChange(index, 'location_name', e.target.value)} placeholder="Contoh: Gedung Serbaguna Senayan" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} />
+                    </div>
+                    <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}>
+                      <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Alamat Lengkap</label>
+                      <textarea required value={ev.address || ''} onChange={(e) => handleEventChange(index, 'address', e.target.value)} rows="2" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}></textarea>
+                    </div>
+                    
+                    <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}>
+                      <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Link Google Maps (URL)</label>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', padding: '0.5rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', backgroundColor: '#fff' }}>
+                        <MapPin size={20} color="var(--primary)" style={{ marginLeft: '0.5rem' }} />
+                        <input type="url" value={ev.map_url || ''} onChange={(e) => handleEventChange(index, 'map_url', e.target.value)} placeholder="https://maps.app.goo.gl/..." style={{ flex: 1, padding: '0.4rem', border: 'none', outline: 'none' }} />
+                      </div>
+                      <small style={{ color: 'gray', display: 'block', marginTop: '0.5rem' }}>Link ini digunakan jika tamu mengklik tombol "Buka Peta".</small>
+                    </div>
+
+                    {/* LIVE PREVIEW PETA GOOGLE (GRATIS) */}
+                    {(ev.location_name || ev.address) && (
+                      <div style={{ gridColumn: isMobile ? '1' : '1 / span 2', marginTop: '0.5rem', padding: '1rem', backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-sm)', border: '1px dashed var(--border)' }}>
+                        <label style={{ display: 'block', marginBottom: '0.8rem', fontSize: '0.9rem', fontWeight: 'bold' }}>Preview Lokasi Peta:</label>
+                        <div style={{ width: '100%', height: '250px', borderRadius: 'var(--radius-sm)', overflow: 'hidden', border: '1px solid var(--border)' }}>
+                          <iframe 
+                            width="100%" 
+                            height="100%" 
+                            style={{ border: 0 }} 
+                            loading="lazy" 
+                            allowFullScreen 
+                            src={`https://maps.google.com/maps?q=${encodeURIComponent((ev.location_name || '') + ' ' + (ev.address || ''))}&t=&z=15&ie=UTF8&iwloc=&output=embed`}
+                          ></iframe>
+                        </div>
+                        <small style={{ color: 'var(--warning)', display: 'block', marginTop: '0.8rem', lineHeight: '1.4' }}>
+                          * Peta di atas otomatis mencari berdasarkan <b>Nama Tempat</b> dan <b>Alamat Lengkap</b> yang Anda ketik. Pastikan titik merah berada di lokasi yang benar.
+                        </small>
+                      </div>
+                    )}
+
                   </div>
                 </div>
               ))}
