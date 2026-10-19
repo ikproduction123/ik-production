@@ -9,7 +9,7 @@ export default function Editor() {
   const { id } = useParams();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-  const [activeTab, setActiveTab] = useState('acara'); // Pindah default ke acara sementara untuk test
+  const [activeTab, setActiveTab] = useState('acara'); 
   const [message, setMessage] = useState({ text: '', type: '' });
   const [uploading, setUploading] = useState({ groom: false, bride: false, cover: false, meta: false, music: false });
   const [isMobile, setIsMobile] = useState(false);
@@ -32,7 +32,6 @@ export default function Editor() {
     title: '', cover_img: '', meta_title: '', meta_description: '', meta_img: '', music_url: '', slug: ''
   });
 
-  // State untuk daftar acara (array)
   const [events, setEvents] = useState([]);
 
   useEffect(() => {
@@ -66,7 +65,6 @@ export default function Editor() {
         }
       }
 
-      // Ambil data Acara
       const { data: eventsData } = await supabase.from('events').select('*').eq('invitation_id', id).order('created_at', { ascending: true });
       if (eventsData) {
         setEvents(eventsData);
@@ -81,7 +79,6 @@ export default function Editor() {
   const handleCoupleChange = (e) => setCouple(prev => ({ ...prev, [e.target.name]: e.target.value }));
   const handleInvitationChange = (e) => setInvitation(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
-  // --- LOGIKA EVENT ---
   const handleEventChange = (index, field, value) => {
     const updatedEvents = [...events];
     updatedEvents[index][field] = value;
@@ -105,7 +102,6 @@ export default function Editor() {
 
   const removeEvent = async (index) => {
     const eventToRemove = events[index];
-    // Jika event sudah ada di database (memiliki id), hapus dari database
     if (eventToRemove.id) {
       const { error } = await supabase.from('events').delete().eq('id', eventToRemove.id);
       if (error) {
@@ -113,7 +109,6 @@ export default function Editor() {
         return;
       }
     }
-    // Hapus dari state
     const updatedEvents = events.filter((_, i) => i !== index);
     setEvents(updatedEvents);
   };
@@ -129,11 +124,8 @@ export default function Editor() {
       return;
     }
 
-    // Upsert (Update or Insert) semua acara ke Supabase
     const { error } = await supabase.from('events').upsert(events.map(ev => {
-      // Hapus created_at dan updated_at agar database yg mengurus
       const { created_at, updated_at, ...cleanEvent } = ev; 
-      // Konversi string kosong menjadi null untuk tanggal agar postgreSQL tidak error
       if (!cleanEvent.event_date) cleanEvent.event_date = null;
       return cleanEvent;
     }));
@@ -142,17 +134,14 @@ export default function Editor() {
       setMessage({ text: 'Gagal menyimpan data acara: ' + error.message, type: 'error' });
     } else {
       setMessage({ text: 'Rangkaian acara berhasil disimpan!', type: 'success' });
-      // Refresh state events dari server agar mendapat ID untuk event baru
       const { data } = await supabase.from('events').select('*').eq('invitation_id', id).order('created_at', { ascending: true });
       if (data) setEvents(data);
     }
     setSaving(false);
     setTimeout(() => setMessage({ text: '', type: '' }), 3000);
   };
-  // --------------------
 
   const handleFileUpload = async (e, type, tableRef, maxMb, folder) => {
-    // ... [Fungsi tetap sama] ...
     const file = e.target.files[0];
     if (!file) return;
     if (file.size > maxMb * 1024 * 1024) { setMessage({ text: `Ukuran file maksimal ${maxMb}MB`, type: 'error' }); return; }
@@ -223,10 +212,9 @@ export default function Editor() {
         <div style={{ padding: '1rem', marginBottom: '1.5rem', borderRadius: 'var(--radius-sm)', backgroundColor: message.type === 'success' || message.type === 'info' ? '#e0f2f1' : '#ffebee', color: message.type === 'success' || message.type === 'info' ? 'var(--success)' : 'var(--danger)' }}>{message.text}</div>
       )}
 
-      {/* TAB PENGATURAN UMUM & SEO */}
       {activeTab === 'pengaturan' && (
          <form onSubmit={handleSavePengaturan}>
-         <div style={{ backgroundColor: 'var(--surface)', padding: isMobile ? '1.5rem' : '2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', marginBottom: '1.5rem' }}>
+           <div style={{ backgroundColor: 'var(--surface)', padding: isMobile ? '1.5rem' : '2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)', marginBottom: '1.5rem' }}>
            <h2 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', color: 'var(--warning)' }}>Informasi Dasar</h2>
            <div style={{ marginBottom: '1.5rem' }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', fontWeight: 'bold' }}>Judul Undangan (Header)</label><input type="text" name="title" value={invitation.title} onChange={handleInvitationChange} placeholder="Contoh: The Wedding of Romeo & Juliet" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
            
@@ -289,19 +277,16 @@ export default function Editor() {
              </div>
            </div>
          </div>
-         
          <div style={{ marginTop: '2rem', textAlign: 'right', position: isMobile ? 'fixed' : 'static', bottom: isMobile ? '0' : 'auto', left: 0, right: 0, padding: isMobile ? '1rem' : '0', background: isMobile ? 'var(--surface)' : 'transparent', borderTop: isMobile ? '1px solid var(--border)' : 'none', zIndex: 10 }}>
            <button type="submit" disabled={saving || uploading.cover || uploading.meta || uploading.music} style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem', padding: '1rem 2rem', backgroundColor: 'var(--success)', color: '#fff', border: 'none', borderRadius: 'var(--radius-sm)', fontWeight: 'bold', cursor: 'pointer', width: isMobile ? '100%' : 'auto' }}>
-             <Save size={20} /> {saving ? 'Menyimpan...' : 'Simpan Pengaturan'}
+             <Save size={20} /> Simpan Pengaturan
            </button>
          </div>
        </form>
       )}
 
-      {/* TAB MEMPELAI */}
       {activeTab === 'mempelai' && (
         <form onSubmit={handleSaveMempelai}>
-          {/* ... [Form Pria dan Wanita] ... (Disembunyikan agar logik tidak terlalu panjang, tetap ada di script) */}
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
             <div style={{ backgroundColor: 'var(--surface)', padding: isMobile ? '1.5rem' : '2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
               <h2 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', color: 'var(--warning)' }}>Mempelai Pria</h2>
@@ -347,7 +332,7 @@ export default function Editor() {
         </form>
       )}
 
-      {/* TAB ACARA (BARU) */}
+      {/* TAB ACARA */}
       {activeTab === 'acara' && (
         <form onSubmit={handleSaveAcara}>
           
@@ -372,23 +357,24 @@ export default function Editor() {
                   </div>
 
                   <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: '1.5rem' }}>
-                    <div><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Judul Acara</label><input type="text" required value={ev.title} onChange={(e) => handleEventChange(index, 'title', e.target.value)} placeholder="Contoh: Akad Nikah / Resepsi" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
+                    <div><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Judul Acara</label><input type="text" required value={ev.title || ''} onChange={(e) => handleEventChange(index, 'title', e.target.value)} placeholder="Contoh: Akad Nikah / Resepsi" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
                     <div>
                       <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Tipe Acara</label>
-                      <select value={ev.event_type} onChange={(e) => handleEventChange(index, 'event_type', e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', backgroundColor: '#fff' }}>
+                      <select value={ev.event_type || 'akad'} onChange={(e) => handleEventChange(index, 'event_type', e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)', backgroundColor: '#fff' }}>
                         <option value="akad">Akad Nikah / Pemberkatan</option>
                         <option value="resepsi">Resepsi</option>
                         <option value="lainnya">Lainnya (Unduh Mantu, dll)</option>
                       </select>
                     </div>
-                    <div><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Tanggal</label><input type="date" required value={ev.event_date ? ev.event_date.split('T')[0] : ''} onChange={(e) => handleEventChange(index, 'event_date', e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
+                    {/* Input TEXT bebas untuk Tanggal dan Waktu */}
+                    <div><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Tanggal</label><input type="text" required value={ev.event_date || ''} onChange={(e) => handleEventChange(index, 'event_date', e.target.value)} placeholder="Contoh: Sabtu, 24 Oktober 2026" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
                     <div style={{ display: 'flex', gap: '1rem' }}>
-                      <div style={{ flex: 1 }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Waktu Mulai</label><input type="time" value={ev.time_start} onChange={(e) => handleEventChange(index, 'time_start', e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
-                      <div style={{ flex: 1 }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Selesai</label><input type="text" placeholder="ex: Selesai" value={ev.time_end} onChange={(e) => handleEventChange(index, 'time_end', e.target.value)} style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
+                      <div style={{ flex: 1 }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Waktu Mulai</label><input type="text" value={ev.time_start || ''} onChange={(e) => handleEventChange(index, 'time_start', e.target.value)} placeholder="08:00 WIB" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
+                      <div style={{ flex: 1 }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Selesai</label><input type="text" value={ev.time_end || ''} onChange={(e) => handleEventChange(index, 'time_end', e.target.value)} placeholder="Selesai" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
                     </div>
-                    <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Nama Tempat / Gedung</label><input type="text" required value={ev.location_name} onChange={(e) => handleEventChange(index, 'location_name', e.target.value)} placeholder="Contoh: Gedung Serbaguna Senayan" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
-                    <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Alamat Lengkap</label><textarea required value={ev.address} onChange={(e) => handleEventChange(index, 'address', e.target.value)} rows="2" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}></textarea></div>
-                    <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Link Google Maps (URL)</label><input type="url" value={ev.map_url} onChange={(e) => handleEventChange(index, 'map_url', e.target.value)} placeholder="https://maps.app.goo.gl/..." style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
+                    <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Nama Tempat / Gedung</label><input type="text" required value={ev.location_name || ''} onChange={(e) => handleEventChange(index, 'location_name', e.target.value)} placeholder="Contoh: Gedung Serbaguna Senayan" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
+                    <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Alamat Lengkap</label><textarea required value={ev.address || ''} onChange={(e) => handleEventChange(index, 'address', e.target.value)} rows="2" style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }}></textarea></div>
+                    <div style={{ gridColumn: isMobile ? '1' : '1 / span 2' }}><label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem' }}>Link Google Maps (URL)</label><input type="url" value={ev.map_url || ''} onChange={(e) => handleEventChange(index, 'map_url', e.target.value)} placeholder="https://maps.app.goo.gl/..." style={{ width: '100%', padding: '0.8rem', borderRadius: 'var(--radius-sm)', border: '1px solid var(--border)' }} /></div>
                   </div>
                 </div>
               ))}
