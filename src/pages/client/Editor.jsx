@@ -113,6 +113,7 @@ export default function Editor() {
     setEvents(updatedEvents);
   };
 
+  // ----- PERBAIKAN LOGIKA SIMPAN ACARA -----
   const handleSaveAcara = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -124,22 +125,49 @@ export default function Editor() {
       return;
     }
 
-    const { error } = await supabase.from('events').upsert(events.map(ev => {
+    const eventsToUpdate = [];
+    const eventsToInsert = [];
+
+    // Pisahkan mana acara yang sudah ada di DB (punya ID) dan yang baru
+    events.forEach(ev => {
       const { created_at, updated_at, ...cleanEvent } = ev; 
       if (!cleanEvent.event_date) cleanEvent.event_date = null;
-      return cleanEvent;
-    }));
 
-    if (error) {
-      setMessage({ text: 'Gagal menyimpan data acara: ' + error.message, type: 'error' });
+      if (cleanEvent.id) {
+        eventsToUpdate.push(cleanEvent);
+      } else {
+        // Hapus property id sepenuhnya agar Supabase generate UUID otomatis
+        delete cleanEvent.id; 
+        eventsToInsert.push(cleanEvent);
+      }
+    });
+
+    let errorMsg = '';
+
+    // Simpan acara lama (Upsert)
+    if (eventsToUpdate.length > 0) {
+      const { error } = await supabase.from('events').upsert(eventsToUpdate);
+      if (error) errorMsg = error.message;
+    }
+
+    // Simpan acara baru (Insert)
+    if (!errorMsg && eventsToInsert.length > 0) {
+      const { error } = await supabase.from('events').insert(eventsToInsert);
+      if (error) errorMsg = error.message;
+    }
+
+    if (errorMsg) {
+      setMessage({ text: 'Gagal menyimpan data acara: ' + errorMsg, type: 'error' });
     } else {
       setMessage({ text: 'Rangkaian acara berhasil disimpan!', type: 'success' });
+      // Refresh state events dari server agar mendapat ID untuk event baru
       const { data } = await supabase.from('events').select('*').eq('invitation_id', id).order('created_at', { ascending: true });
       if (data) setEvents(data);
     }
     setSaving(false);
     setTimeout(() => setMessage({ text: '', type: '' }), 3000);
   };
+  // -----------------------------------------
 
   const handleFileUpload = async (e, type, tableRef, maxMb, folder) => {
     const file = e.target.files[0];
@@ -289,7 +317,6 @@ export default function Editor() {
       {/* TAB MEMPELAI */}
       {activeTab === 'mempelai' && (
         <form onSubmit={handleSaveMempelai}>
-          {/* ... [Form Pria dan Wanita] ... */}
           <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(320px, 1fr))', gap: '1.5rem' }}>
             <div style={{ backgroundColor: 'var(--surface)', padding: isMobile ? '1.5rem' : '2rem', borderRadius: 'var(--radius-md)', border: '1px solid var(--border)' }}>
               <h2 style={{ fontSize: '1.2rem', marginBottom: '1.5rem', color: 'var(--warning)' }}>Mempelai Pria</h2>
@@ -335,7 +362,7 @@ export default function Editor() {
         </form>
       )}
 
-      {/* TAB ACARA DENGAN PREVIEW MAPS */}
+      {/* TAB ACARA */}
       {activeTab === 'acara' && (
         <form onSubmit={handleSaveAcara}>
           {events.length === 0 ? (
@@ -393,7 +420,6 @@ export default function Editor() {
                       <small style={{ color: 'gray', display: 'block', marginTop: '0.5rem' }}>Link ini digunakan jika tamu mengklik tombol "Buka Peta".</small>
                     </div>
 
-                    {/* LIVE PREVIEW PETA GOOGLE (GRATIS) */}
                     {(ev.location_name || ev.address) && (
                       <div style={{ gridColumn: isMobile ? '1' : '1 / span 2', marginTop: '0.5rem', padding: '1rem', backgroundColor: 'var(--bg-primary)', borderRadius: 'var(--radius-sm)', border: '1px dashed var(--border)' }}>
                         <label style={{ display: 'block', marginBottom: '0.8rem', fontSize: '0.9rem', fontWeight: 'bold' }}>Preview Lokasi Peta:</label>
