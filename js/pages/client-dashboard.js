@@ -13,6 +13,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   setupNavigation();
   await loadOverviewData();
   await loadClientInvitations();
+  await loadClientPackages();
   await loadClientTransactions();
   await loadRSVPData();
 });
