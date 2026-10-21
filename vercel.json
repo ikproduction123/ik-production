@@ -1,25 +1,13 @@
 {
   "version": 2,
   "cleanUrls": true,
-  "rewrites": [
+  "routes": [
     {
-      "source": "/anisa-bagas",
-      "destination": "/package/motion/velvet-garden/index.html"
+      "handle": "filesystem"
     },
     {
-      "source": "/:slug",
-      "destination": "/package/motion/velvet-garden/index.html"
-    }
-  ],
-  "headers": [
-    {
-      "source": "/(.*)",
-      "headers": [
-        {
-          "key": "X-Content-Type-Options",
-          "value": "nosniff"
-        }
-      ]
+      "src": "/(.*)",
+      "dest": "/package/motion/velvet-garden/index.html"
     }
   ]
 }
