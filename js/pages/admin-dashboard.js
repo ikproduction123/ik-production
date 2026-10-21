@@ -5,24 +5,25 @@ import { showToast, formatRupiah } from '../utils/helpers.js';
 let currentAdmin = null;
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Protect page: Khusus Role Admin
   currentAdmin = await protectPage('admin');
   if (!currentAdmin) return;
 
   setupAdminNavigation();
+  setupModalHandlers();
+
   await loadAdminTransactions();
   await loadAdminThemes();
   await loadAdminPackages();
   await loadAdminMusics();
   await loadAdminQuotes();
 
-  document.getElementById('btn-admin-logout').addEventListener('click', async () => {
+  document.getElementById('btn-admin-logout')?.addEventListener('click', async () => {
     await supabase.auth.signOut();
     window.location.href = '/login.html';
   });
 });
 
-// 1. Navigation Tab Admin
+// 1. Navigation Tabs
 function setupAdminNavigation() {
   const navItems = document.querySelectorAll('.sidebar-nav .nav-item');
   const tabContents = document.querySelectorAll('.tab-content');
@@ -35,24 +36,113 @@ function setupAdminNavigation() {
 
       item.classList.add('active');
       const tabId = item.dataset.tab;
-      document.getElementById(`tab-${tabId}`).classList.add('active');
-      pageTitle.innerText = item.innerText;
+      document.getElementById(`tab-${tabId}`)?.classList.add('active');
+      if (pageTitle) pageTitle.innerText = item.innerText;
     });
   });
 }
 
-// 2. Load & Approve Transaksi Client
+// 2. Modals Control & Submit Handlers
+function setupModalHandlers() {
+  const modalTheme = document.getElementById('modal-theme');
+  const modalMusic = document.getElementById('modal-music');
+  const modalQuote = document.getElementById('modal-quote');
+
+  document.getElementById('btn-open-modal-theme')?.addEventListener('click', () => modalTheme.classList.add('show'));
+  document.getElementById('btn-open-modal-music')?.addEventListener('click', () => modalMusic.classList.add('show'));
+  document.getElementById('btn-open-modal-quote')?.addEventListener('click', () => modalQuote.classList.add('show'));
+
+  document.getElementById('close-theme-modal')?.addEventListener('click', () => modalTheme.classList.remove('show'));
+  document.getElementById('close-music-modal')?.addEventListener('click', () => modalMusic.classList.remove('show'));
+  document.getElementById('close-quote-modal')?.addEventListener('click', () => modalQuote.classList.remove('show'));
+
+  // Handler Submit Form Tambah Tema
+  document.getElementById('form-add-theme')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const payload = {
+      theme_name: document.getElementById('theme-name').value.trim(),
+      theme_slug: document.getElementById('theme-slug').value.trim(),
+      package_id: document.getElementById('theme-package-id').value,
+      category: document.getElementById('theme-category').value,
+      folder_path: document.getElementById('theme-folder-path').value.trim(),
+      thumbnail_url: document.getElementById('theme-thumbnail').value.trim(),
+    };
+
+    const { error } = await supabase.from('themes').insert([payload]);
+    if (error) return showToast('Gagal menambah tema: ' + error.message, 'error');
+
+    showToast('Tema berhasil ditambahkan!', 'success');
+    modalTheme.classList.remove('show');
+    e.target.reset();
+    await loadAdminThemes();
+  });
+
+  // Handler Submit Upload Musik ke Supabase Storage (audio-library)
+  document.getElementById('form-add-music')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = document.getElementById('btn-save-music');
+    const title = document.getElementById('music-title').value.trim();
+    const artist = document.getElementById('music-artist').value.trim();
+    const file = document.getElementById('music-file').files[0];
+
+    if (!file) return;
+    btn.disabled = true;
+    btn.innerText = 'Uploading...';
+
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}.${fileExt}`;
+
+    const { error: uploadError } = await supabase.storage
+      .from('audio-library')
+      .upload(fileName, file);
+
+    if (uploadError) {
+      showToast('Gagal upload audio: ' + uploadError.message, 'error');
+      btn.disabled = false;
+      btn.innerText = 'Upload & Simpan';
+      return;
+    }
+
+    const { data: publicUrlData } = supabase.storage.from('audio-library').getPublicUrl(fileName);
+
+    await supabase.from('musics').insert([{ title, artist, audio_url: publicUrlData.publicUrl }]);
+
+    showToast('Musik berhasil ditambahkan!', 'success');
+    modalMusic.classList.remove('show');
+    btn.disabled = false;
+    btn.innerText = 'Upload & Simpan';
+    e.target.reset();
+    await loadAdminMusics();
+  });
+
+  // Handler Submit Tambah Quote
+  document.getElementById('form-add-quote')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const content = document.getElementById('quote-content').value.trim();
+    const source = document.getElementById('quote-source').value.trim();
+
+    const { error } = await supabase.from('quotes').insert([{ content, source }]);
+    if (error) return showToast('Gagal menyimpan quote: ' + error.message, 'error');
+
+    showToast('Quote berhasil ditambahkan!', 'success');
+    modalQuote.classList.remove('show');
+    e.target.reset();
+    await loadAdminQuotes();
+  });
+}
+
+// 3. Transactions Verification
 async function loadAdminTransactions() {
   const tbody = document.getElementById('admin-transactions-table');
   if (!tbody) return;
 
-  const { data: txs, error } = await supabase
+  const { data: txs } = await supabase
     .from('transactions')
     .select('*, profiles(full_name, phone_number), packages(name, active_duration_days)')
     .order('created_at', { ascending: false });
 
-  if (error || !txs || txs.length === 0) {
-    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Belum ada transaksi masuk.</td></tr>`;
+  if (!txs || txs.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Belum ada transaksi.</td></tr>`;
     return;
   }
 
@@ -61,7 +151,7 @@ async function loadAdminTransactions() {
       <td>${tx.profiles?.full_name || 'Client'}<br><small>${tx.profiles?.phone_number || ''}</small></td>
       <td>${tx.packages?.name || '-'}</td>
       <td>${formatRupiah(tx.amount)}</td>
-      <td>${tx.payment_proof_url ? `<a href="${tx.payment_proof_url}" target="_blank" class="btn-link">Buka Bukti</a>` : '-'}</td>
+      <td>${tx.payment_proof_url ? `<a href="${tx.payment_proof_url}" target="_blank">Lihat Bukti</a>` : '-'}</td>
       <td><span class="badge-status ${tx.status}">${tx.status}</span></td>
       <td>
         ${tx.status === 'pending' ? `
@@ -72,15 +162,11 @@ async function loadAdminTransactions() {
     </tr>
   `).join('');
 
-  // Event Listener Approve Transaksi
   document.querySelectorAll('.btn-approve').forEach(btn => {
     btn.addEventListener('click', async () => {
       const { id, user, pkg, days } = btn.dataset;
-      
-      // Update status transaksi
       await supabase.from('transactions').update({ status: 'approved' }).eq('id', id);
 
-      // Tambah / Aktifkan User Subscription
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + parseInt(days || 365, 10));
 
@@ -92,21 +178,34 @@ async function loadAdminTransactions() {
         is_active: true
       });
 
-      showToast('Transaksi disetujui & paket client diaktifkan!', 'success');
+      showToast('Transaksi disetujui & paket aktif!', 'success');
+      loadAdminTransactions();
+    });
+  });
+
+  document.querySelectorAll('.btn-reject').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      await supabase.from('transactions').update({ status: 'rejected' }).eq('id', btn.dataset.id);
+      showToast('Transaksi ditolak', 'error');
       loadAdminTransactions();
     });
   });
 }
 
-// 3. Load & Kelola Tema
+// 4. Load Themes & Package Options
 async function loadAdminThemes() {
   const tbody = document.getElementById('admin-themes-table');
+  const selectPkg = document.getElementById('theme-package-id');
   if (!tbody) return;
 
-  const { data: themes } = await supabase
-    .from('themes')
-    .select('*, packages(name)')
-    .order('created_at', { ascending: false });
+  const [{ data: themes }, { data: packages }] = await Promise.all([
+    supabase.from('themes').select('*, packages(name)').order('created_at', { ascending: false }),
+    supabase.from('packages').select('id, name')
+  ]);
+
+  if (selectPkg && packages) {
+    selectPkg.innerHTML = packages.map(p => `<option value="${p.id}">${p.name}</option>`).join('');
+  }
 
   if (!themes || themes.length === 0) {
     tbody.innerHTML = `<tr><td colspan="6" style="text-align:center;">Belum ada tema.</td></tr>`;
@@ -126,24 +225,21 @@ async function loadAdminThemes() {
 
   document.querySelectorAll('.btn-delete-theme').forEach(btn => {
     btn.addEventListener('click', async () => {
-      if (confirm('Yakin ingin menghapus tema ini?')) {
+      if (confirm('Yakin hapus tema ini?')) {
         await supabase.from('themes').delete().eq('id', btn.dataset.id);
-        showToast('Tema berhasil dihapus', 'success');
+        showToast('Tema dihapus', 'success');
         loadAdminThemes();
       }
     });
   });
 }
 
-// 4. Load & Kelola Paket
+// 5. Load Packages
 async function loadAdminPackages() {
   const tbody = document.getElementById('admin-packages-table');
   if (!tbody) return;
 
-  const { data: packages } = await supabase
-    .from('packages')
-    .select('*')
-    .order('price', { ascending: false });
+  const { data: packages } = await supabase.from('packages').select('*').order('price', { ascending: false });
 
   tbody.innerHTML = (packages || []).map(p => `
     <tr>
@@ -152,12 +248,12 @@ async function loadAdminPackages() {
       <td>${formatRupiah(p.price)}</td>
       <td>${p.max_invitations} Undangan</td>
       <td>${p.active_duration_days} Hari</td>
-      <td><button class="btn-secondary btn-sm btn-edit-pkg" data-id="${p.id}">Edit Paket</button></td>
+      <td><button class="btn-secondary btn-sm">Edit</button></td>
     </tr>
   `).join('');
 }
 
-// 5. Load & Kelola Musik Backsound
+// 6. Load Musics
 async function loadAdminMusics() {
   const tbody = document.getElementById('admin-musics-table');
   if (!tbody) return;
@@ -172,9 +268,19 @@ async function loadAdminMusics() {
       <td><button class="btn-danger btn-sm btn-delete-music" data-id="${m.id}">Hapus</button></td>
     </tr>
   `).join('');
+
+  document.querySelectorAll('.btn-delete-music').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (confirm('Hapus musik ini?')) {
+        await supabase.from('musics').delete().eq('id', btn.dataset.id);
+        showToast('Musik dihapus', 'success');
+        loadAdminMusics();
+      }
+    });
+  });
 }
 
-// 6. Load & Kelola Quotes
+// 7. Load Quotes
 async function loadAdminQuotes() {
   const tbody = document.getElementById('admin-quotes-table');
   if (!tbody) return;
@@ -189,4 +295,14 @@ async function loadAdminQuotes() {
       <td><button class="btn-danger btn-sm btn-delete-quote" data-id="${q.id}">Hapus</button></td>
     </tr>
   `).join('');
+
+  document.querySelectorAll('.btn-delete-quote').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      if (confirm('Hapus quote ini?')) {
+        await supabase.from('quotes').delete().eq('id', btn.dataset.id);
+        showToast('Quote dihapus', 'success');
+        loadAdminQuotes();
+      }
+    });
+  });
 }

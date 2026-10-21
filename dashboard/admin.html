@@ -154,6 +154,87 @@
     </section>
 
   </main>
+  
+    <!-- MODAL TEMA -->
+  <div id="modal-theme" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" id="close-theme-modal">&times;</span>
+      <h3>Tambah Tema Baru</h3>
+      <form id="form-add-theme">
+        <div class="form-group">
+          <label>Nama Tema</label>
+          <input type="text" id="theme-name" class="form-control" placeholder="Contoh: Velvet Garden" required>
+        </div>
+        <div class="form-group">
+          <label>Slug Tema</label>
+          <input type="text" id="theme-slug" class="form-control" placeholder="Contoh: velvet-garden" required>
+        </div>
+        <div class="form-group">
+          <label>Pilih Paket</label>
+          <select id="theme-package-id" class="form-control" required></select>
+        </div>
+        <div class="form-group">
+          <label>Kategori</label>
+          <select id="theme-category" class="form-control" required>
+            <option value="wedding">Pernikahan</option>
+            <option value="other">Acara Lain</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Folder Path</label>
+          <input type="text" id="theme-folder-path" class="form-control" placeholder="package/motion/velvet-garden/" required>
+        </div>
+        <div class="form-group">
+          <label>URL Thumbnail Gambar</label>
+          <input type="url" id="theme-thumbnail" class="form-control" placeholder="https://..." required>
+        </div>
+        <button type="submit" class="btn-primary btn-full">Simpan Tema</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL MUSIK -->
+  <div id="modal-music" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" id="close-music-modal">&times;</span>
+      <h3>Upload Musik Backsound</h3>
+      <form id="form-add-music">
+        <div class="form-group">
+          <label>Judul Lagu</label>
+          <input type="text" id="music-title" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label>Artis / Penyanyi</label>
+          <input type="text" id="music-artist" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label>File Audio (MP3)</label>
+          <input type="file" id="music-file" class="form-control" accept="audio/mp3,audio/mpeg" required>
+        </div>
+        <button type="submit" class="btn-primary btn-full" id="btn-save-music">Upload & Simpan</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- MODAL QUOTE -->
+  <div id="modal-quote" class="modal">
+    <div class="modal-content">
+      <span class="close-modal" id="close-quote-modal">&times;</span>
+      <h3>Tambah Kutipan Baru</h3>
+      <form id="form-add-quote">
+        <div class="form-group">
+          <label>Isi Kutipan / Kata-kata</label>
+          <textarea id="quote-content" class="form-control" required></textarea>
+        </div>
+        <div class="form-group">
+          <label>Sumber (Misal: Ar-Rum: 21)</label>
+          <input type="text" id="quote-source" class="form-control" required>
+        </div>
+        <button type="submit" class="btn-primary btn-full">Simpan Quote</button>
+      </form>
+    </div>
+  </div>
+
 
   <script type="module" src="/js/pages/admin-dashboard.js"></script>
 </body>
