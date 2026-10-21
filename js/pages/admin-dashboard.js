@@ -142,54 +142,77 @@ document.getElementById('form-add-theme')?.addEventListener('submit', async (e) 
 });
 
 
-    // Handler Submit Upload Musik ke Supabase Storage (audio-library)
-    document
-        .getElementById("form-add-music")
-        ?.addEventListener("submit", async e => {
-            e.preventDefault();
-            const btn = document.getElementById("btn-save-music");
-            const title = document.getElementById("music-title").value.trim();
-            const artist = document.getElementById("music-artist").value.trim();
-            const file = document.getElementById("music-file").files[0];
+// Handler Submit Upload Musik ke Supabase Storage (audio-library)
+document.getElementById('form-add-music')?.addEventListener('submit', async (e) => {
+  e.preventDefault();
+  
+  const btn = document.getElementById('btn-save-music');
+  const titleInput = document.getElementById('music-title');
+  const artistInput = document.getElementById('music-artist');
+  const fileInput = document.getElementById('music-file');
 
-            if (!file) return;
-            btn.disabled = true;
-            btn.innerText = "Uploading...";
+  const title = titleInput.value.trim();
+  const artist = artistInput.value.trim();
+  const file = fileInput.files[0];
 
-            const fileExt = file.name.split(".").pop();
-            const fileName = `${Date.now()}.${fileExt}`;
+  if (!file) {
+    showToast('Silakan pilih file audio MP3!', 'error');
+    return;
+  }
 
-            const { error: uploadError } = await supabase.storage
-                .from("audio-library")
-                .upload(fileName, file);
+  // Validasi ukuran file (misal maksimal 10MB)
+  if (file.size > 10 * 1024 * 1024) {
+    showToast('Ukuran file maksimal 10MB!', 'error');
+    return;
+  }
 
-            if (uploadError) {
-                showToast(
-                    "Gagal upload audio: " + uploadError.message,
-                    "error"
-                );
-                btn.disabled = false;
-                btn.innerText = "Upload & Simpan";
-                return;
-            }
+  btn.disabled = true;
+  btn.innerText = 'Mengunggah Musik...';
 
-            const { data: publicUrlData } = supabase.storage
-                .from("audio-library")
-                .getPublicUrl(fileName);
+  try {
+    // Sanitasi nama file agar tidak ada spasi atau karakter ilegal
+    const fileExt = file.name.split('.').pop().toLowerCase();
+    const cleanFileName = `${Date.now()}_${title.toLowerCase().replace(/[^a-z0-9]/g, '_')}.${fileExt}`;
 
-            await supabase
-                .from("musics")
-                .insert([
-                    { title, artist, audio_url: publicUrlData.publicUrl }
-                ]);
+    // 1. Upload ke Bucket Storage audio-library
+    const { data: uploadData, error: uploadError } = await supabase.storage
+      .from('audio-library')
+      .upload(cleanFileName, file, {
+        cacheControl: '3600',
+        upsert: true
+      });
 
-            showToast("Musik berhasil ditambahkan!", "success");
-            modalMusic.classList.remove("show");
-            btn.disabled = false;
-            btn.innerText = "Upload & Simpan";
-            e.target.reset();
-            await loadAdminMusics();
-        });
+    if (uploadError) throw new Error('Gagal upload ke Storage: ' + uploadError.message);
+
+    // 2. Ambil Public URL File Audio
+    const { data: publicUrlData } = supabase.storage
+      .from('audio-library')
+      .getPublicUrl(cleanFileName);
+
+    if (!publicUrlData?.publicUrl) throw new Error('Gagal mendapatkan URL publik audio.');
+
+    // 3. Simpan Metadata Musik ke Tabel musics
+    const { error: dbError } = await supabase
+      .from('musics')
+      .insert([{ title, artist, audio_url: publicUrlData.publicUrl }]);
+
+    if (dbError) throw new Error('Gagal menyimpan data ke database: ' + dbError.message);
+
+    showToast('Musik berhasil diunggah & disimpan!', 'success');
+    
+    // Reset Form & Close Modal
+    e.target.reset();
+    document.getElementById('modal-music')?.classList.remove('show');
+    await loadAdminMusics();
+
+  } catch (err) {
+    showToast(err.message, 'error');
+  } finally {
+    btn.disabled = false;
+    btn.innerText = 'Upload & Simpan';
+  }
+});
+
 
     // Handler Submit Tambah Quote
     document
