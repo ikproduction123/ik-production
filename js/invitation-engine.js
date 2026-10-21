@@ -2,15 +2,23 @@ import { supabase } from '/js/config/supabase.js';
 import { formatDateShort } from '/js/utils/helpers.js';
 
 document.addEventListener('DOMContentLoaded', async () => {
-  // Extract Slug dari URL path (misal: /anisa-bagas -> anisa-bagas)
-  const path = window.location.pathname.replace(/^\/|\/$/g, '');
-  if (!path) return;
+  // 1. Ekstrak Slug dari URL path (misal: /anisa-bagas -> anisa-bagas)
+  let path = window.location.pathname.replace(/^\/|\/$/g, '');
+
+  // Jika path mengarah ke file sistem/invitation.html, ambil dari query param atau referrer fallback
+  if (!path || path === 'invitation.html' || path === 'invitation') {
+    const params = new URLSearchParams(window.location.search);
+    path = params.get('slug') || '';
+  }
+
+  // Abort jika memang tidak ada slug
+  if (!path || path.includes('.html')) return;
 
   // Extract Parameter Tamu Undangan (?to=Tamu+Undangan)
   const urlParams = new URLSearchParams(window.location.search);
   const guestName = urlParams.get('to') || 'Tamu Undangan';
 
-  // 1. Fetch Master Undangan beserta Tema, Pasangan, Acara, Story, Gallery, Bank, Kado, Quote, Musik
+  // 2. Fetch Master Undangan beserta Relasi Data
   const { data: inv, error } = await supabase
     .from('invitations')
     .select(`
@@ -29,11 +37,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     .single();
 
   if (error || !inv) {
-    console.error('Undangan tidak ditemukan');
+    console.error('Undangan tidak ditemukan untuk slug:', path);
+    const container = document.getElementById('app') || document.body;
+    container.innerHTML = `
+      <div style="text-align:center; padding:100px 20px; font-family:sans-serif;">
+        <h2>Undangan Tidak Ditemukan</h2>
+        <p>Maaf, link undangan dengan slug <strong>"${path}"</strong> tidak terdaftar atau belum aktif.</p>
+      </div>
+    `;
     return;
   }
 
-  // Inject Inject SEO Meta Tags
+  // Inject SEO Meta Tags
   document.title = inv.meta_title || inv.title;
   setMetaTag('description', inv.meta_description || inv.title);
   setMetaTag('og:title', inv.meta_title || inv.title);
@@ -43,6 +58,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   // Inject Data ke DOM Template
   renderInvitationDOM(inv, guestName);
 });
+
+// Sisa fungsi setMetaTag, renderInvitationDOM, loadWishesList, dst tetap sama...
+
 
 function setMetaTag(property, content) {
   let element = document.querySelector(`meta[property="${property}"], meta[name="${property}"]`);

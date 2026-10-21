@@ -3,8 +3,16 @@
   "cleanUrls": true,
   "rewrites": [
     {
-      "source": "/:slug",
-      "destination": "/package/motion/velvet-garden/index.html"
+      "source": "/dashboard",
+      "destination": "/dashboard/index.html"
+    },
+    {
+      "source": "/dashboard/admin",
+      "destination": "/dashboard/admin.html"
+    },
+    {
+      "source": "/:slug((?!css|js|assets|dashboard|package|login|register|forgot-password|reset-password).*)",
+      "destination": "/invitation.html"
     }
   ]
 }
