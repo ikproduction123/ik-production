@@ -109,6 +109,131 @@ async function loadClientInvitations() {
   `).join('');
 }
 
+// Tambahkan panggilan fungsi ini di dalam event listener DOMContentLoaded:
+// await loadClientPackages();
+
+async function loadClientPackages() {
+  const container = document.getElementById('client-packages-list');
+  if (!container) return;
+
+  // 1. Fetch paket aktif milik user dari subscription
+  const { data: sub } = await supabase
+    .from('user_subscriptions')
+    .select('*, packages(*)')
+    .eq('user_id', currentUser.id)
+    .eq('is_active', true)
+    .single();
+
+  // 2. Fetch seluruh katalog paket dari Supabase
+  const { data: packages, error } = await supabase
+    .from('packages')
+    .select('*')
+    .eq('is_active', true)
+    .order('price', { ascending: true });
+
+  if (error || !packages) {
+    container.innerHTML = '<p class="empty-text">Gagal memuat daftar paket.</p>';
+    return;
+  }
+
+  // Tampilkan banner status paket aktif saat ini
+  const banner = document.getElementById('subscription-status-banner');
+  if (banner) {
+    if (sub && sub.packages) {
+      banner.innerHTML = `
+        <div class="stat-card" style="border-left: 4px solid var(--accent-gold);">
+          <h4>Paket Aktif Anda</h4>
+          <p class="stat-value" style="font-size:20px;">${sub.packages.name}</p>
+          <small>Berlaku hingga: ${formatDateShort(sub.expires_at)}</small>
+        </div>
+      `;
+    } else {
+      banner.innerHTML = `
+        <div class="stat-card" style="border-left: 4px solid #D32F2F;">
+          <h4>Status Langganan</h4>
+          <p class="stat-value" style="font-size:18px; color:#D32F2F;">Belum Memiliki Paket Aktif</p>
+          <small>Pilih paket di bawah dan lakukan pembayaran untuk mengaktifkan fitur.</small>
+        </div>
+      `;
+    }
+  }
+
+  // Render kartu pilihan paket
+  container.innerHTML = packages.map(pkg => {
+    const isCurrentPkg = sub?.package_id === pkg.id;
+    return `
+      <div class="harga-card" style="background:#FFF; padding:20px; border-radius:8px; border:1px solid #E2E8F0;">
+        <h3>${pkg.name} ${isCurrentPkg ? '<span class="badge-status approved">Aktif</span>' : ''}</h3>
+        <div class="price" style="font-size:24px; font-weight:700; color:var(--accent-gold); margin:8px 0;">
+          ${formatRupiah(pkg.price)}
+        </div>
+        <p><small>Masa aktif ${pkg.active_duration_days} Hari • Max ${pkg.max_invitations} Undangan</small></p>
+        <button class="btn-primary btn-full btn-order-package" 
+                style="margin-top:16px;" 
+                data-id="${pkg.id}" 
+                data-price="${pkg.price}" 
+                ${isCurrentPkg ? 'disabled' : ''}>
+          ${isCurrentPkg ? 'Paket Saat Ini' : 'Pilih / Buy Paket'}
+        </button>
+      </div>
+    `;
+  }).join('');
+
+  // Event Listener Klik Beli/Upgrade Paket (Upload Bukti Transfer)
+  document.querySelectorAll('.btn-order-package').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const packageId = btn.dataset.id;
+      const amount = btn.dataset.price;
+
+      const fileInput = document.createElement('input');
+      fileInput.type = 'file';
+      fileInput.accept = 'image/*';
+
+      fileInput.onchange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        showToast('Mengunggah bukti pembayaran...', 'info');
+
+        // Upload bukti bayar ke storage
+        const fileName = `payment_${currentUser.id}_${Date.now()}.${file.name.split('.').pop()}`;
+        const { error: uploadErr } = await supabase.storage
+          .from('payment-proofs')
+          .upload(fileName, file);
+
+        if (uploadErr) {
+          showToast('Gagal upload bukti: ' + uploadErr.message, 'error');
+          return;
+        }
+
+        const { data: publicUrl } = supabase.storage
+          .from('payment-proofs')
+          .getPublicUrl(fileName);
+
+        // Simpan transaksi status pending
+        const { error: txErr } = await supabase.from('transactions').insert([{
+          user_id: currentUser.id,
+          package_id: packageId,
+          amount: parseFloat(amount),
+          payment_proof_url: publicUrl.publicUrl,
+          status: 'pending'
+        }]);
+
+        if (txErr) {
+          showToast('Gagal membuat transaksi: ' + txErr.message, 'error');
+          return;
+        }
+
+        showToast('Transaksi berhasil dikirim! Menunggu verifikasi Admin.', 'success');
+        await loadClientTransactions();
+      };
+
+      fileInput.click();
+    });
+  });
+}
+
+
 // 4. Load Transactions History
 async function loadClientTransactions() {
   const tbody = document.getElementById('transaction-history-table');
