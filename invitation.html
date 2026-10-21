@@ -1,70 +1,103 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Undangan Digital</title>
-  <link rel="stylesheet" href="/package/motion/velvet-garden/style.css">
-</head>
-<body>
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Undangan Digital</title>
+        <link rel="stylesheet" href="/package/motion/velvet-garden/style.css" />
+    </head>
+    <body>
+        <!-- Cover Section -->
+        <section class="cover-section" id="cover">
+            <div class="cover-content">
+                <img
+                    src="/assets/mockups/hero-mockup.png"
+                    class="cover-img data-cover-photo"
+                    alt="Cover"
+                />
+                <h3>UNDANGAN PERNIKAHAN</h3>
+                <h1 class="data-invitation-title">Title</h1>
+                <div class="guest-box">
+                    <p>Kepada Yth. Bapak/Ibu/Saudara/i:</p>
+                    <h2 class="data-guest-name">Tamu Undangan</h2>
+                </div>
+                <button
+                    class="btn-open"
+                    onclick="
+                        document.getElementById('cover').style.display = 'none'
+                    "
+                >
+                    Buka Undangan
+                </button>
+            </div>
+        </section>
 
-  <!-- Cover Section -->
-  <section class="cover-section" id="cover">
-    <div class="cover-content">
-      <img src="/assets/mockups/hero-mockup.png" class="cover-img data-cover-photo" alt="Cover">
-      <h3>UNDANGAN PERNIKAHAN</h3>
-      <h1 class="data-invitation-title">Title</h1>
-      <div class="guest-box">
-        <p>Kepada Yth. Bapak/Ibu/Saudara/i:</p>
-        <h2 class="data-guest-name">Tamu Undangan</h2>
-      </div>
-      <button class="btn-open" onclick="document.getElementById('cover').style.display='none'">Buka Undangan</button>
-    </div>
-  </section>
+        <!-- Main Content Wrapper -->
+        <main id="app">
+            <!-- Groom & Bride -->
+            <section class="couples-section">
+                <div class="couple-card">
+                    <img
+                        class="data-groom-photo"
+                        src="/assets/mockups/hero-mockup.png"
+                    />
+                    <h2 class="data-groom-name">Mempelai Pria</h2>
+                    <p class="data-groom-parents"></p>
+                </div>
+                <div class="couple-card">
+                    <img
+                        class="data-bride-photo"
+                        src="/assets/mockups/hero-mockup.png"
+                    />
+                    <h2 class="data-bride-name">Mempelai Wanita</h2>
+                    <p class="data-bride-parents"></p>
+                </div>
+            </section>
 
-  <!-- Main Content Wrapper -->
-  <main id="app">
-    <!-- Groom & Bride -->
-    <section class="couples-section">
-      <div class="couple-card">
-        <img class="data-groom-photo" src="/assets/mockups/hero-mockup.png">
-        <h2 class="data-groom-name">Mempelai Pria</h2>
-        <p class="data-groom-parents"></p>
-      </div>
-      <div class="couple-card">
-        <img class="data-bride-photo" src="/assets/mockups/hero-mockup.png">
-        <h2 class="data-bride-name">Mempelai Wanita</h2>
-        <p class="data-bride-parents"></p>
-      </div>
-    </section>
+            <!-- Events Container -->
+            <section class="events-section">
+                <h2>Rangkaian Acara</h2>
+                <div id="events-container"></div>
+            </section>
 
-    <!-- Events Container -->
-    <section class="events-section">
-      <h2>Rangkaian Acara</h2>
-      <div id="events-container"></div>
-    </section>
+            <!-- RSVP & Wishes -->
+            <section class="rsvp-section">
+                <h2>Konfirmasi Kehadiran</h2>
+                <form id="form-rsvp" class="rsvp-form">
+                    <input
+                        type="text"
+                        id="rsvp-name"
+                        placeholder="Nama Anda"
+                        required
+                    />
+                    <select id="rsvp-status" required>
+                        <option value="Hadir">Hadir</option>
+                        <option value="Tidak Hadir">Tidak Hadir</option>
+                    </select>
+                    <input
+                        type="number"
+                        id="rsvp-pax"
+                        placeholder="Jumlah Tamu (Pax)"
+                        value="1"
+                        min="1"
+                    />
+                    <textarea
+                        id="rsvp-message"
+                        placeholder="Ucapan & Doa"
+                        required
+                    ></textarea>
+                    <button type="submit" class="btn-submit">
+                        Kirim Konfirmasi
+                    </button>
+                </form>
 
-    <!-- RSVP & Wishes -->
-    <section class="rsvp-section">
-      <h2>Konfirmasi Kehadiran</h2>
-      <form id="form-rsvp" class="rsvp-form">
-        <input type="text" id="rsvp-name" placeholder="Nama Anda" required>
-        <select id="rsvp-status" required>
-          <option value="Hadir">Hadir</option>
-          <option value="Tidak Hadir">Tidak Hadir</option>
-        </select>
-        <input type="number" id="rsvp-pax" placeholder="Jumlah Tamu (Pax)" value="1" min="1">
-        <textarea id="rsvp-message" placeholder="Ucapan & Doa" required></textarea>
-        <button type="submit" class="btn-submit">Kirim Konfirmasi</button>
-      </form>
-      
-      <div id="wishes-list" class="margin-top"></div>
-    </section>
-  </main>
+                <div id="wishes-list" class="margin-top"></div>
+            </section>
+        </main>
 
-  <audio id="audio-backsound" autoplay loop></audio>
+        <audio id="audio-backsound" autoplay loop></audio>
 
-  <!-- Panggil Engine Loader -->
-  <script type="module" src="/invitation-engine.js"></script>
-</body>
+        <!-- Panggil Engine Loader -->
+        <script type="module" src="/js/invitation-engine.js"></script>
+    </body>
 </html>
