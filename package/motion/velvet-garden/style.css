@@ -1,0 +1,242 @@
+/* ==========================================================================
+   TEMA: VELVET GARDEN (PAKET MOTION)
+   ========================================================================== */
+
+:root {
+  --theme-primary: #2B4C3F;
+  --theme-accent: #D4AF37;
+  --theme-bg-light: #F9F6F0;
+  --theme-text-dark: #1F2D27;
+  --theme-text-muted: #62726B;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+body {
+  background-color: var(--theme-bg-light);
+  color: var(--theme-text-dark);
+  line-height: 1.6;
+}
+
+/* SECTION A: COVER */
+.cover-section {
+  position: fixed;
+  inset: 0;
+  z-index: 999;
+  background: var(--theme-primary);
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
+
+.cover-content {
+  max-width: 400px;
+  width: 100%;
+}
+
+.cover-img {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--theme-accent);
+  margin-bottom: 20px;
+}
+
+.cover-content h3 {
+  font-size: 16px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--theme-accent);
+}
+
+.cover-content h1 {
+  font-size: 32px;
+  margin: 10px 0;
+}
+
+.guest-box {
+  background: rgba(255, 255, 255, 0.1);
+  padding: 16px;
+  border-radius: 8px;
+  margin: 24px 0;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.btn-open {
+  background: var(--theme-accent);
+  color: var(--theme-text-dark);
+  border: none;
+  padding: 12px 28px;
+  font-size: 15px;
+  font-weight: 700;
+  border-radius: 50px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-open:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+}
+
+/* SECTION B: BACKGROUND VIDEO (MOTION) */
+.hero-theme-section {
+  position: relative;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: #FFFFFF;
+  overflow: hidden;
+}
+
+.bg-video {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  min-width: 100%;
+  min-height: 100%;
+  transform: translate(-50%, -50%);
+  object-fit: cover;
+  z-index: 1;
+}
+
+.hero-overlay {
+  position: relative;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.45);
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding: 24px;
+}
+
+.scroll-down-indicator {
+  position: absolute;
+  bottom: 24px;
+  font-size: 14px;
+  letter-spacing: 1px;
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+  40% { transform: translateY(-8px); }
+  60% { transform: translateY(-4px); }
+}
+
+/* COMMON SECTION STYLES */
+.quotes-section, .couples-section, .events-section, 
+.stories-section, .galleries-section, .bank-section, 
+.rsvp-section, .closing-section {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 60px 24px;
+  text-align: center;
+}
+
+/* SECTION D: BRIDE & GROOM */
+.couple-card {
+  margin-bottom: 40px;
+}
+
+.couple-card img {
+  width: 180px;
+  height: 240px;
+  border-radius: 100px;
+  object-fit: cover;
+  border: 2px solid var(--theme-accent);
+  margin-bottom: 16px;
+}
+
+.couple-card h2 {
+  color: var(--theme-primary);
+  font-size: 26px;
+}
+
+/* SECTION E: EVENTS */
+.event-card {
+  background: #FFFFFF;
+  padding: 24px;
+  border-radius: 12px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  margin-bottom: 20px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+}
+
+.btn-map, .btn-copy, .btn-submit {
+  display: inline-block;
+  background: var(--theme-primary);
+  color: #FFFFFF;
+  padding: 10px 20px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-size: 14px;
+  margin-top: 12px;
+  border: none;
+  cursor: pointer;
+}
+
+/* SECTION G: GALLERIES */
+#galleries-container {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.gallery-item img, .gallery-item video {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* SECTION I: RSVP & WISHES */
+.rsvp-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 32px;
+}
+
+.rsvp-form input, .rsvp-form select, .rsvp-form textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #DDD;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.wish-card {
+  background: #FFFFFF;
+  padding: 16px;
+  border-radius: 8px;
+  text-align: left;
+  margin-bottom: 12px;
+  border-left: 4px solid var(--theme-accent);
+}
+
+.theme-footer {
+  background: var(--theme-primary);
+  color: #FFFFFF;
+  padding: 24px;
+  text-align: center;
+  font-size: 13px;
+}
+
+.theme-footer a {
+  color: var(--theme-accent);
+}

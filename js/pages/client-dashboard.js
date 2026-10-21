@@ -1,0 +1,183 @@
+import { supabase } from '../config/supabase.js';
+import { protectPage } from '../utils/auth-guard.js';
+import { showToast, formatRupiah, formatDateShort } from '../utils/helpers.js';
+
+let currentUser = null;
+
+document.addEventListener('DOMContentLoaded', async () => {
+  // Protect page: Khusus Client
+  currentUser = await protectPage('client');
+  if (!currentUser) return;
+
+  setupUI();
+  setupNavigation();
+  await loadOverviewData();
+  await loadClientInvitations();
+  await loadClientTransactions();
+  await loadRSVPData();
+});
+
+function setupUI() {
+  document.getElementById('header-username').innerText = currentUser.profile?.full_name || 'Client';
+  if (currentUser.profile?.avatar_url) {
+    document.getElementById('header-avatar').src = currentUser.profile.avatar_url;
+  }
+  
+  document.getElementById('profile-name').value = currentUser.profile?.full_name || '';
+  document.getElementById('profile-phone').value = currentUser.profile?.phone_number || '';
+  document.getElementById('profile-avatar').value = currentUser.profile?.avatar_url || '';
+
+  document.getElementById('btn-logout').addEventListener('click', async () => {
+    await supabase.auth.signOut();
+    window.location.href = '/login.html';
+  });
+}
+
+// 1. Navigation Tab
+function setupNavigation() {
+  const navItems = document.querySelectorAll('.sidebar-nav .nav-item');
+  const tabContents = document.querySelectorAll('.tab-content');
+  const pageTitle = document.getElementById('page-title');
+
+  navItems.forEach(item => {
+    item.addEventListener('click', () => {
+      navItems.forEach(i => i.classList.remove('active'));
+      tabContents.forEach(t => t.classList.remove('active'));
+
+      item.classList.add('active');
+      const tabId = item.dataset.tab;
+      document.getElementById(`tab-${tabId}`).classList.add('active');
+      pageTitle.innerText = item.innerText;
+    });
+  });
+}
+
+// 2. Load Overview Metrics
+async function loadOverviewData() {
+  const { data: invitations } = await supabase
+    .from('invitations')
+    .select('id')
+    .eq('user_id', currentUser.id);
+
+  const totalInv = invitations?.length || 0;
+  document.getElementById('overview-total-invitations').innerText = totalInv;
+
+  if (totalInv > 0) {
+    const invIds = invitations.map(i => i.id);
+    const { data: rsvps } = await supabase
+      .from('rsvps_and_wishes')
+      .select('pax_count, message')
+      .in('invitation_id', invIds);
+
+    const totalWishes = rsvps?.filter(r => r.message).length || 0;
+    const totalGuests = rsvps?.reduce((acc, c) => acc + (c.pax_count || 1), 0) || 0;
+
+    document.getElementById('overview-total-wishes').innerText = totalWishes;
+    document.getElementById('overview-total-guests').innerText = totalGuests;
+  }
+}
+
+// 3. Load Client Invitations
+async function loadClientInvitations() {
+  const container = document.getElementById('invitations-list');
+  if (!container) return;
+
+  const { data: list, error } = await supabase
+    .from('invitations')
+    .select('*, themes(theme_name, thumbnail_url)')
+    .eq('user_id', currentUser.id);
+
+  if (error || !list || list.length === 0) {
+    container.innerHTML = `<p class="empty-text">Belum ada undangan yang dibuat. Klik tombol "+ Buat Undangan Baru" di atas.</p>`;
+    return;
+  }
+
+  container.innerHTML = list.map(inv => `
+    <div class="invitation-card">
+      <img src="${inv.cover_photo_url || inv.themes?.thumbnail_url || '/assets/mockups/hero-mockup.png'}" alt="Cover">
+      <div class="inv-card-body">
+        <h4>${inv.title}</h4>
+        <p class="slug-text">ik-pro.my.id/${inv.slug}</p>
+        <p class="event-date">Tanggal: ${formatDateShort(inv.event_date)}</p>
+        <div class="inv-card-actions">
+          <a href="/${inv.slug}" target="_blank" class="btn-outline btn-sm">Lihat Link</a>
+          <button class="btn-secondary btn-sm btn-edit-inv" data-id="${inv.id}">Edit Data</button>
+          <button class="btn-danger btn-sm btn-delete-inv" data-id="${inv.id}">Hapus</button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// 4. Load Transactions History
+async function loadClientTransactions() {
+  const tbody = document.getElementById('transaction-history-table');
+  if (!tbody) return;
+
+  const { data: txs } = await supabase
+    .from('transactions')
+    .select('*, packages(name)')
+    .eq('user_id', currentUser.id)
+    .order('created_at', { ascending: false });
+
+  if (!txs || txs.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Belum ada riwayat transaksi.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = txs.map(tx => `
+    <tr>
+      <td>${formatDateShort(tx.created_at)}</td>
+      <td>${tx.packages?.name || '-'}</td>
+      <td>${formatRupiah(tx.amount)}</td>
+      <td><span class="badge-status ${tx.status}">${tx.status}</span></td>
+      <td>${tx.payment_proof_url ? `<a href="${tx.payment_proof_url}" target="_blank">Lihat Bukti</a>` : '-'}</td>
+    </tr>
+  `).join('');
+}
+
+// 5. Load RSVPs Data
+async function loadRSVPData() {
+  const select = document.getElementById('rsvp-invitation-select');
+  const tbody = document.getElementById('client-rsvp-table');
+  if (!select || !tbody) return;
+
+  const { data: invitations } = await supabase
+    .from('invitations')
+    .select('id, title')
+    .eq('user_id', currentUser.id);
+
+  if (!invitations || invitations.length === 0) return;
+
+  select.innerHTML = '<option value="">-- Pilih Undangan --</option>' + 
+    invitations.map(i => `<option value="${i.id}">${i.title}</option>`).join('');
+
+  select.addEventListener('change', async () => {
+    const invId = select.value;
+    if (!invId) {
+      tbody.innerHTML = '';
+      return;
+    }
+
+    const { data: rsvps } = await supabase
+      .from('rsvps_and_wishes')
+      .select('*')
+      .eq('invitation_id', invId)
+      .order('created_at', { ascending: false });
+
+    if (!rsvps || rsvps.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="5" style="text-align:center;">Belum ada konfirmasi RSVP/ucapan.</td></tr>`;
+      return;
+    }
+
+    tbody.innerHTML = rsvps.map(r => `
+      <tr>
+        <td>${r.guest_name}</td>
+        <td>${r.attendance_status}</td>
+        <td>${r.pax_count}</td>
+        <td>${r.message}</td>
+        <td>${formatDateShort(r.created_at)}</td>
+      </tr>
+    `).join('');
+  });
+}

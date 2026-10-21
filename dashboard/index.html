@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Client - IK Production</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body class="dashboard-body">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img src="/assets/logo/logo-ikpro.png" alt="IK Pro Logo" class="brand-logo">
+      <span>IK-PRO</span>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-tab="overview">Overview</button>
+      <button class="nav-item" data-tab="invitations">Undangan Saya</button>
+      <button class="nav-item" data-tab="packages">Paket & Transaksi</button>
+      <button class="nav-item" data-tab="rsvps">RSVP & Ucapan</button>
+      <button class="nav-item" data-tab="profile">Pengaturan Profil</button>
+    </nav>
+    <div class="sidebar-footer">
+      <button id="btn-logout" class="btn-logout">Keluar</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    
+    <!-- TOP HEADER -->
+    <header class="top-header">
+      <h2 id="page-title">Overview</h2>
+      <div class="user-profile-widget">
+        <img id="header-avatar" src="/assets/mockups/hero-mockup.png" alt="Avatar" class="avatar-sm">
+        <span id="header-username">Client Name</span>
+      </div>
+    </header>
+
+    <!-- TAB 1: OVERVIEW -->
+    <section class="tab-content active" id="tab-overview">
+      <div class="stats-overview-grid">
+        <div class="stat-card">
+          <h4>Total Undangan</h4>
+          <p class="stat-value" id="overview-total-invitations">0</p>
+        </div>
+        <div class="stat-card">
+          <h4>Total Ucapan Masuk</h4>
+          <p class="stat-value" id="overview-total-wishes">0</p>
+        </div>
+        <div class="stat-card">
+          <h4>Tamu Dikonfirmasi</h4>
+          <p class="stat-value" id="overview-total-guests">0</p>
+        </div>
+      </div>
+      <div class="active-subscription-banner" id="subscription-status-banner">
+        <!-- Di-render via JS -->
+      </div>
+    </section>
+
+    <!-- TAB 2: INVITATIONS (CRUD) -->
+    <section class="tab-content" id="tab-invitations">
+      <div class="action-bar">
+        <h3>Daftar Undangan Digital</h3>
+        <button id="btn-create-invitation" class="btn-primary">+ Buat Undangan Baru</button>
+      </div>
+      <div class="invitations-grid" id="invitations-list">
+        <!-- List Undangan Client -->
+      </div>
+    </section>
+
+    <!-- TAB 3: PACKAGES & TRANSACTIONS -->
+    <section class="tab-content" id="tab-packages">
+      <h3>Pilih / Upgrade Paket</h3>
+      <div class="client-packages-grid" id="client-packages-list">
+        <!-- Paket Aktif & Pilihan Upgrade -->
+      </div>
+
+      <hr class="divider">
+
+      <h3>Riwayat Transaksi</h3>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Tanggal</th>
+              <th>Paket</th>
+              <th>Jumlah</th>
+              <th>Status</th>
+              <th>Bukti Bayar</th>
+            </tr>
+          </thead>
+          <tbody id="transaction-history-table">
+            <!-- Table Row -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 4: RSVPS & WISHES -->
+    <section class="tab-content" id="tab-rsvps">
+      <h3>Rekap RSVP & Ucapan Tamu</h3>
+      <div class="filter-bar">
+        <select id="rsvp-invitation-select" class="form-control">
+          <option value="">-- Pilih Undangan --</option>
+        </select>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nama Tamu</th>
+              <th>Status Kehadiran</th>
+              <th>Jumlah Pax</th>
+              <th>Pesan / Ucapan</th>
+              <th>Waktu</th>
+            </tr>
+          </thead>
+          <tbody id="client-rsvp-table">
+            <!-- Data RSVP -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 5: PROFILE SETTINGS -->
+    <section class="tab-content" id="tab-profile">
+      <h3>Pengaturan Akun & Profil</h3>
+      <form id="profile-form" class="form-card">
+        <div class="form-group">
+          <label>Nama Lengkap</label>
+          <input type="text" id="profile-name" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label>Nomor Telepon/WhatsApp</label>
+          <input type="tel" id="profile-phone" class="form-control" required>
+        </div>
+        <div class="form-group">
+          <label>URL Foto Profil</label>
+          <input type="url" id="profile-avatar" class="form-control">
+        </div>
+        <button type="submit" class="btn-primary">Simpan Profil</button>
+      </form>
+
+      <form id="change-password-form" class="form-card margin-top">
+        <h4>Ubah Kata Sandi</h4>
+        <div class="form-group">
+          <label>Kata Sandi Baru</label>
+          <input type="password" id="new-pwd" class="form-control" minlength="6" required>
+        </div>
+        <button type="submit" class="btn-secondary">Update Password</button>
+      </form>
+    </section>
+
+  </main>
+
+  <script type="module" src="/js/pages/client-dashboard.js"></script>
+</body>
+</html>

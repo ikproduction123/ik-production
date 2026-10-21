@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard Admin - IK Production</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/dashboard.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body class="dashboard-body">
+
+  <!-- SIDEBAR ADMIN -->
+  <aside class="sidebar">
+    <div class="sidebar-brand">
+      <img src="/assets/logo/logo-ikpro.png" alt="IK Pro Admin Logo" class="brand-logo">
+      <span>IK-PRO ADMIN</span>
+    </div>
+    <nav class="sidebar-nav">
+      <button class="nav-item active" data-tab="admin-transactions">Verifikasi Transaksi</button>
+      <button class="nav-item" data-tab="admin-themes">Kelola Tema</button>
+      <button class="nav-item" data-tab="admin-packages">Kelola Paket & Harga</button>
+      <button class="nav-item" data-tab="admin-musics">Pustaka Musik</button>
+      <button class="nav-item" data-tab="admin-quotes">Kutipan / Quotes</button>
+    </nav>
+    <div class="sidebar-footer">
+      <button id="btn-admin-logout" class="btn-logout">Keluar</button>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT ADMIN -->
+  <main class="main-content">
+    
+    <header class="top-header">
+      <h2 id="admin-page-title">Verifikasi Transaksi Client</h2>
+      <div class="user-profile-widget">
+        <span class="badge-role">ADMINISTRATOR</span>
+      </div>
+    </header>
+
+    <!-- TAB 1: VERIFIKASI TRANSAKSI -->
+    <section class="tab-content active" id="tab-admin-transactions">
+      <h3>Daftar Pembayaran Masuk</h3>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Client</th>
+              <th>Paket</th>
+              <th>Jumlah</th>
+              <th>Bukti Bayar</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="admin-transactions-table">
+            <!-- Di-render via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 2: KELOLA TEMA -->
+    <section class="tab-content" id="tab-admin-themes">
+      <div class="action-bar">
+        <h3>Daftar Tema Undangan</h3>
+        <button id="btn-open-modal-theme" class="btn-primary">+ Tambah Tema Baru</button>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Thumbnail</th>
+              <th>Nama Tema</th>
+              <th>Paket</th>
+              <th>Kategori</th>
+              <th>Folder Path</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="admin-themes-table">
+            <!-- Di-render via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 3: KELOLA PAKET & HARGA -->
+    <section class="tab-content" id="tab-admin-packages">
+      <h3>Pengaturan Paket & Fitur</h3>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Nama Paket</th>
+              <th>Slug</th>
+              <th>Harga (IDR)</th>
+              <th>Max Undangan</th>
+              <th>Masa Aktif (Hari)</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="admin-packages-table">
+            <!-- Di-render via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 4: PUSTAKA MUSIK -->
+    <section class="tab-content" id="tab-admin-musics">
+      <div class="action-bar">
+        <h3>Pustaka Lagu Backsound</h3>
+        <button id="btn-open-modal-music" class="btn-primary">+ Upload Musik Baru</button>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Judul Lagu</th>
+              <th>Artis</th>
+              <th>Preview Audio</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="admin-musics-table">
+            <!-- Di-render via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- TAB 5: KUTIPAN / QUOTES -->
+    <section class="tab-content" id="tab-admin-quotes">
+      <div class="action-bar">
+        <h3>Pustaka Kutipan / Quotes</h3>
+        <button id="btn-open-modal-quote" class="btn-primary">+ Tambah Quote Baru</button>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Isi Kutipan</th>
+              <th>Sumber</th>
+              <th>Kategori</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="admin-quotes-table">
+            <!-- Di-render via JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </main>
+
+  <script type="module" src="/js/pages/admin-dashboard.js"></script>
+</body>
+</html>

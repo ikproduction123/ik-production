@@ -1,8 +1,29 @@
 {
+  "version": 2,
+  "cleanUrls": true,
   "rewrites": [
     {
+      "source": "/anisa-bagas/(.*)",
+      "destination": "/package/motion/velvet-garden/index.html"
+    },
+    {
+      "source": "/:slug",
+      "destination": "/invitation-engine.js"
+    }
+  ],
+  "headers": [
+    {
       "source": "/(.*)",
-      "destination": "/index.html"
+      "headers": [
+        {
+          "key": "X-Content-Type-Options",
+          "value": "nosniff"
+        },
+        {
+          "key": "X-Frame-Options",
+          "value": "DENY"
+        }
+      ]
     }
   ]
 }

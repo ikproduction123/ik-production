@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Daftar - IK Production Undangan Digital</title>
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/auth.css">
+</head>
+<body class="auth-body">
+  <div class="auth-card">
+    <div class="auth-header">
+      <h2>Buat Akun Baru</h2>
+      <p>Mulai buat undangan digital premium Anda</p>
+    </div>
+    <form id="register-form">
+      <div class="form-group">
+        <label for="full-name">Nama Lengkap</label>
+        <input type="text" id="full-name" placeholder="Nama Anda" required>
+      </div>
+      <div class="form-group">
+        <label for="phone">Nomor Telepon/WhatsApp</label>
+        <input type="tel" id="phone" placeholder="08123456789" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="nama@email.com" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Kata Sandi</label>
+        <input type="password" id="password" placeholder="••••••••" minlength="6" required>
+      </div>
+      <div class="form-group">
+        <label for="confirm-password">Ulangi Kata Sandi</label>
+        <input type="password" id="confirm-password" placeholder="••••••••" minlength="6" required>
+      </div>
+      <div class="form-options">
+        <label><input type="checkbox" id="terms" required> Saya menyetujui syarat dan ketentuan</label>
+      </div>
+      <button type="submit" class="btn-primary btn-full" id="btn-register">Daftar</button>
+    </form>
+    <p class="auth-footer">
+      Sudah punya akun? <a href="/login.html" class="auth-link">Masuk</a>
+    </p>
+  </div>
+  <script type="module" src="/js/auth/register.js"></script>
+</body>
+</html>

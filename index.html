@@ -1,13 +1,256 @@
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>ik-pro.my.id</title>
-  </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/src/main.jsx"></script>
-  </body>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>IK Production - Jasa Undangan Digital Premium & Elegant</title>
+  <meta name="description" content="Buat undangan digital kekinian dengan desain mewah, fitur RSVP, ucapan, gallery, dan rekening digital di ik-pro.my.id">
+  <link rel="stylesheet" href="/css/main.css">
+  <link rel="stylesheet" href="/css/components.css">
+</head>
+<body>
+
+  <!-- 1. NAVBAR -->
+  <nav class="navbar">
+    <div class="nav-container">
+      <a href="/" class="nav-logo">
+        <img src="/assets/logo/logo-ikpro.png" alt="IK Production Logo" class="logo-img">
+        <span>IK-PRO</span>
+      </a>
+      <ul class="nav-menu" id="nav-menu">
+        <li><a href="#beranda" class="nav-link">Beranda</a></li>
+        <li><a href="#fitur" class="nav-link">Fitur</a></li>
+        <li><a href="#tema" class="nav-link">Tema</a></li>
+        <li><a href="#harga" class="nav-link">Harga</a></li>
+        <li><a href="#faq" class="nav-link">FAQ</a></li>
+      </ul>
+      <div class="nav-action">
+        <a href="/login.html" class="btn-secondary">Masuk</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- 2. HERO SECTION -->
+  <section class="hero-section" id="beranda">
+    <div class="hero-container">
+      <div class="hero-content">
+        <span class="badge">Platform Undangan Digital #1</span>
+        <h1>Buat Undangan Digital Impian Tanpa Ribet</h1>
+        <p>Solusi mudah, praktis, dan elegan untuk momen spesial pernikahan dan acara Anda dengan tampilan modern.</p>
+        <div class="hero-buttons">
+          <a href="/register.html" class="btn-primary">Daftar Sekarang</a>
+          <a href="#tema" class="btn-outline">Lihat Tema</a>
+        </div>
+      </div>
+      <div class="hero-mockup">
+        <img src="/assets/mockups/hero-mockup.png" alt="Undangan Digital Mockup HP">
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. STATS SECTION -->
+  <section class="stats-section">
+    <div class="stats-container">
+      <div class="stat-item">
+        <h3 class="counter" data-target="0" id="stat-invitations">0</h3>
+        <p>Undangan Dibuat</p>
+      </div>
+      <div class="stat-item">
+        <h3 class="counter" data-target="0" id="stat-themes">0</h3>
+        <p>Pilihan Tema</p>
+      </div>
+      <div class="stat-item">
+        <h3 class="counter" data-target="0" id="stat-wishes">0</h3>
+        <p>Ucapan & Doa</p>
+      </div>
+      <div class="stat-item">
+        <h3 class="counter" data-target="0" id="stat-shares">0</h3>
+        <p>Undangan Disebar</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. FITUR SECTION -->
+  <section class="fitur-section" id="fitur">
+    <div class="section-header">
+      <h2>Fitur Unggulan</h2>
+      <p>Lengkap dengan teknologi terkini untuk kenyamanan tamu Anda</p>
+    </div>
+    <div class="fitur-grid">
+      <div class="fitur-card">
+        <h3>Desain Premium</h3>
+        <p>Pilihan tampilan visual modern, estetik, dan responsif di semua perangkat.</p>
+      </div>
+      <div class="fitur-card">
+        <h3>Smart Dashboard</h3>
+        <p>Atur isi data undangan, cerita cinta, dan foto kapan saja dari HP.</p>
+      </div>
+      <div class="fitur-card">
+        <h3>Free Revisi</h3>
+        <p>Bebas ubah data atau jadwal acara tanpa biaya tambahan.</p>
+      </div>
+      <div class="fitur-card">
+        <h3>Unlimited Nama Tamu</h3>
+        <p>Kirim undangan ke ribuan tamu dengan pesan kustomisasi personal.</p>
+      </div>
+      <div class="fitur-card">
+        <h3>Gallery Foto & Video</h3>
+        <p>Tampilkan momen terbaik prewedding dalam format slider interaktif.</p>
+      </div>
+      <div class="fitur-card">
+        <h3>Rekening Digital</h3>
+        <p>Memudahkan tamu memberikan kado via transfer bank & e-wallet.</p>
+      </div>
+      <div class="fitur-card">
+        <h3>Navigasi Lokasi</h3>
+        <p>Terhubung langsung dengan Google Maps lokasi acara secara akurat.</p>
+      </div>
+      <div class="fitur-card">
+        <h3>Love Story</h3>
+        <p>Bagikan perjalanan alur kisah cinta Anda kepada para tamu.</p>
+      </div>
+      <div class="fitur-card">
+        <h3>Backsound Music</h3>
+        <p>Pilih alunan lagu favorit untuk mengiringi halaman undangan.</p>
+      </div>
+      <div class="fitur-card">
+        <h3>Ucapan & Doa</h3>
+        <p>Terima doa dan ucapan langsung dari kerabat secara *real-time*.</p>
+      </div>
+      <div class="fitur-card">
+        <h3>Smart RSVP</h3>
+        <p>Rekapitulasi konfirmasi kehadiran tamu secara otomatis di dashboard.</p>
+      </div>
+      <div class="fitur-card">
+        <h3>Aktif 1 Tahun</h3>
+        <p>Masa aktif masa guna link undangan panjang hingga 365 hari.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. TEMA SECTION -->
+  <section class="tema-section" id="tema">
+    <div class="section-header">
+      <h2>Pilihan Tema Katalog</h2>
+      <p>Temukan desain yang pas dengan karakter momen berharga Anda</p>
+    </div>
+
+    <!-- Main Category Buttons -->
+    <div class="tab-buttons">
+      <button class="btn-tab active" data-category="wedding">Pernikahan</button>
+      <button class="btn-tab" data-category="other">Acara Lain</button>
+    </div>
+
+    <!-- Sub Sub-Category Buttons (Khusus Pernikahan) -->
+    <div class="sub-tab-buttons" id="wedding-subtabs">
+      <button class="btn-subtab active" data-package="all">Semua</button>
+      <button class="btn-subtab" data-package="motion">Motion</button>
+      <button class="btn-subtab" data-package="luxury">Luxury</button>
+      <button class="btn-subtab" data-package="premium">Premium</button>
+      <button class="btn-subtab" data-package="basic">Basic</button>
+    </div>
+
+    <!-- Container Grid Tema Card -->
+    <div class="tema-grid" id="tema-container">
+      <!-- Di-render dinamis via JS -->
+    </div>
+  </section>
+
+  <!-- 6. HARGA SECTION -->
+  <section class="harga-section" id="harga">
+    <div class="section-header">
+      <h2>Pilihan Paket & Harga</h2>
+      <p>Pilih paket terbaik yang sesuai kebutuhan Anda</p>
+    </div>
+    <div class="harga-grid" id="harga-container">
+      <!-- Di-render dinamis dari Supabase via JS -->
+    </div>
+  </section>
+
+  <!-- 7. CARA PEMESANAN -->
+  <section class="step-section">
+    <div class="section-header">
+      <h2>Cara Pemesanan</h2>
+      <p>4 langkah mudah memiliki undangan digital</p>
+    </div>
+    <div class="step-grid">
+      <div class="step-card">
+        <span class="step-num">1</span>
+        <h3>Buat Akun</h3>
+        <p>Daftar akun gratis dan pilih paket undangan yang diinginkan.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">2</span>
+        <h3>Pilih Tema</h3>
+        <p>Tentukan desain tema kustom sesuai paket aktif Anda.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">3</span>
+        <h3>Isi Data Acara</h3>
+        <p>Lengkapi informasi mempelai, tanggal, foto, dan lagu di dashboard.</p>
+      </div>
+      <div class="step-card">
+        <span class="step-num">4</span>
+        <h3>Sebarkan Undangan</h3>
+        <p>Salin link undangan kustom Anda dan bagikan ke WhatsApp tamu.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 8. FAQ -->
+  <section class="faq-section" id="faq">
+    <div class="section-header">
+      <h2>Sering Ditanyakan (FAQ)</h2>
+    </div>
+    <div class="faq-accordion">
+      <details class="faq-item">
+        <summary>Berapa lama proses pembuatan undangan digital?</summary>
+        <p>Proses pembuatan instan! Setelah pembayaran terverifikasi, Anda dapat mengisi data di dashboard dan undangan langsung aktif saat itu juga.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Apakah bisa revisi data jika ada perubahan jadwal?</summary>
+        <p>Tentu bisa. Anda bisa mengubah isi teks, tanggal, lokasi, hingga foto kapan saja tanpa batas melalui dashboard client.</p>
+      </details>
+      <details class="faq-item">
+        <summary>Berapa banyak nama tamu yang bisa dibuatkan link khusus?</summary>
+        <p>Tidak terbatas (Unlimited). Anda bebas membuat nama tamu sebanyak-banyaknya untuk ditempatkan pada parameter link undangan.</p>
+      </details>
+    </div>
+  </section>
+
+  <!-- 9. CTA SECTION -->
+  <section class="cta-section">
+    <div class="cta-card">
+      <h2>Siap Membuat Undangan Digital Anda?</h2>
+      <p>Buat momen berharga Anda menjadi lebih berkesan bersama IK Production.</p>
+      <a href="/register.html" class="btn-primary">Daftar Sekarang</a>
+    </div>
+  </section>
+
+  <!-- 10. FOOTER -->
+  <footer class="footer">
+    <div class="footer-container">
+      <div class="footer-brand">
+        <img src="/assets/logo/logo-ikpro.png" alt="IK Production Logo" class="footer-logo">
+        <p>ik-pro.my.id - Platform Penyedia Jasa Undangan Digital Premium, Praktis, dan Elegant.</p>
+      </div>
+      <div class="footer-links">
+        <h4>Navigasi</h4>
+        <a href="#beranda">Beranda</a>
+        <a href="#fitur">Fitur</a>
+        <a href="#tema">Tema</a>
+        <a href="#harga">Harga</a>
+      </div>
+      <div class="footer-social">
+        <h4>Ikuti Kami</h4>
+        <p>IK Production Web Services</p>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 ik-pro.my.id. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script type="module" src="/js/pages/landing.js"></script>
+</body>
 </html>
