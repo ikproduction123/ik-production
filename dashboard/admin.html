@@ -1,241 +1,318 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Admin - IK Production</title>
-  <link rel="stylesheet" href="/css/main.css">
-  <link rel="stylesheet" href="/css/dashboard.css">
-  <link rel="stylesheet" href="/css/components.css">
-</head>
-<body class="dashboard-body">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Dashboard Admin - IK Production</title>
+        <link rel="stylesheet" href="/css/main.css" />
+        <link rel="stylesheet" href="/css/dashboard.css" />
+        <link rel="stylesheet" href="/css/components.css" />
+    </head>
+    <body class="dashboard-body">
+        <!-- SIDEBAR ADMIN -->
+        <aside class="sidebar">
+            <div class="sidebar-brand">
+                <img
+                    src="/assets/logo/logo-ikpro.png"
+                    alt="IK Pro Admin Logo"
+                    class="brand-logo"
+                />
+                <span>IK-PRO ADMIN</span>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-item active" data-tab="admin-transactions">
+                    Verifikasi Transaksi
+                </button>
+                <button class="nav-item" data-tab="admin-themes">
+                    Kelola Tema
+                </button>
+                <button class="nav-item" data-tab="admin-packages">
+                    Kelola Paket & Harga
+                </button>
+                <button class="nav-item" data-tab="admin-musics">
+                    Pustaka Musik
+                </button>
+                <button class="nav-item" data-tab="admin-quotes">
+                    Kutipan / Quotes
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <button id="btn-admin-logout" class="btn-logout">Keluar</button>
+            </div>
+        </aside>
 
-  <!-- SIDEBAR ADMIN -->
-  <aside class="sidebar">
-    <div class="sidebar-brand">
-      <img src="/assets/logo/logo-ikpro.png" alt="IK Pro Admin Logo" class="brand-logo">
-      <span>IK-PRO ADMIN</span>
-    </div>
-    <nav class="sidebar-nav">
-      <button class="nav-item active" data-tab="admin-transactions">Verifikasi Transaksi</button>
-      <button class="nav-item" data-tab="admin-themes">Kelola Tema</button>
-      <button class="nav-item" data-tab="admin-packages">Kelola Paket & Harga</button>
-      <button class="nav-item" data-tab="admin-musics">Pustaka Musik</button>
-      <button class="nav-item" data-tab="admin-quotes">Kutipan / Quotes</button>
-    </nav>
-    <div class="sidebar-footer">
-      <button id="btn-admin-logout" class="btn-logout">Keluar</button>
-    </div>
-  </aside>
+        <!-- MAIN CONTENT ADMIN -->
+        <main class="main-content">
+            <header class="top-header">
+                <h2 id="admin-page-title">Verifikasi Transaksi Client</h2>
+                <div class="user-profile-widget">
+                    <span class="badge-role">ADMINISTRATOR</span>
+                </div>
+            </header>
 
-  <!-- MAIN CONTENT ADMIN -->
-  <main class="main-content">
-    
-    <header class="top-header">
-      <h2 id="admin-page-title">Verifikasi Transaksi Client</h2>
-      <div class="user-profile-widget">
-        <span class="badge-role">ADMINISTRATOR</span>
-      </div>
-    </header>
+            <!-- TAB 1: VERIFIKASI TRANSAKSI -->
+            <section class="tab-content active" id="tab-admin-transactions">
+                <h3>Daftar Pembayaran Masuk</h3>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Paket</th>
+                                <th>Jumlah</th>
+                                <th>Bukti Bayar</th>
+                                <th>Status</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-transactions-table">
+                            <!-- Di-render via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-    <!-- TAB 1: VERIFIKASI TRANSAKSI -->
-    <section class="tab-content active" id="tab-admin-transactions">
-      <h3>Daftar Pembayaran Masuk</h3>
-      <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Client</th>
-              <th>Paket</th>
-              <th>Jumlah</th>
-              <th>Bukti Bayar</th>
-              <th>Status</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="admin-transactions-table">
-            <!-- Di-render via JS -->
-          </tbody>
-        </table>
-      </div>
-    </section>
+            <!-- TAB 2: KELOLA TEMA -->
+            <section class="tab-content" id="tab-admin-themes">
+                <div class="action-bar">
+                    <h3>Daftar Tema Undangan</h3>
+                    <button id="btn-open-modal-theme" class="btn-primary">
+                        + Tambah Tema Baru
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Thumbnail</th>
+                                <th>Nama Tema</th>
+                                <th>Paket</th>
+                                <th>Kategori</th>
+                                <th>Folder Path</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-themes-table">
+                            <!-- Di-render via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-    <!-- TAB 2: KELOLA TEMA -->
-    <section class="tab-content" id="tab-admin-themes">
-      <div class="action-bar">
-        <h3>Daftar Tema Undangan</h3>
-        <button id="btn-open-modal-theme" class="btn-primary">+ Tambah Tema Baru</button>
-      </div>
-      <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Thumbnail</th>
-              <th>Nama Tema</th>
-              <th>Paket</th>
-              <th>Kategori</th>
-              <th>Folder Path</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="admin-themes-table">
-            <!-- Di-render via JS -->
-          </tbody>
-        </table>
-      </div>
-    </section>
+            <!-- TAB 3: KELOLA PAKET & HARGA -->
+            <section class="tab-content" id="tab-admin-packages">
+                <h3>Pengaturan Paket & Fitur</h3>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Nama Paket</th>
+                                <th>Slug</th>
+                                <th>Harga (IDR)</th>
+                                <th>Max Undangan</th>
+                                <th>Masa Aktif (Hari)</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-packages-table">
+                            <!-- Di-render via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-    <!-- TAB 3: KELOLA PAKET & HARGA -->
-    <section class="tab-content" id="tab-admin-packages">
-      <h3>Pengaturan Paket & Fitur</h3>
-      <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Nama Paket</th>
-              <th>Slug</th>
-              <th>Harga (IDR)</th>
-              <th>Max Undangan</th>
-              <th>Masa Aktif (Hari)</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="admin-packages-table">
-            <!-- Di-render via JS -->
-          </tbody>
-        </table>
-      </div>
-    </section>
+            <!-- TAB 4: PUSTAKA MUSIK -->
+            <section class="tab-content" id="tab-admin-musics">
+                <div class="action-bar">
+                    <h3>Pustaka Lagu Backsound</h3>
+                    <button id="btn-open-modal-music" class="btn-primary">
+                        + Upload Musik Baru
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Judul Lagu</th>
+                                <th>Artis</th>
+                                <th>Preview Audio</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-musics-table">
+                            <!-- Di-render via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-    <!-- TAB 4: PUSTAKA MUSIK -->
-    <section class="tab-content" id="tab-admin-musics">
-      <div class="action-bar">
-        <h3>Pustaka Lagu Backsound</h3>
-        <button id="btn-open-modal-music" class="btn-primary">+ Upload Musik Baru</button>
-      </div>
-      <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Judul Lagu</th>
-              <th>Artis</th>
-              <th>Preview Audio</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="admin-musics-table">
-            <!-- Di-render via JS -->
-          </tbody>
-        </table>
-      </div>
-    </section>
+            <!-- TAB 5: KUTIPAN / QUOTES -->
+            <section class="tab-content" id="tab-admin-quotes">
+                <div class="action-bar">
+                    <h3>Pustaka Kutipan / Quotes</h3>
+                    <button id="btn-open-modal-quote" class="btn-primary">
+                        + Tambah Quote Baru
+                    </button>
+                </div>
+                <div class="table-container">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Isi Kutipan</th>
+                                <th>Sumber</th>
+                                <th>Kategori</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody id="admin-quotes-table">
+                            <!-- Di-render via JS -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
 
-    <!-- TAB 5: KUTIPAN / QUOTES -->
-    <section class="tab-content" id="tab-admin-quotes">
-      <div class="action-bar">
-        <h3>Pustaka Kutipan / Quotes</h3>
-        <button id="btn-open-modal-quote" class="btn-primary">+ Tambah Quote Baru</button>
-      </div>
-      <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Isi Kutipan</th>
-              <th>Sumber</th>
-              <th>Kategori</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="admin-quotes-table">
-            <!-- Di-render via JS -->
-          </tbody>
-        </table>
-      </div>
-    </section>
-
-  </main>
-  
-    <!-- MODAL TEMA -->
-  <div id="modal-theme" class="modal">
-    <div class="modal-content">
-      <span class="close-modal" id="close-theme-modal">&times;</span>
-      <h3>Tambah Tema Baru</h3>
-      <form id="form-add-theme">
-        <div class="form-group">
-          <label>Nama Tema</label>
-          <input type="text" id="theme-name" class="form-control" placeholder="Contoh: Velvet Garden" required>
+        <!-- MODAL TEMA -->
+        <div id="modal-theme" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" id="close-theme-modal">&times;</span>
+                <h3>Tambah Tema Baru</h3>
+                <form id="form-add-theme">
+                    <div class="form-group">
+                        <label>Nama Tema</label>
+                        <input
+                            type="text"
+                            id="theme-name"
+                            class="form-control"
+                            placeholder="Contoh: Velvet Garden"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label>Slug Tema</label>
+                        <input
+                            type="text"
+                            id="theme-slug"
+                            class="form-control"
+                            placeholder="Contoh: velvet-garden"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label>Pilih Paket</label>
+                        <select
+                            id="theme-package-id"
+                            class="form-control"
+                            required
+                        ></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Kategori</label>
+                        <select
+                            id="theme-category"
+                            class="form-control"
+                            required
+                        >
+                            <option value="wedding">Pernikahan</option>
+                            <option value="other">Acara Lain</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Folder Path</label>
+                        <input
+                            type="text"
+                            id="theme-folder-path"
+                            class="form-control"
+                            placeholder="package/motion/velvet-garden/"
+                            required
+                        />
+                    </div>
+<div class="form-group">
+  <label>File Gambar Thumbnail</label>
+  <input type="file" id="theme-thumbnail-file" class="form-control" accept="image/png, image/jpeg, image/webp" required>
+</div>
+                    <button type="submit" class="btn-primary btn-full">
+                        Simpan Tema
+                    </button>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-          <label>Slug Tema</label>
-          <input type="text" id="theme-slug" class="form-control" placeholder="Contoh: velvet-garden" required>
-        </div>
-        <div class="form-group">
-          <label>Pilih Paket</label>
-          <select id="theme-package-id" class="form-control" required></select>
-        </div>
-        <div class="form-group">
-          <label>Kategori</label>
-          <select id="theme-category" class="form-control" required>
-            <option value="wedding">Pernikahan</option>
-            <option value="other">Acara Lain</option>
-          </select>
-        </div>
-        <div class="form-group">
-          <label>Folder Path</label>
-          <input type="text" id="theme-folder-path" class="form-control" placeholder="package/motion/velvet-garden/" required>
-        </div>
-        <div class="form-group">
-          <label>URL Thumbnail Gambar</label>
-          <input type="url" id="theme-thumbnail" class="form-control" placeholder="https://..." required>
-        </div>
-        <button type="submit" class="btn-primary btn-full">Simpan Tema</button>
-      </form>
-    </div>
-  </div>
 
-  <!-- MODAL MUSIK -->
-  <div id="modal-music" class="modal">
-    <div class="modal-content">
-      <span class="close-modal" id="close-music-modal">&times;</span>
-      <h3>Upload Musik Backsound</h3>
-      <form id="form-add-music">
-        <div class="form-group">
-          <label>Judul Lagu</label>
-          <input type="text" id="music-title" class="form-control" required>
+        <!-- MODAL MUSIK -->
+        <div id="modal-music" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" id="close-music-modal">&times;</span>
+                <h3>Upload Musik Backsound</h3>
+                <form id="form-add-music">
+                    <div class="form-group">
+                        <label>Judul Lagu</label>
+                        <input
+                            type="text"
+                            id="music-title"
+                            class="form-control"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label>Artis / Penyanyi</label>
+                        <input
+                            type="text"
+                            id="music-artist"
+                            class="form-control"
+                            required
+                        />
+                    </div>
+                    <div class="form-group">
+                        <label>File Audio (MP3)</label>
+                        <input
+                            type="file"
+                            id="music-file"
+                            class="form-control"
+                            accept="audio/mp3,audio/mpeg"
+                            required
+                        />
+                    </div>
+                    <button
+                        type="submit"
+                        class="btn-primary btn-full"
+                        id="btn-save-music"
+                    >
+                        Upload & Simpan
+                    </button>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-          <label>Artis / Penyanyi</label>
-          <input type="text" id="music-artist" class="form-control" required>
-        </div>
-        <div class="form-group">
-          <label>File Audio (MP3)</label>
-          <input type="file" id="music-file" class="form-control" accept="audio/mp3,audio/mpeg" required>
-        </div>
-        <button type="submit" class="btn-primary btn-full" id="btn-save-music">Upload & Simpan</button>
-      </form>
-    </div>
-  </div>
 
-  <!-- MODAL QUOTE -->
-  <div id="modal-quote" class="modal">
-    <div class="modal-content">
-      <span class="close-modal" id="close-quote-modal">&times;</span>
-      <h3>Tambah Kutipan Baru</h3>
-      <form id="form-add-quote">
-        <div class="form-group">
-          <label>Isi Kutipan / Kata-kata</label>
-          <textarea id="quote-content" class="form-control" required></textarea>
+        <!-- MODAL QUOTE -->
+        <div id="modal-quote" class="modal">
+            <div class="modal-content">
+                <span class="close-modal" id="close-quote-modal">&times;</span>
+                <h3>Tambah Kutipan Baru</h3>
+                <form id="form-add-quote">
+                    <div class="form-group">
+                        <label>Isi Kutipan / Kata-kata</label>
+                        <textarea
+                            id="quote-content"
+                            class="form-control"
+                            required
+                        ></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Sumber (Misal: Ar-Rum: 21)</label>
+                        <input
+                            type="text"
+                            id="quote-source"
+                            class="form-control"
+                            required
+                        />
+                    </div>
+                    <button type="submit" class="btn-primary btn-full">
+                        Simpan Quote
+                    </button>
+                </form>
+            </div>
         </div>
-        <div class="form-group">
-          <label>Sumber (Misal: Ar-Rum: 21)</label>
-          <input type="text" id="quote-source" class="form-control" required>
-        </div>
-        <button type="submit" class="btn-primary btn-full">Simpan Quote</button>
-      </form>
-    </div>
-  </div>
 
-
-  <script type="module" src="/js/pages/admin-dashboard.js"></script>
-</body>
+        <script type="module" src="/js/pages/admin-dashboard.js"></script>
+    </body>
 </html>
