@@ -27,7 +27,7 @@
             "destination": "/dashboard/admin.html"
         },
         {
-            "source": "/:slug((?!css|js|assets|dashboard|package|login|register|forgot-password|reset-password).*)",
+            "source": "/:slug",
             "destination": "/package/motion/velvet-garden/index.html"
         }
     ]
