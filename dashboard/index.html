@@ -156,6 +156,101 @@
     </section>
 
   </main>
+  
+  <!-- MODAL BUAT UNDANGAN BARU -->
+<div id="modal-invitation" class="modal">
+  <div class="modal-content" style="max-width: 650px; max-height: 90vh; overflow-y: auto;">
+    <span class="close-modal" id="close-invitation-modal">&times;</span>
+    <h3>Buat Undangan Digital Baru</h3>
+    <form id="form-create-invitation">
+      
+      <!-- Pilih Tema -->
+      <div class="form-group">
+        <label>Pilih Tema Undangan</label>
+        <select id="inv-theme-id" class="form-control" required></select>
+      </div>
+
+      <!-- Informasi Utama -->
+      <div class="form-group">
+        <label>Judul Undangan / Meta Title</label>
+        <input type="text" id="inv-title" class="form-control" placeholder="Contoh: The Wedding of Anisa & Bagas" required>
+      </div>
+
+      <div class="form-group">
+        <label>URL Custom Slug Link</label>
+        <input type="text" id="inv-slug" class="form-control" placeholder="Contoh: anisa-bagas (tanpa spasi)" required>
+      </div>
+
+      <div class="form-group">
+        <label>Tanggal Utama Acara</label>
+        <input type="date" id="inv-date" class="form-control" required>
+      </div>
+
+      <hr class="divider" style="margin: 20px 0;">
+      <h4>Data Mempelai Pria (Groom)</h4>
+
+      <div class="form-group">
+        <label>Nama Lengkap Mempelai Pria</label>
+        <input type="text" id="groom-full-name" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label>Nama Panggilan Pria</label>
+        <input type="text" id="groom-short-name" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label>Nama Ayah Pria</label>
+        <input type="text" id="groom-father" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>Nama Ibu Pria</label>
+        <input type="text" id="groom-mother" class="form-control">
+      </div>
+
+      <hr class="divider" style="margin: 20px 0;">
+      <h4>Data Mempelai Wanita (Bride)</h4>
+
+      <div class="form-group">
+        <label>Nama Lengkap Mempelai Wanita</label>
+        <input type="text" id="bride-full-name" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label>Nama Panggilan Wanita</label>
+        <input type="text" id="bride-short-name" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label>Nama Ayah Wanita</label>
+        <input type="text" id="bride-father" class="form-control">
+      </div>
+      <div class="form-group">
+        <label>Nama Ibu Wanita</label>
+        <input type="text" id="bride-mother" class="form-control">
+      </div>
+
+      <hr class="divider" style="margin: 20px 0;">
+      <h4>Detail Acara (Akad / Resepsi)</h4>
+
+      <div class="form-group">
+        <label>Nama Acara</label>
+        <input type="text" id="event-title" class="form-control" placeholder="Contoh: Akad Nikah & Resepsi" required>
+      </div>
+      <div class="form-group">
+        <label>Nama Lokasi / Gedung</label>
+        <input type="text" id="event-venue" class="form-control" required>
+      </div>
+      <div class="form-group">
+        <label>Alamat Lengkap</label>
+        <textarea id="event-address" class="form-control" required></textarea>
+      </div>
+      <div class="form-group">
+        <label>Jam Acara</label>
+        <input type="text" id="event-time" class="form-control" placeholder="Contoh: 08:00 WIB - Selesai" required>
+      </div>
+
+      <button type="submit" class="btn-primary btn-full" id="btn-save-invitation" style="margin-top: 20px;">Buat & Simpan Undangan</button>
+    </form>
+  </div>
+</div>
+
 
   <script type="module" src="/js/pages/client-dashboard.js"></script>
 </body>
