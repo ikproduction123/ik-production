@@ -6,39 +6,118 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <title>Dashboard Admin — IK Production</title>
+  <link rel="stylesheet" href="/assets/css/admin.css">
 </head>
 <body>
-  <main>
+  <header class="admin-header">
+    <a href="/" class="admin-brand">IK <span>Production</span></a>
+    <button id="logoutButton" type="button">Keluar</button>
+  </header>
+
+  <main class="admin-main">
     <h1>Dashboard Admin</h1>
     <p id="welcomeMessage">Memeriksa hak akses...</p>
 
-    <section>
-      <h2>Manajemen SaaS</h2>
-      <ul>
-        <li>Data pelanggan</li>
-        <li>Paket dan harga</li>
-        <li>Katalog tema</li>
-        <li>Konfirmasi pembayaran</li>
-        <li>Langganan pelanggan</li>
-      </ul>
-      <p>Fitur manajemen akan kita implementasikan bertahap.</p>
+    <div id="adminMessage" class="admin-message" role="status" hidden></div>
+
+    <section class="admin-panel">
+      <h2>Manajemen Paket</h2>
+      <p>Kelola harga, batas undangan, dan status paket tahunan.</p>
+
+      <form id="planForm">
+        <input type="hidden" id="planId">
+
+        <div class="admin-form">
+          <div class="admin-field">
+            <label for="planCode">Kode paket</label>
+            <select id="planCode" required>
+              <option value="basic">Basic</option>
+              <option value="premium">Premium</option>
+              <option value="luxury">Luxury</option>
+              <option value="motion">Motion</option>
+              <option value="acara-lain">Acara Lain</option>
+              <option value="all-in-one">All In One</option>
+            </select>
+          </div>
+
+          <div class="admin-field">
+            <label for="planName">Nama paket</label>
+            <input id="planName" required maxlength="100">
+          </div>
+
+          <div class="admin-field">
+            <label for="planPrice">Harga (rupiah)</label>
+            <input id="planPrice" type="number" min="0"
+              step="1000" required>
+          </div>
+
+          <div class="admin-field">
+            <label for="invitationLimit">Batas undangan</label>
+            <input id="invitationLimit" type="number" min="1"
+              step="1" required>
+          </div>
+
+          <div class="admin-field">
+            <label for="durationDays">Durasi (hari)</label>
+            <input id="durationDays" type="number" value="365"
+              min="365" max="365" required>
+          </div>
+
+          <div class="admin-field">
+            <label for="displayOrder">Urutan tampil</label>
+            <input id="displayOrder" type="number" value="1"
+              min="0" step="1" required>
+          </div>
+
+          <div class="admin-field full">
+            <label for="planDescription">Deskripsi</label>
+            <textarea id="planDescription" maxlength="1000"></textarea>
+          </div>
+
+          <div class="admin-field full">
+            <label class="admin-checkbox">
+              <input id="planActive" type="checkbox" checked>
+              Paket aktif dan ditampilkan kepada pelanggan
+            </label>
+          </div>
+        </div>
+
+        <div class="admin-actions">
+          <button class="admin-button" id="savePlanButton" type="submit">
+            Simpan Paket
+          </button>
+          <button class="admin-button secondary" id="cancelEditButton"
+            type="button">
+            Batal / Paket Baru
+          </button>
+        </div>
+      </form>
     </section>
 
-    <button id="logoutButton" type="button">Keluar</button>
+    <section class="admin-panel">
+      <h2>Daftar Paket</h2>
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Paket</th>
+              <th>Harga</th>
+              <th>Batas</th>
+              <th>Durasi</th>
+              <th>Status</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="plansTableBody">
+            <tr>
+              <td colspan="6">Memuat paket...</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
   </main>
 
-  <script type="module">
-    import { requireRole, setupLogout } from "/assets/js/auth-guard.js";
-
-    setupLogout();
-
-    const result = await requireRole(["admin"]);
-
-    if (result) {
-      const name = result.profile.full_name || result.user.email || "Admin";
-      document.getElementById("welcomeMessage").textContent =
-        `Selamat datang, ${name}!`;
-    }
-  </script>
+  <script type="module" src="/assets/js/admin.js"></script>
 </body>
 </html>
