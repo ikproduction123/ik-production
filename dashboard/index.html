@@ -5,38 +5,82 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
+
   <title>Dashboard Pelanggan — IK Production</title>
+
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
 </head>
 <body>
-  <main>
-    <h1>Dashboard Pelanggan</h1>
-    <p id="welcomeMessage">Memeriksa akun...</p>
+  <div class="dashboard-layout">
+    <header class="dashboard-header">
+      <a href="/" class="dashboard-brand">
+        IK <span>Production</span>
+      </a>
 
-    <section>
-      <h2>Undangan Saya</h2>
-      <p>Daftar undangan akan ditampilkan pada tahap berikutnya.</p>
-    </section>
+      <button id="logoutButton" type="button">Keluar</button>
+    </header>
 
-    <section>
-      <h2>Paket Saya</h2>
-      <p>Informasi langganan akan ditampilkan setelah integrasi data.</p>
-    </section>
+    <main class="dashboard-main">
+      <section class="dashboard-heading">
+        <h1>Dashboard Pelanggan</h1>
+        <p id="welcomeMessage">Memuat data akun...</p>
+      </section>
 
-    <button id="logoutButton" type="button">Keluar</button>
-  </main>
+      <div id="dashboardMessage" class="dashboard-message">
+        Mengambil data dari Supabase...
+      </div>
 
-  <script type="module">
-    import { requireRole, setupLogout } from "/assets/js/auth-guard.js";
+      <div id="dashboardContent" hidden>
+        <section class="dashboard-grid">
+          <article class="dashboard-card">
+            <h2>Profil Saya</h2>
+            <p class="dashboard-label">Nama lengkap</p>
+            <p class="dashboard-value" id="profileName">-</p>
 
-    setupLogout();
+            <p class="dashboard-label" style="margin-top:16px">Email</p>
+            <p id="profileEmail">-</p>
 
-    const result = await requireRole(["customer"]);
+            <p class="dashboard-label" style="margin-top:16px">Nomor telepon</p>
+            <p id="profilePhone">-</p>
+          </article>
 
-    if (result) {
-      const name = result.profile.full_name || result.user.email || "Pelanggan";
-      document.getElementById("welcomeMessage").textContent =
-        `Selamat datang, ${name}!`;
-    }
-  </script>
+          <article class="dashboard-card">
+            <h2>Paket Saya</h2>
+            <p class="dashboard-label">Nama paket</p>
+            <p class="dashboard-value" id="planName">Belum berlangganan</p>
+
+            <p class="dashboard-label" style="margin-top:16px">Status langganan</p>
+            <p><span id="subscriptionStatus" class="status">Belum ada paket</span></p>
+
+            <p class="dashboard-detail" id="subscriptionDetails">
+              Pilih paket untuk mulai membuat undangan.
+            </p>
+
+            <p class="dashboard-label" style="margin-top:16px">Batas undangan</p>
+            <p id="invitationLimit">-</p>
+          </article>
+        </section>
+
+        <section class="dashboard-section dashboard-card">
+          <div class="dashboard-section-header">
+            <h2>Undangan Saya</h2>
+            <a class="btn-secondary" href="/#tema">Lihat Tema</a>
+          </div>
+
+          <p class="dashboard-detail" id="invitationCount">
+            Memuat jumlah undangan...
+          </p>
+
+          <div id="invitationList" class="invitation-list"></div>
+        </section>
+      </div>
+    </main>
+
+    <footer class="dashboard-footer">
+      &copy; IK Production — Undangan Digital
+    </footer>
+  </div>
+
+  <script type="module" src="/assets/js/dashboard.js"></script>
 </body>
 </html>

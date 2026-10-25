@@ -1,0 +1,263 @@
+
+:root {
+  --dashboard-navy: #17233d;
+  --dashboard-gold: #c8a45d;
+  --dashboard-text: #263247;
+  --dashboard-muted: #778196;
+  --dashboard-border: #e4e8ef;
+  --dashboard-bg: #f5f7fb;
+  --dashboard-white: #ffffff;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: var(--dashboard-bg);
+  color: var(--dashboard-text);
+  font-family: Arial, sans-serif;
+}
+
+.dashboard-layout {
+  min-height: 100vh;
+}
+
+.dashboard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 5%;
+  background: var(--dashboard-white);
+  border-bottom: 1px solid var(--dashboard-border);
+}
+
+.dashboard-brand {
+  color: var(--dashboard-navy);
+  font-size: 20px;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.dashboard-brand span {
+  color: var(--dashboard-gold);
+}
+
+.dashboard-header button,
+.btn-primary,
+.btn-secondary {
+  display: inline-block;
+  padding: 11px 16px;
+  border: 0;
+  border-radius: 9px;
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.dashboard-header button,
+.btn-secondary {
+  background: #eef1f6;
+  color: var(--dashboard-navy);
+}
+
+.btn-primary {
+  background: var(--dashboard-navy);
+  color: white;
+}
+
+.dashboard-main {
+  width: min(1120px, 90%);
+  margin: 32px auto;
+}
+
+.dashboard-heading {
+  margin-bottom: 26px;
+}
+
+.dashboard-heading h1 {
+  margin: 0 0 8px;
+  font-size: clamp(25px, 4vw, 34px);
+  color: var(--dashboard-navy);
+}
+
+.dashboard-heading p {
+  margin: 0;
+  color: var(--dashboard-muted);
+  overflow-wrap: anywhere;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.dashboard-card {
+  min-width: 0;
+  padding: 22px;
+  background: var(--dashboard-white);
+  border: 1px solid var(--dashboard-border);
+  border-radius: 16px;
+  box-shadow: 0 5px 18px rgb(23 35 61 / 4%);
+}
+
+.dashboard-card h2 {
+  margin: 0 0 18px;
+  color: var(--dashboard-navy);
+  font-size: 18px;
+}
+
+.dashboard-label {
+  margin-bottom: 7px;
+  color: var(--dashboard-muted);
+  font-size: 13px;
+}
+
+.dashboard-value {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  overflow-wrap: anywhere;
+}
+
+.dashboard-detail {
+  margin-top: 10px;
+  color: var(--dashboard-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.dashboard-section {
+  margin-top: 22px;
+}
+
+.dashboard-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.dashboard-section-header h2 {
+  margin: 0;
+  color: var(--dashboard-navy);
+  font-size: 20px;
+}
+
+.invitation-list {
+  display: grid;
+  gap: 14px;
+}
+
+.invitation-item {
+  padding: 18px;
+  border: 1px solid var(--dashboard-border);
+  border-radius: 12px;
+  background: white;
+  overflow-wrap: anywhere;
+}
+
+.invitation-item h3 {
+  margin: 0 0 10px;
+  color: var(--dashboard-navy);
+}
+
+.invitation-item p {
+  margin: 6px 0;
+  color: var(--dashboard-muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.invitation-link {
+  display: inline-block;
+  margin-top: 12px;
+  color: #76551b;
+  font-size: 14px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.status {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 20px;
+  background: #eef1f6;
+  color: var(--dashboard-navy);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.status-active,
+.message-success {
+  color: #176b43;
+}
+
+.status-active {
+  background: #e5f6ed;
+}
+
+.status-pending {
+  color: #8a5a00;
+  background: #fff2d6;
+}
+
+.status-expired,
+.status-cancelled,
+.status-rejected {
+  color: #a12d2d;
+  background: #fde9e9;
+}
+
+.dashboard-message {
+  padding: 14px;
+  border-radius: 10px;
+  background: #eef1f6;
+  color: var(--dashboard-muted);
+  line-height: 1.6;
+}
+
+.dashboard-error {
+  color: #a12d2d;
+  background: #fde9e9;
+}
+
+.dashboard-footer {
+  padding: 28px 5%;
+  text-align: center;
+  color: var(--dashboard-muted);
+  font-size: 13px;
+}
+
+@media (max-width: 640px) {
+  .dashboard-header {
+    padding: 16px 5%;
+  }
+
+  .dashboard-brand {
+    font-size: 17px;
+  }
+
+  .dashboard-header button {
+    padding: 10px 12px;
+  }
+
+  .dashboard-main {
+    width: 92%;
+    margin: 24px auto;
+  }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-card {
+    padding: 18px;
+  }
+}
