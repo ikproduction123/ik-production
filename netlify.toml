@@ -1,0 +1,10 @@
+
+[build]
+  publish = "."
+  command = ""
+
+# Fallback untuk URL undangan yang belum memiliki file fisik
+[[redirects]]
+  from = "/*"
+  to = "/invitation/index.html"
+  status = 200

@@ -1,0 +1,58 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f8f4ef">
+  <meta name="description" content="Undangan digital">
+  <title>Undangan Digital | IK Production</title>
+  <link rel="stylesheet" href="/assets/css/invitation.css">
+</head>
+<body>
+  <main class="invitation" id="invitation">
+    <section class="cover">
+      <p class="eyebrow">UNDANGAN</p>
+      <h1 id="eventTitle">Memuat undangan...</h1>
+      <p class="intro" id="guestGreeting"></p>
+      <p class="event-date" id="eventDate"></p>
+      <button id="openInvitation" type="button" hidden>
+        Buka Undangan
+      </button>
+    </section>
+
+    <section class="details" id="eventDetails" hidden>
+      <p class="eyebrow">DENGAN HORMAT</p>
+      <h2 id="hostNames"></h2>
+      <p id="eventDescription"></p>
+
+      <div class="detail-card">
+        <h3>Waktu dan Tempat</h3>
+        <p id="venueName"></p>
+        <p id="venueAddress"></p>
+        <a id="mapsLink" target="_blank"
+           rel="noopener noreferrer" hidden>
+          Lihat lokasi di Google Maps
+        </a>
+      </div>
+
+      <p class="guest-note" id="guestName"></p>
+    </section>
+
+    <section class="state-message" id="loadingMessage">
+      Sedang memuat undangan...
+    </section>
+    <section class="state-message error" id="errorMessage" hidden>
+      <h2>Undangan belum tersedia</h2>
+      <p>Periksa kembali tautan undangan atau hubungi penyelenggara.</p>
+    </section>
+  </main>
+
+  <footer>
+    Dibuat dengan ❤️ oleh IK Production
+  </footer>
+
+  <script type="module"
+    src="/assets/js/public-invitation.js"></script>
+</body>
+</html>
