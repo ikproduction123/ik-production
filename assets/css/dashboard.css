@@ -461,3 +461,35 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+
+.invitation-setting-card {
+  padding: 18px;
+  margin-bottom: 14px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.invitation-setting-card h3 {
+  margin-top: 0;
+  overflow-wrap: anywhere;
+}
+
+.invitation-setting-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.invitation-setting-actions button {
+  padding: 10px 16px;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.invitation-setting-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}

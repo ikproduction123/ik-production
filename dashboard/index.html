@@ -91,6 +91,28 @@
 
                         <div id="invitationList" class="invitation-list"></div>
                     </section>
+
+                    <section
+                        class="dashboard-section"
+                        id="invitationSettingsSection"
+                    >
+                        <div class="section-heading">
+                            <div>
+                                <h2>Pengaturan Publikasi</h2>
+                                <p>Kelola status dan tautan undangan Anda.</p>
+                            </div>
+                        </div>
+
+                        <div
+                            id="invitationSettingsMessage"
+                            role="status"
+                            aria-live="polite"
+                        ></div>
+
+                        <div id="invitationSettingsList">
+                            <p>Memuat undangan...</p>
+                        </div>
+                    </section>
                 </div>
 
                 <section class="dashboard-section" id="plansSection">
@@ -265,11 +287,13 @@
         </div>
 
         <script type="module" src="/assets/js/dashboard.js"></script>
-        
-        
-<script type="module" src="/assets/js/client-plans.js"></script>
 
+        <script type="module" src="/assets/js/client-plans.js"></script>
 
         <script type="module" src="/assets/js/create-invitation.js"></script>
+        
+        
+<script type="module" src="/assets/js/invitation-settings.js"></script>
+
     </body>
 </html>
