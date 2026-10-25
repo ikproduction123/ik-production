@@ -113,6 +113,97 @@
                             <p>Memuat undangan...</p>
                         </div>
                     </section>
+
+                    <section
+                        class="dashboard-section"
+                        id="invitationEditorSection"
+                    >
+                        <div class="section-heading">
+                            <div>
+                                <h2>Edit Konten Undangan</h2>
+                                <p>
+                                    Pilih undangan, ubah konten, lalu simpan
+                                    perubahan.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div
+                            id="editorMessage"
+                            role="status"
+                            aria-live="polite"
+                        ></div>
+
+                        <form id="invitationEditorForm">
+                            <div class="form-group">
+                                <label for="editorInvitation"
+                                    >Pilih undangan</label
+                                >
+                                <select id="editorInvitation" required>
+                                    <option value="">Memuat undangan...</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editorHeadline">Judul sampul</label>
+                                <input
+                                    id="editorHeadline"
+                                    maxlength="150"
+                                    placeholder="The Wedding Of"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editorOpening">Pesan pembuka</label>
+                                <textarea
+                                    id="editorOpening"
+                                    rows="3"
+                                    maxlength="2000"
+                                ></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editorStoryTitle"
+                                    >Judul Love Story</label
+                                >
+                                <input
+                                    id="editorStoryTitle"
+                                    maxlength="150"
+                                    placeholder="Kisah Kami"
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editorStoryDescription"
+                                    >Cerita pasangan</label
+                                >
+                                <textarea
+                                    id="editorStoryDescription"
+                                    rows="5"
+                                    maxlength="5000"
+                                    placeholder="Tuliskan cerita perjalanan kalian..."
+                                ></textarea>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="editorClosing">Pesan penutup</label>
+                                <textarea
+                                    id="editorClosing"
+                                    rows="3"
+                                    maxlength="2000"
+                                ></textarea>
+                            </div>
+
+                            <div class="editor-actions">
+                                <button type="submit" id="saveEditorButton">
+                                    Simpan Perubahan
+                                </button>
+                                <button type="button" id="previewEditorButton">
+                                    Pratinjau Undangan
+                                </button>
+                            </div>
+                        </form>
+                    </section>
                 </div>
 
                 <section class="dashboard-section" id="plansSection">
@@ -291,9 +382,10 @@
         <script type="module" src="/assets/js/client-plans.js"></script>
 
         <script type="module" src="/assets/js/create-invitation.js"></script>
+
+        <script type="module" src="/assets/js/invitation-settings.js"></script>
         
-        
-<script type="module" src="/assets/js/invitation-settings.js"></script>
+<script type="module" src="/assets/js/invitation-editor.js"></script>
 
     </body>
 </html>

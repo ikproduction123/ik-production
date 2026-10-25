@@ -85,3 +85,38 @@ async function loadWedding() {
 }
 
 loadWedding();
+
+
+const content = data.content || {};
+const cover = content.cover || {};
+const story = content.story || {};
+
+const headline = document.getElementById("coverHeadline");
+if (headline) {
+  headline.textContent = cover.headline || "The Wedding Of";
+}
+
+const opening = document.getElementById("openingMessage");
+if (opening) {
+  opening.textContent = cover.opening_message || "";
+}
+
+const storyTitle = document.getElementById("storyTitle");
+if (storyTitle) {
+  storyTitle.textContent = story.title || "Kisah Kami";
+}
+
+const storyDescription = document.getElementById("storyDescription");
+if (storyDescription) {
+  storyDescription.textContent = story.description || "";
+}
+
+const storySection = document.getElementById("loveStory");
+if (storySection) {
+  storySection.hidden = story.enabled === false;
+}
+
+const closing = document.getElementById("closingMessage");
+if (closing) {
+  closing.textContent = content.closing_message || "";
+}
