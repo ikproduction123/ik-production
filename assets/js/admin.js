@@ -268,8 +268,6 @@ form.addEventListener("submit", async event => {
 
 $("cancelEditButton").addEventListener("click", resetForm);
 
-
-
 /* =========================================
    MANAJEMEN KATALOG TEMA
 ========================================= */
@@ -736,33 +734,101 @@ async function initAdminPayments() {
         loadingRow.append(loadingCell);
         tbody.append(loadingRow);
 
-        const { data, error } = await supabase
-            .from("payments")
-            .select(
-                `
-        id,
-        amount,
-        status,
-        proof_path,
-        admin_note,
-        created_at,
-        subscription:subscriptions!inner (
-          id,
-          user_id,
-          status,
-          profile:profiles (
-            full_name
-          ),
-          plan:plans (
-            name
-          )
-        )
-      `
-            )
-            .eq("status", "pending")
-            .order("created_at", { ascending: true });
+        
+const { data: payments, error: paymentError } = await supabase
+  .from("payments")
+  .select(`
+    id,
+    amount,
+    status,
+    proof_path,
+    admin_note,
+    created_at,
+    subscription_id
+  `)
+  .eq("status", "pending")
+  .order("created_at", { ascending: true });
 
-        if (error) throw error;
+if (paymentError) throw paymentError;
+
+const subscriptionIds = [
+  ...new Set(
+    (payments ?? [])
+      .map((payment) => payment.subscription_id)
+      .filter(Boolean)
+  )
+];
+
+let subscriptions = [];
+
+if (subscriptionIds.length) {
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .select("id, user_id, plan_id, status")
+    .in("id", subscriptionIds);
+
+  if (error) throw error;
+  subscriptions = data ?? [];
+}
+
+const userIds = [
+  ...new Set(subscriptions.map((item) => item.user_id).filter(Boolean))
+];
+
+const planIds = [
+  ...new Set(subscriptions.map((item) => item.plan_id).filter(Boolean))
+];
+
+let profiles = [];
+let plans = [];
+
+if (userIds.length) {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id, full_name")
+    .in("id", userIds);
+
+  if (error) throw error;
+  profiles = data ?? [];
+}
+
+if (planIds.length) {
+  const { data, error } = await supabase
+    .from("plans")
+    .select("id, name")
+    .in("id", planIds);
+
+  if (error) throw error;
+  plans = data ?? [];
+}
+
+const subscriptionById = new Map(
+  subscriptions.map((item) => [item.id, item])
+);
+
+const profileById = new Map(
+  profiles.map((item) => [item.id, item])
+);
+
+const planById = new Map(
+  plans.map((item) => [item.id, item])
+);
+
+const data = (payments ?? []).map((payment) => {
+  const subscription = subscriptionById.get(payment.subscription_id);
+
+  return {
+    ...payment,
+    subscription: subscription
+      ? {
+          ...subscription,
+          profile: profileById.get(subscription.user_id) ?? null,
+          plan: planById.get(subscription.plan_id) ?? null
+        }
+      : null
+  };
+});
+
 
         tbody.replaceChildren();
 
