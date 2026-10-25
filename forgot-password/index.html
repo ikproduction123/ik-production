@@ -1,0 +1,59 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Lupa Password — IK Production</title>
+        <link rel="stylesheet" href="/assets/css/auth.css" />
+        <script type="module" src="/assets/js/forgot-password.js"></script>
+    </head>
+    <body>
+        <main class="auth-container">
+            <section class="auth-card">
+                <a class="auth-brand" href="/">
+                    <img
+                        src="/assets/images/logo.webp"
+                        alt="Logo IK Production"
+                    />
+                    <span>IK Production</span>
+                </a>
+
+                <h1>Lupa Password?</h1>
+                <p class="auth-description">
+                    Masukkan email akun Anda. Kami akan mengirim tautan untuk
+                    membuat password baru.
+                </p>
+
+                <div
+                    id="formMessage"
+                    class="form-message"
+                    role="status"
+                    aria-live="polite"
+                    hidden
+                ></div>
+
+                <form id="forgotForm">
+                    <label for="email">Email terdaftar</label>
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        autocomplete="email"
+                        maxlength="254"
+                        required
+                        placeholder="nama@email.com"
+                    />
+
+                    <button id="forgotButton" type="submit">
+                        Kirim Tautan Pemulihan
+                    </button>
+                </form>
+
+                <p class="auth-switch">
+                    Ingat password?
+                    <a href="/login/">Kembali ke Login</a>
+                </p>
+            </section>
+        </main>
+    </body>
+</html>
