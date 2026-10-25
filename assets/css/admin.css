@@ -214,3 +214,37 @@ body {
     padding: 16px;
   }
 }
+
+
+.admin-plan-options {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.admin-plan-option {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 11px;
+  border: 1px solid var(--admin-border);
+  border-radius: 8px;
+  overflow-wrap: anywhere;
+}
+
+.admin-plan-option input {
+  width: auto;
+}
+
+.admin-theme-preview {
+  width: 56px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 7px;
+}
+
+@media (max-width: 640px) {
+  .admin-plan-options {
+    grid-template-columns: 1fr;
+  }
+}

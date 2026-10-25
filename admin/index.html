@@ -116,6 +116,108 @@
         </table>
       </div>
     </section>
+    
+    
+<section class="admin-panel">
+  <h2>Manajemen Katalog Tema</h2>
+  <p>Kelola tema dan tentukan paket yang berhak menggunakannya.</p>
+
+  <form id="themeForm">
+    <input type="hidden" id="themeId">
+
+    <div class="admin-form">
+      <div class="admin-field">
+        <label for="themeName">Nama tema</label>
+        <input id="themeName" required maxlength="150"
+          placeholder="Contoh: Velvet Garden">
+      </div>
+
+      <div class="admin-field">
+        <label for="themeSlug">Slug tema</label>
+        <input id="themeSlug" required maxlength="150"
+          pattern="[a-z0-9]+(-[a-z0-9]+)*"
+          placeholder="velvet-garden">
+      </div>
+
+      <div class="admin-field">
+        <label for="themeCategory">Kategori</label>
+        <select id="themeCategory" required>
+          <option value="wedding">Pernikahan</option>
+          <option value="other">Acara Lain</option>
+        </select>
+      </div>
+
+      <div class="admin-field">
+        <label for="themeOrder">Urutan tampil</label>
+        <input id="themeOrder" type="number" min="0"
+          step="1" value="1" required>
+      </div>
+
+      <div class="admin-field full">
+        <label for="themePreview">URL gambar preview</label>
+        <input id="themePreview" type="url" maxlength="1000"
+          placeholder="https://...">
+      </div>
+
+      <div class="admin-field full">
+        <label for="themeDemo">URL demo tema</label>
+        <input id="themeDemo" type="url" maxlength="1000"
+          placeholder="https://...">
+      </div>
+
+      <div class="admin-field full">
+        <label for="themeDescription">Deskripsi</label>
+        <textarea id="themeDescription" maxlength="1000"></textarea>
+      </div>
+
+      <div class="admin-field full">
+        <label>Paket yang boleh menggunakan tema ini</label>
+        <div id="themePlanOptions" class="admin-plan-options">
+          Memuat daftar paket...
+        </div>
+      </div>
+
+      <div class="admin-field full">
+        <label class="admin-checkbox">
+          <input id="themeActive" type="checkbox" checked>
+          Tema aktif dan ditampilkan
+        </label>
+      </div>
+    </div>
+
+    <div class="admin-actions">
+      <button class="admin-button" id="saveThemeButton" type="submit">
+        Simpan Tema
+      </button>
+      <button class="admin-button secondary" id="cancelThemeButton"
+        type="button">
+        Batal / Tema Baru
+      </button>
+    </div>
+  </form>
+</section>
+
+<section class="admin-panel">
+  <h2>Daftar Tema</h2>
+
+  <div class="admin-table-wrap">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Nama Tema</th>
+          <th>Kategori</th>
+          <th>Paket</th>
+          <th>Status</th>
+          <th>Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="themesTableBody">
+        <tr><td colspan="5">Memuat tema...</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
   </main>
 
   <script type="module" src="/assets/js/admin.js"></script>
