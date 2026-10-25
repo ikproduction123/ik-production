@@ -1,208 +1,275 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="robots" content="noindex, nofollow">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="robots" content="noindex, nofollow" />
 
-  <title>Dashboard Pelanggan — IK Production</title>
+        <title>Dashboard Pelanggan — IK Production</title>
 
-  <link rel="stylesheet" href="/assets/css/dashboard.css">
-</head>
-<body>
-  <div class="dashboard-layout">
-    <header class="dashboard-header">
-      <a href="/" class="dashboard-brand">
-        IK <span>Production</span>
-      </a>
+        <link rel="stylesheet" href="/assets/css/dashboard.css" />
+    </head>
+    <body>
+        <div class="dashboard-layout">
+            <header class="dashboard-header">
+                <a href="/" class="dashboard-brand">
+                    IK <span>Production</span>
+                </a>
 
-      <button id="logoutButton" type="button">Keluar</button>
-    </header>
+                <button id="logoutButton" type="button">Keluar</button>
+            </header>
 
-    <main class="dashboard-main">
-      <section class="dashboard-heading">
-        <h1>Dashboard Pelanggan</h1>
-        <p id="welcomeMessage">Memuat data akun...</p>
-      </section>
+            <main class="dashboard-main">
+                <section class="dashboard-heading">
+                    <h1>Dashboard Pelanggan</h1>
+                    <p id="welcomeMessage">Memuat data akun...</p>
+                </section>
 
-      <div id="dashboardMessage" class="dashboard-message">
-        Mengambil data dari Supabase...
-      </div>
+                <div id="dashboardMessage" class="dashboard-message">
+                    Mengambil data dari Supabase...
+                </div>
 
-      <div id="dashboardContent" hidden>
-        <section class="dashboard-grid">
-          <article class="dashboard-card">
-            <h2>Profil Saya</h2>
-            <p class="dashboard-label">Nama lengkap</p>
-            <p class="dashboard-value" id="profileName">-</p>
+                <div id="dashboardContent" hidden>
+                    <section class="dashboard-grid">
+                        <article class="dashboard-card">
+                            <h2>Profil Saya</h2>
+                            <p class="dashboard-label">Nama lengkap</p>
+                            <p class="dashboard-value" id="profileName">-</p>
 
-            <p class="dashboard-label" style="margin-top:16px">Email</p>
-            <p id="profileEmail">-</p>
+                            <p class="dashboard-label" style="margin-top: 16px">
+                                Email
+                            </p>
+                            <p id="profileEmail">-</p>
 
-            <p class="dashboard-label" style="margin-top:16px">Nomor telepon</p>
-            <p id="profilePhone">-</p>
-          </article>
+                            <p class="dashboard-label" style="margin-top: 16px">
+                                Nomor telepon
+                            </p>
+                            <p id="profilePhone">-</p>
+                        </article>
 
-          <article class="dashboard-card">
-            <h2>Paket Saya</h2>
-            <p class="dashboard-label">Nama paket</p>
-            <p class="dashboard-value" id="planName">Belum berlangganan</p>
+                        <article class="dashboard-card">
+                            <h2>Paket Saya</h2>
+                            <p class="dashboard-label">Nama paket</p>
+                            <p class="dashboard-value" id="planName">
+                                Belum berlangganan
+                            </p>
 
-            <p class="dashboard-label" style="margin-top:16px">Status langganan</p>
-            <p><span id="subscriptionStatus" class="status">Belum ada paket</span></p>
+                            <p class="dashboard-label" style="margin-top: 16px">
+                                Status langganan
+                            </p>
+                            <p>
+                                <span id="subscriptionStatus" class="status"
+                                    >Belum ada paket</span
+                                >
+                            </p>
 
-            <p class="dashboard-detail" id="subscriptionDetails">
-              Pilih paket untuk mulai membuat undangan.
-            </p>
+                            <p
+                                class="dashboard-detail"
+                                id="subscriptionDetails"
+                            >
+                                Pilih paket untuk mulai membuat undangan.
+                            </p>
 
-            <p class="dashboard-label" style="margin-top:16px">Batas undangan</p>
-            <p id="invitationLimit">-</p>
-          </article>
-        </section>
+                            <p class="dashboard-label" style="margin-top: 16px">
+                                Batas undangan
+                            </p>
+                            <p id="invitationLimit">-</p>
+                        </article>
+                    </section>
 
-        <section class="dashboard-section dashboard-card">
-          <div class="dashboard-section-header">
-            <h2>Undangan Saya</h2>
-            <a class="btn-secondary" href="/#tema">Lihat Tema</a>
-          </div>
+                    <section class="dashboard-section dashboard-card">
+                        <div class="dashboard-section-header">
+                            <h2>Undangan Saya</h2>
+                            <a class="btn-secondary" href="/#tema"
+                                >Lihat Tema</a
+                            >
+                        </div>
 
-          <p class="dashboard-detail" id="invitationCount">
-            Memuat jumlah undangan...
-          </p>
+                        <p class="dashboard-detail" id="invitationCount">
+                            Memuat jumlah undangan...
+                        </p>
 
-          <div id="invitationList" class="invitation-list"></div>
-        </section>
-      </div>
-      
-<section class="dashboard-section" id="createInvitationSection">
-  <div class="section-heading">
-    <div>
-      <h2>Buat Undangan Baru</h2>
-      <p>Isi informasi acara dan pilih tema sesuai paket Anda.</p>
-    </div>
-  </div>
+                        <div id="invitationList" class="invitation-list"></div>
+                    </section>
+                </div>
 
-  <div id="createInvitationMessage" role="status" aria-live="polite"></div>
+                <section class="dashboard-section" id="plansSection">
+                    <div class="section-heading">
+                        <div>
+                            <h2>Pilih Paket Undangan</h2>
+                            <p>
+                                Pilih paket yang sesuai kebutuhan Anda. Semua
+                                paket berlaku selama 1 tahun.
+                            </p>
+                        </div>
+                    </div>
 
-  <form id="createInvitationForm">
-    <div class="form-group">
-      <label for="invitationTitle">Nama undangan</label>
-      <input
-        id="invitationTitle"
-        name="title"
-        type="text"
-        placeholder="Contoh: Anisa & Bagas"
-        maxlength="150"
-        required
-      >
-    </div>
+                    <div
+                        id="plansMessage"
+                        role="status"
+                        aria-live="polite"
+                    ></div>
+                    <div id="plansContainer" class="plans-grid">
+                        <p>Memuat paket...</p>
+                    </div>
+                </section>
 
-    <div class="form-group">
-      <label for="invitationEventType">Kategori acara</label>
-      <select id="invitationEventType" name="event_type" required>
-        <option value="wedding">Pernikahan</option>
-        <option value="other">Acara lain</option>
-      </select>
-    </div>
+                <section class="dashboard-section" id="createInvitationSection">
+                    <div class="section-heading">
+                        <div>
+                            <h2>Buat Undangan Baru</h2>
+                            <p>
+                                Isi informasi acara dan pilih tema sesuai paket
+                                Anda.
+                            </p>
+                        </div>
+                    </div>
 
-    <div class="form-group">
-      <label for="invitationTheme">Pilih tema</label>
-      <select id="invitationTheme" name="theme_id" required>
-        <option value="">Memuat tema...</option>
-      </select>
-      <small>Tema yang muncul mengikuti paket aktif Anda.</small>
-    </div>
+                    <div
+                        id="createInvitationMessage"
+                        role="status"
+                        aria-live="polite"
+                    ></div>
 
-    <div class="form-group">
-      <label for="invitationSlug">Alamat undangan</label>
-      <div class="slug-input">
-        <span>ik-pro.my.id/</span>
-        <input
-          id="invitationSlug"
-          name="slug"
-          type="text"
-          placeholder="anisa-bagas"
-          maxlength="80"
-          pattern="[a-z0-9]+(-[a-z0-9]+)*"
-          title="Gunakan huruf kecil, angka, dan tanda hubung."
-          required
-        >
-      </div>
-    </div>
+                    <form id="createInvitationForm">
+                        <div class="form-group">
+                            <label for="invitationTitle">Nama undangan</label>
+                            <input
+                                id="invitationTitle"
+                                name="title"
+                                type="text"
+                                placeholder="Contoh: Anisa & Bagas"
+                                maxlength="150"
+                                required
+                            />
+                        </div>
 
-    <div class="form-group">
-      <label for="invitationHosts">Nama pasangan atau penyelenggara</label>
-      <input
-        id="invitationHosts"
-        name="host_names"
-        type="text"
-        placeholder="Anisa, Bagas"
-        maxlength="250"
-        required
-      >
-      <small>Pisahkan beberapa nama dengan koma.</small>
-    </div>
+                        <div class="form-group">
+                            <label for="invitationEventType"
+                                >Kategori acara</label
+                            >
+                            <select
+                                id="invitationEventType"
+                                name="event_type"
+                                required
+                            >
+                                <option value="wedding">Pernikahan</option>
+                                <option value="other">Acara lain</option>
+                            </select>
+                        </div>
 
-    <div class="form-group">
-      <label for="invitationDate">Tanggal dan waktu acara</label>
-      <input
-        id="invitationDate"
-        name="event_date"
-        type="datetime-local"
-        required
-      >
-    </div>
+                        <div class="form-group">
+                            <label for="invitationTheme">Pilih tema</label>
+                            <select
+                                id="invitationTheme"
+                                name="theme_id"
+                                required
+                            >
+                                <option value="">Memuat tema...</option>
+                            </select>
+                            <small
+                                >Tema yang muncul mengikuti paket aktif
+                                Anda.</small
+                            >
+                        </div>
 
-    <div class="form-group">
-      <label for="invitationVenue">Nama tempat acara</label>
-      <input
-        id="invitationVenue"
-        name="venue_name"
-        type="text"
-        placeholder="Contoh: Gedung Pernikahan"
-        maxlength="200"
-      >
-    </div>
+                        <div class="form-group">
+                            <label for="invitationSlug">Alamat undangan</label>
+                            <div class="slug-input">
+                                <span>ik-pro.my.id/</span>
+                                <input
+                                    id="invitationSlug"
+                                    name="slug"
+                                    type="text"
+                                    placeholder="anisa-bagas"
+                                    maxlength="80"
+                                    pattern="[a-z0-9]+(-[a-z0-9]+)*"
+                                    title="Gunakan huruf kecil, angka, dan tanda hubung."
+                                    required
+                                />
+                            </div>
+                        </div>
 
-    <div class="form-group">
-      <label for="invitationAddress">Alamat acara</label>
-      <textarea
-        id="invitationAddress"
-        name="venue_address"
-        rows="3"
-        maxlength="1000"
-        placeholder="Masukkan alamat lengkap"
-      ></textarea>
-    </div>
+                        <div class="form-group">
+                            <label for="invitationHosts"
+                                >Nama pasangan atau penyelenggara</label
+                            >
+                            <input
+                                id="invitationHosts"
+                                name="host_names"
+                                type="text"
+                                placeholder="Anisa, Bagas"
+                                maxlength="250"
+                                required
+                            />
+                            <small>Pisahkan beberapa nama dengan koma.</small>
+                        </div>
 
-    <div class="form-group">
-      <label for="invitationMaps">Link Google Maps</label>
-      <input
-        id="invitationMaps"
-        name="maps_url"
-        type="url"
-        maxlength="2000"
-        placeholder="https://maps.google.com/..."
-      >
-    </div>
+                        <div class="form-group">
+                            <label for="invitationDate"
+                                >Tanggal dan waktu acara</label
+                            >
+                            <input
+                                id="invitationDate"
+                                name="event_date"
+                                type="datetime-local"
+                                required
+                            />
+                        </div>
 
-    <button type="submit" id="saveInvitationButton">
-      Simpan sebagai Draft
-    </button>
-  </form>
-</section>
+                        <div class="form-group">
+                            <label for="invitationVenue"
+                                >Nama tempat acara</label
+                            >
+                            <input
+                                id="invitationVenue"
+                                name="venue_name"
+                                type="text"
+                                placeholder="Contoh: Gedung Pernikahan"
+                                maxlength="200"
+                            />
+                        </div>
 
-    </main>
+                        <div class="form-group">
+                            <label for="invitationAddress">Alamat acara</label>
+                            <textarea
+                                id="invitationAddress"
+                                name="venue_address"
+                                rows="3"
+                                maxlength="1000"
+                                placeholder="Masukkan alamat lengkap"
+                            ></textarea>
+                        </div>
 
-    <footer class="dashboard-footer">
-      &copy; IK Production — Undangan Digital
-    </footer>
-  </div>
+                        <div class="form-group">
+                            <label for="invitationMaps">Link Google Maps</label>
+                            <input
+                                id="invitationMaps"
+                                name="maps_url"
+                                type="url"
+                                maxlength="2000"
+                                placeholder="https://maps.google.com/..."
+                            />
+                        </div>
 
-  <script type="module" src="/assets/js/dashboard.js"></script>
-  
-<script type="module" src="/assets/js/create-invitation.js"></script>
+                        <button type="submit" id="saveInvitationButton">
+                            Simpan sebagai Draft
+                        </button>
+                    </form>
+                </section>
+            </main>
 
-</body>
+            <footer class="dashboard-footer">
+                &copy; IK Production — Undangan Digital
+            </footer>
+        </div>
+
+        <script type="module" src="/assets/js/dashboard.js"></script>
+        
+        
+<script type="module" src="/assets/js/client-plans.js"></script>
+
+
+        <script type="module" src="/assets/js/create-invitation.js"></script>
+    </body>
 </html>

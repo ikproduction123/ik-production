@@ -401,3 +401,63 @@ body {
         flex-wrap: wrap;
     }
 }
+
+
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.client-plan-card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  background: #fff;
+}
+
+.client-plan-card h3 {
+  margin: 0;
+  font-size: 1.2rem;
+}
+
+.client-plan-price {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 800;
+}
+
+.client-plan-card p {
+  line-height: 1.5;
+}
+
+.client-plan-card button {
+  margin-top: auto;
+  padding: 12px 16px;
+  border: 0;
+  border-radius: 9px;
+  background: #6d28d9;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.client-plan-card button:hover {
+  background: #5b21b6;
+}
+
+@media (max-width: 800px) {
+  .plans-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 520px) {
+  .plans-grid {
+    grid-template-columns: 1fr;
+  }
+}
