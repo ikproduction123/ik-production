@@ -74,6 +74,125 @@
           <div id="invitationList" class="invitation-list"></div>
         </section>
       </div>
+      
+<section class="dashboard-section" id="createInvitationSection">
+  <div class="section-heading">
+    <div>
+      <h2>Buat Undangan Baru</h2>
+      <p>Isi informasi acara dan pilih tema sesuai paket Anda.</p>
+    </div>
+  </div>
+
+  <div id="createInvitationMessage" role="status" aria-live="polite"></div>
+
+  <form id="createInvitationForm">
+    <div class="form-group">
+      <label for="invitationTitle">Nama undangan</label>
+      <input
+        id="invitationTitle"
+        name="title"
+        type="text"
+        placeholder="Contoh: Anisa & Bagas"
+        maxlength="150"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="invitationEventType">Kategori acara</label>
+      <select id="invitationEventType" name="event_type" required>
+        <option value="wedding">Pernikahan</option>
+        <option value="other">Acara lain</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="invitationTheme">Pilih tema</label>
+      <select id="invitationTheme" name="theme_id" required>
+        <option value="">Memuat tema...</option>
+      </select>
+      <small>Tema yang muncul mengikuti paket aktif Anda.</small>
+    </div>
+
+    <div class="form-group">
+      <label for="invitationSlug">Alamat undangan</label>
+      <div class="slug-input">
+        <span>ik-pro.my.id/</span>
+        <input
+          id="invitationSlug"
+          name="slug"
+          type="text"
+          placeholder="anisa-bagas"
+          maxlength="80"
+          pattern="[a-z0-9]+(-[a-z0-9]+)*"
+          title="Gunakan huruf kecil, angka, dan tanda hubung."
+          required
+        >
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="invitationHosts">Nama pasangan atau penyelenggara</label>
+      <input
+        id="invitationHosts"
+        name="host_names"
+        type="text"
+        placeholder="Anisa, Bagas"
+        maxlength="250"
+        required
+      >
+      <small>Pisahkan beberapa nama dengan koma.</small>
+    </div>
+
+    <div class="form-group">
+      <label for="invitationDate">Tanggal dan waktu acara</label>
+      <input
+        id="invitationDate"
+        name="event_date"
+        type="datetime-local"
+        required
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="invitationVenue">Nama tempat acara</label>
+      <input
+        id="invitationVenue"
+        name="venue_name"
+        type="text"
+        placeholder="Contoh: Gedung Pernikahan"
+        maxlength="200"
+      >
+    </div>
+
+    <div class="form-group">
+      <label for="invitationAddress">Alamat acara</label>
+      <textarea
+        id="invitationAddress"
+        name="venue_address"
+        rows="3"
+        maxlength="1000"
+        placeholder="Masukkan alamat lengkap"
+      ></textarea>
+    </div>
+
+    <div class="form-group">
+      <label for="invitationMaps">Link Google Maps</label>
+      <input
+        id="invitationMaps"
+        name="maps_url"
+        type="url"
+        maxlength="2000"
+        placeholder="https://maps.google.com/..."
+      >
+    </div>
+
+    <button type="submit" id="saveInvitationButton">
+      Simpan sebagai Draft
+    </button>
+  </form>
+</section>
+
     </main>
 
     <footer class="dashboard-footer">
@@ -82,5 +201,8 @@
   </div>
 
   <script type="module" src="/assets/js/dashboard.js"></script>
+  
+<script type="module" src="/assets/js/create-invitation.js"></script>
+
 </body>
 </html>
