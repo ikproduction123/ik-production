@@ -1,391 +1,351 @@
+
 <!doctype html>
 <html lang="id">
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="robots" content="noindex, nofollow" />
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="theme-color" content="#ffffff">
+  <title>Dashboard Pelanggan — IK Production</title>
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
+</head>
+<body>
+  <div class="sidebar-overlay" id="sidebarOverlay" hidden></div>
 
-        <title>Dashboard Pelanggan — IK Production</title>
+  <aside class="dashboard-sidebar" id="dashboardSidebar" aria-label="Navigasi pelanggan">
+    <a href="/dashboard/" class="sidebar-brand">
+      <span class="brand-mark">IK</span>
+      <span class="brand-copy">
+        <strong>IK PRODUCTION</strong>
+        <small>Digital Invitation</small>
+      </span>
+    </a>
 
-        <link rel="stylesheet" href="/assets/css/dashboard.css" />
-    </head>
-    <body>
-        <div class="dashboard-layout">
-            <header class="dashboard-header">
-                <a href="/" class="dashboard-brand">
-                    IK <span>Production</span>
-                </a>
+    <p class="sidebar-label">MENU UTAMA</p>
+    <nav class="sidebar-nav">
+      <a class="sidebar-link active" href="#dashboardOverview" data-section="dashboardOverview">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/></svg>
+        <span>Dashboard</span>
+      </a>
+      <a class="sidebar-link" href="#plansSection" data-section="plansSection">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 8h16l-1.5 12h-13L4 8Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg>
+        <span>Paket Saya</span>
+      </a>
+      <a class="sidebar-link" href="#createInvitationSection" data-section="createInvitationSection">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        <span>Buat Undangan</span>
+      </a>
+      <a class="sidebar-link" href="#myInvitationsSection" data-section="myInvitationsSection">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+        <span>Undangan Saya</span>
+      </a>
+      <a class="sidebar-link" href="#invitationSettingsSection" data-section="invitationSettingsSection">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v3m0 12v3M3 12h3m12 0h3"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/></svg>
+        <span>Publikasi</span>
+      </a>
+      <a class="sidebar-link" href="#invitationEditorSection" data-section="invitationEditorSection">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m14 5 5 5M4 20l4.5-1 11-11a2.1 2.1 0 0 0-3-3l-11 11L4 20Z"/></svg>
+        <span>Edit Konten</span>
+      </a>
+    </nav>
 
-                <button id="logoutButton" type="button">Keluar</button>
-            </header>
+    <div class="sidebar-bottom">
+      <a class="sidebar-link" href="/">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3h7v7M21 3l-9 9"/><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/></svg>
+        <span>Kembali ke Website</span>
+      </a>
+      <button id="logoutButton" class="sidebar-logout" type="button">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 17l5-5-5-5M15 12H3"/><path d="M12 3h6a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-6"/></svg>
+        <span>Keluar</span>
+      </button>
+    </div>
+  </aside>
 
-            <main class="dashboard-main">
-                <section class="dashboard-heading">
-                    <h1>Dashboard Pelanggan</h1>
-                    <p id="welcomeMessage">Memuat data akun...</p>
-                </section>
-
-                <div id="dashboardMessage" class="dashboard-message">
-                    Mengambil data dari Supabase...
-                </div>
-
-                <div id="dashboardContent" hidden>
-                    <section class="dashboard-grid">
-                        <article class="dashboard-card">
-                            <h2>Profil Saya</h2>
-                            <p class="dashboard-label">Nama lengkap</p>
-                            <p class="dashboard-value" id="profileName">-</p>
-
-                            <p class="dashboard-label" style="margin-top: 16px">
-                                Email
-                            </p>
-                            <p id="profileEmail">-</p>
-
-                            <p class="dashboard-label" style="margin-top: 16px">
-                                Nomor telepon
-                            </p>
-                            <p id="profilePhone">-</p>
-                        </article>
-
-                        <article class="dashboard-card">
-                            <h2>Paket Saya</h2>
-                            <p class="dashboard-label">Nama paket</p>
-                            <p class="dashboard-value" id="planName">
-                                Belum berlangganan
-                            </p>
-
-                            <p class="dashboard-label" style="margin-top: 16px">
-                                Status langganan
-                            </p>
-                            <p>
-                                <span id="subscriptionStatus" class="status"
-                                    >Belum ada paket</span
-                                >
-                            </p>
-
-                            <p
-                                class="dashboard-detail"
-                                id="subscriptionDetails"
-                            >
-                                Pilih paket untuk mulai membuat undangan.
-                            </p>
-
-                            <p class="dashboard-label" style="margin-top: 16px">
-                                Batas undangan
-                            </p>
-                            <p id="invitationLimit">-</p>
-                        </article>
-                    </section>
-
-                    <section class="dashboard-section dashboard-card">
-                        <div class="dashboard-section-header">
-                            <h2>Undangan Saya</h2>
-                            <a class="btn-secondary" href="/#tema"
-                                >Lihat Tema</a
-                            >
-                        </div>
-
-                        <p class="dashboard-detail" id="invitationCount">
-                            Memuat jumlah undangan...
-                        </p>
-
-                        <div id="invitationList" class="invitation-list"></div>
-                    </section>
-
-                    <section
-                        class="dashboard-section"
-                        id="invitationSettingsSection"
-                    >
-                        <div class="section-heading">
-                            <div>
-                                <h2>Pengaturan Publikasi</h2>
-                                <p>Kelola status dan tautan undangan Anda.</p>
-                            </div>
-                        </div>
-
-                        <div
-                            id="invitationSettingsMessage"
-                            role="status"
-                            aria-live="polite"
-                        ></div>
-
-                        <div id="invitationSettingsList">
-                            <p>Memuat undangan...</p>
-                        </div>
-                    </section>
-
-                    <section
-                        class="dashboard-section"
-                        id="invitationEditorSection"
-                    >
-                        <div class="section-heading">
-                            <div>
-                                <h2>Edit Konten Undangan</h2>
-                                <p>
-                                    Pilih undangan, ubah konten, lalu simpan
-                                    perubahan.
-                                </p>
-                            </div>
-                        </div>
-
-                        <div
-                            id="editorMessage"
-                            role="status"
-                            aria-live="polite"
-                        ></div>
-
-                        <form id="invitationEditorForm">
-                            <div class="form-group">
-                                <label for="editorInvitation"
-                                    >Pilih undangan</label
-                                >
-                                <select id="editorInvitation" required>
-                                    <option value="">Memuat undangan...</option>
-                                </select>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="editorHeadline">Judul sampul</label>
-                                <input
-                                    id="editorHeadline"
-                                    maxlength="150"
-                                    placeholder="The Wedding Of"
-                                />
-                            </div>
-
-                            <div class="form-group">
-                                <label for="editorOpening">Pesan pembuka</label>
-                                <textarea
-                                    id="editorOpening"
-                                    rows="3"
-                                    maxlength="2000"
-                                ></textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="editorStoryTitle"
-                                    >Judul Love Story</label
-                                >
-                                <input
-                                    id="editorStoryTitle"
-                                    maxlength="150"
-                                    placeholder="Kisah Kami"
-                                />
-                            </div>
-
-                            <div class="form-group">
-                                <label for="editorStoryDescription"
-                                    >Cerita pasangan</label
-                                >
-                                <textarea
-                                    id="editorStoryDescription"
-                                    rows="5"
-                                    maxlength="5000"
-                                    placeholder="Tuliskan cerita perjalanan kalian..."
-                                ></textarea>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="editorClosing">Pesan penutup</label>
-                                <textarea
-                                    id="editorClosing"
-                                    rows="3"
-                                    maxlength="2000"
-                                ></textarea>
-                            </div>
-
-                            <div class="editor-actions">
-                                <button type="submit" id="saveEditorButton">
-                                    Simpan Perubahan
-                                </button>
-                                <button type="button" id="previewEditorButton">
-                                    Pratinjau Undangan
-                                </button>
-                            </div>
-                        </form>
-                    </section>
-                </div>
-
-                <section class="dashboard-section" id="plansSection">
-                    <div class="section-heading">
-                        <div>
-                            <h2>Pilih Paket Undangan</h2>
-                            <p>
-                                Pilih paket yang sesuai kebutuhan Anda. Semua
-                                paket berlaku selama 1 tahun.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div
-                        id="plansMessage"
-                        role="status"
-                        aria-live="polite"
-                    ></div>
-                    <div id="plansContainer" class="plans-grid">
-                        <p>Memuat paket...</p>
-                    </div>
-                </section>
-
-                <section class="dashboard-section" id="createInvitationSection">
-                    <div class="section-heading">
-                        <div>
-                            <h2>Buat Undangan Baru</h2>
-                            <p>
-                                Isi informasi acara dan pilih tema sesuai paket
-                                Anda.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div
-                        id="createInvitationMessage"
-                        role="status"
-                        aria-live="polite"
-                    ></div>
-
-                    <form id="createInvitationForm">
-                        <div class="form-group">
-                            <label for="invitationTitle">Nama undangan</label>
-                            <input
-                                id="invitationTitle"
-                                name="title"
-                                type="text"
-                                placeholder="Contoh: Anisa & Bagas"
-                                maxlength="150"
-                                required
-                            />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="invitationEventType"
-                                >Kategori acara</label
-                            >
-                            <select
-                                id="invitationEventType"
-                                name="event_type"
-                                required
-                            >
-                                <option value="wedding">Pernikahan</option>
-                                <option value="other">Acara lain</option>
-                            </select>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="invitationTheme">Pilih tema</label>
-                            <select
-                                id="invitationTheme"
-                                name="theme_id"
-                                required
-                            >
-                                <option value="">Memuat tema...</option>
-                            </select>
-                            <small
-                                >Tema yang muncul mengikuti paket aktif
-                                Anda.</small
-                            >
-                        </div>
-
-                        <div class="form-group">
-                            <label for="invitationSlug">Alamat undangan</label>
-                            <div class="slug-input">
-                                <span>ik-pro.my.id/</span>
-                                <input
-                                    id="invitationSlug"
-                                    name="slug"
-                                    type="text"
-                                    placeholder="anisa-bagas"
-                                    maxlength="80"
-                                    pattern="[a-z0-9]+(-[a-z0-9]+)*"
-                                    title="Gunakan huruf kecil, angka, dan tanda hubung."
-                                    required
-                                />
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="invitationHosts"
-                                >Nama pasangan atau penyelenggara</label
-                            >
-                            <input
-                                id="invitationHosts"
-                                name="host_names"
-                                type="text"
-                                placeholder="Anisa, Bagas"
-                                maxlength="250"
-                                required
-                            />
-                            <small>Pisahkan beberapa nama dengan koma.</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="invitationDate"
-                                >Tanggal dan waktu acara</label
-                            >
-                            <input
-                                id="invitationDate"
-                                name="event_date"
-                                type="datetime-local"
-                                required
-                            />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="invitationVenue"
-                                >Nama tempat acara</label
-                            >
-                            <input
-                                id="invitationVenue"
-                                name="venue_name"
-                                type="text"
-                                placeholder="Contoh: Gedung Pernikahan"
-                                maxlength="200"
-                            />
-                        </div>
-
-                        <div class="form-group">
-                            <label for="invitationAddress">Alamat acara</label>
-                            <textarea
-                                id="invitationAddress"
-                                name="venue_address"
-                                rows="3"
-                                maxlength="1000"
-                                placeholder="Masukkan alamat lengkap"
-                            ></textarea>
-                        </div>
-
-                        <div class="form-group">
-                            <label for="invitationMaps">Link Google Maps</label>
-                            <input
-                                id="invitationMaps"
-                                name="maps_url"
-                                type="url"
-                                maxlength="2000"
-                                placeholder="https://maps.google.com/..."
-                            />
-                        </div>
-
-                        <button type="submit" id="saveInvitationButton">
-                            Simpan sebagai Draft
-                        </button>
-                    </form>
-                </section>
-            </main>
-
-            <footer class="dashboard-footer">
-                &copy; IK Production — Undangan Digital
-            </footer>
+  <div class="dashboard-shell">
+    <header class="topbar">
+      <div class="topbar-left">
+        <button id="sidebarToggle" class="hamburger" type="button"
+          aria-label="Buka menu navigasi" aria-controls="dashboardSidebar"
+          aria-expanded="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <div>
+          <span class="topbar-eyebrow">AREA PELANGGAN</span>
+          <strong>Dashboard</strong>
         </div>
+      </div>
+      <a class="topbar-site" href="/" aria-label="Kembali ke website">
+        <span class="online-dot"></span>
+        IK Production
+      </a>
+    </header>
 
-        <script type="module" src="/assets/js/dashboard.js"></script>
+    <main class="dashboard-main">
+      <div id="dashboardMessage" class="dashboard-message" role="status" aria-live="polite">
+        Mengambil data dari Supabase...
+      </div>
 
-        <script type="module" src="/assets/js/client-plans.js"></script>
+      <div id="dashboardContent" hidden>
+        <section class="dashboard-heading" id="dashboardOverview">
+          <div>
+            <span class="eyebrow">OVERVIEW</span>
+            <h1>Selamat datang<span class="gold-dot">.</span></h1>
+            <p id="welcomeMessage">Memuat data akun...</p>
+          </div>
+          <a class="btn-primary" href="#createInvitationSection">
+            <span aria-hidden="true">＋</span> Buat Undangan
+          </a>
+        </section>
 
-        <script type="module" src="/assets/js/create-invitation.js"></script>
+        <section class="stats-grid" aria-label="Ringkasan akun">
+          <article class="stat-card">
+            <div class="stat-icon gold-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 8h6M9 12h6M9 16h4"/></svg>
+            </div>
+            <p>Total Undangan</p>
+            <strong id="statInvitationCount">—</strong>
+            <span>Semua undangan Anda</span>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon green-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>
+            </div>
+            <p>Undangan Terbit</p>
+            <strong id="statPublishedCount">—</strong>
+            <span>Sudah dapat dibagikan</span>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon blue-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v4l3 2"/><circle cx="12" cy="12" r="9"/></svg>
+            </div>
+            <p>Masih Draft</p>
+            <strong id="statDraftCount">—</strong>
+            <span>Menunggu diterbitkan</span>
+          </article>
+          <article class="stat-card">
+            <div class="stat-icon purple-icon">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h16M7 3v4m10-4v4M5 5h14a1 1 0 0 1 1 1v13H4V6a1 1 0 0 1 1-1Z"/></svg>
+            </div>
+            <p>Sisa Masa Aktif</p>
+            <strong id="statDaysRemaining">—</strong>
+            <span id="statExpiryLabel">Paket tahunan</span>
+          </article>
+        </section>
 
-        <script type="module" src="/assets/js/invitation-settings.js"></script>
-        
-<script type="module" src="/assets/js/invitation-editor.js"></script>
+        <section class="overview-grid">
+          <article class="panel active-plan-panel" id="activePlanCard">
+            <div class="panel-heading">
+              <div>
+                <span class="eyebrow">LANGGANAN</span>
+                <h2>Paket Aktif Saya</h2>
+              </div>
+              <span class="status" id="subscriptionStatus">Memuat...</span>
+            </div>
+            <div class="active-plan-body">
+              <div class="plan-emblem" aria-hidden="true">✦</div>
+              <div class="active-plan-info">
+                <p class="muted-label">Paket Anda</p>
+                <h3 id="planName">Memuat paket...</h3>
+                <p id="subscriptionDetails" class="muted-copy">Memuat detail langganan...</p>
+              </div>
+            </div>
+            <div class="plan-progress">
+              <div class="progress-label">
+                <span>Penggunaan undangan</span>
+                <strong id="invitationLimit">—</strong>
+              </div>
+              <div class="progress-track"><span id="invitationProgress"></span></div>
+            </div>
+            <a href="#plansSection" class="text-link">Lihat pilihan paket <span aria-hidden="true">→</span></a>
+          </article>
 
-    </body>
+          <article class="panel profile-panel">
+            <div class="panel-heading">
+              <div>
+                <span class="eyebrow">AKUN ANDA</span>
+                <h2>Profil Saya</h2>
+              </div>
+              <span class="profile-avatar" aria-hidden="true">IK</span>
+            </div>
+            <div class="profile-detail">
+              <span>Nama lengkap</span>
+              <strong id="profileName">—</strong>
+            </div>
+            <div class="profile-detail">
+              <span>Email</span>
+              <strong id="profileEmail">—</strong>
+            </div>
+            <div class="profile-detail">
+              <span>Nomor telepon</span>
+              <strong id="profilePhone">—</strong>
+            </div>
+          </article>
+        </section>
+
+        <section class="panel dashboard-section" id="myInvitationsSection">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">KELOLA KARYA ANDA</span>
+              <h2>Undangan Saya</h2>
+              <p class="section-subtitle" id="invitationCount">Memuat jumlah undangan...</p>
+            </div>
+            <a class="btn-secondary" href="/#tema">Jelajahi Tema</a>
+          </div>
+          <div id="invitationList" class="invitation-list"></div>
+        </section>
+
+        <section class="panel dashboard-section" id="recentActivitySection">
+          <div class="panel-heading">
+            <div>
+              <span class="eyebrow">PEMBARUAN</span>
+              <h2>Aktivitas Terbaru</h2>
+              <p class="section-subtitle">Perubahan terbaru pada undangan Anda.</p>
+            </div>
+          </div>
+          <div id="recentActivityList" class="activity-list">
+            <p class="empty-note">Memuat aktivitas...</p>
+          </div>
+        </section>
+
+        <section class="dashboard-section" id="plansSection">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">PAKET LANGGANAN</span>
+              <h2>Pilih Paket Undangan</h2>
+              <p>Semua paket berlaku selama 1 tahun.</p>
+            </div>
+          </div>
+          <div id="plansMessage" role="status" aria-live="polite"></div>
+          <div id="plansContainer" class="plans-grid">
+            <p>Memuat paket...</p>
+          </div>
+        </section>
+
+        <section class="dashboard-section" id="createInvitationSection">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">MULAI BERKARYA</span>
+              <h2>Buat Undangan Baru</h2>
+              <p>Isi detail acara dan pilih tema yang tersedia untuk paket Anda.</p>
+            </div>
+          </div>
+          <div id="createInvitationMessage" role="status" aria-live="polite"></div>
+          <form id="createInvitationForm">
+            <div class="form-group">
+              <label for="invitationTitle">Nama undangan</label>
+              <input id="invitationTitle" name="title" type="text" placeholder="Contoh: Anisa & Bagas" maxlength="150" required>
+            </div>
+            <div class="form-group">
+              <label for="invitationEventType">Kategori acara</label>
+              <select id="invitationEventType" name="event_type" required>
+                <option value="wedding">Pernikahan</option>
+                <option value="other">Acara lain</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="invitationTheme">Pilih tema</label>
+              <select id="invitationTheme" name="theme_id" required>
+                <option value="">Memuat tema...</option>
+              </select>
+              <small>Tema mengikuti paket aktif Anda.</small>
+            </div>
+            <div class="form-group">
+              <label for="invitationSlug">Alamat undangan</label>
+              <div class="slug-input">
+                <span>ik-pro.my.id/</span>
+                <input id="invitationSlug" name="slug" type="text" placeholder="anisa-bagas" maxlength="80" pattern="[a-z0-9]+(-[a-z0-9]+)*" title="Gunakan huruf kecil, angka, dan tanda hubung." required>
+              </div>
+            </div>
+            <div class="form-group">
+              <label for="invitationHosts">Nama pasangan atau penyelenggara</label>
+              <input id="invitationHosts" name="host_names" type="text" placeholder="Anisa, Bagas" maxlength="250" required>
+              <small>Pisahkan beberapa nama dengan koma.</small>
+            </div>
+            <div class="form-group">
+              <label for="invitationDate">Tanggal dan waktu acara</label>
+              <input id="invitationDate" name="event_date" type="datetime-local" required>
+            </div>
+            <div class="form-group">
+              <label for="invitationVenue">Nama tempat acara</label>
+              <input id="invitationVenue" name="venue_name" type="text" placeholder="Gedung pernikahan" maxlength="200">
+            </div>
+            <div class="form-group">
+              <label for="invitationAddress">Alamat acara</label>
+              <textarea id="invitationAddress" name="venue_address" rows="3" maxlength="1000" placeholder="Masukkan alamat lengkap"></textarea>
+            </div>
+            <div class="form-group form-wide">
+              <label for="invitationMaps">Link Google Maps</label>
+              <input id="invitationMaps" name="maps_url" type="url" maxlength="2000" placeholder="https://maps.google.com/...">
+            </div>
+            <button class="btn-primary form-submit" type="submit" id="saveInvitationButton">Simpan sebagai Draft</button>
+          </form>
+        </section>
+
+        <section class="dashboard-section" id="invitationSettingsSection">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">TAUTAN PUBLIK</span>
+              <h2>Pengaturan Publikasi</h2>
+              <p>Terbitkan undangan atau salin tautannya untuk dibagikan.</p>
+            </div>
+          </div>
+          <div id="invitationSettingsMessage" role="status" aria-live="polite"></div>
+          <div id="invitationSettingsList"><p>Memuat undangan...</p></div>
+        </section>
+
+        <section class="dashboard-section" id="invitationEditorSection">
+          <div class="section-heading">
+            <div>
+              <span class="eyebrow">PERSONALISASI</span>
+              <h2>Edit Konten Undangan</h2>
+              <p>Sesuaikan teks undangan Anda, kemudian simpan perubahan.</p>
+            </div>
+          </div>
+          <div id="editorMessage" role="status" aria-live="polite"></div>
+          <form id="invitationEditorForm">
+            <div class="form-group form-wide">
+              <label for="editorInvitation">Pilih undangan</label>
+              <select id="editorInvitation" required>
+                <option value="">Memuat undangan...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="editorHeadline">Judul sampul</label>
+              <input id="editorHeadline" maxlength="150" placeholder="The Wedding Of">
+            </div>
+            <div class="form-group">
+              <label for="editorStoryTitle">Judul Love Story</label>
+              <input id="editorStoryTitle" maxlength="150" placeholder="Kisah Kami">
+            </div>
+            <div class="form-group">
+              <label for="editorOpening">Pesan pembuka</label>
+              <textarea id="editorOpening" rows="3" maxlength="2000"></textarea>
+            </div>
+            <div class="form-group">
+              <label for="editorStoryDescription">Cerita pasangan</label>
+              <textarea id="editorStoryDescription" rows="5" maxlength="5000" placeholder="Tuliskan perjalanan kalian..."></textarea>
+            </div>
+            <div class="form-group form-wide">
+              <label for="editorClosing">Pesan penutup</label>
+              <textarea id="editorClosing" rows="3" maxlength="2000"></textarea>
+            </div>
+            <div class="editor-actions form-wide">
+              <button class="btn-primary" type="submit" id="saveEditorButton">Simpan Perubahan</button>
+              <button class="btn-secondary" type="button" id="previewEditorButton">Pratinjau Undangan</button>
+            </div>
+          </form>
+        </section>
+      </div>
+    </main>
+
+    <footer class="dashboard-footer">© IK Production · Undangan Digital</footer>
+  </div>
+
+  <script type="module" src="/assets/js/dashboard.js"></script>
+  <script type="module" src="/assets/js/client-plans.js"></script>
+  <script type="module" src="/assets/js/create-invitation.js"></script>
+  <script type="module" src="/assets/js/invitation-settings.js"></script>
+  <script type="module" src="/assets/js/invitation-editor.js"></script>
+  <script type="module" src="/assets/js/dashboard-sidebar.js"></script>
+</body>
 </html>
