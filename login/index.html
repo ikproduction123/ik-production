@@ -1,0 +1,66 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Login ke dashboard IK Production.">
+  <title>Masuk — IK Production</title>
+  <link rel="stylesheet" href="../assets/css/auth.css">
+  <script type="module" src="/assets/js/login.js"></script>
+</head>
+<body>
+  <main class="auth-container">
+    <section class="auth-card">
+      <a class="auth-brand" href="/">
+        <img src="/assets/images/logo.webp" alt="Logo IK Production">
+        <span>IK Production</span>
+      </a>
+
+      <h1>Selamat Datang</h1>
+      <p class="auth-description">
+        Masuk untuk mengelola undangan digital Anda.
+      </p>
+
+      <div id="formMessage" class="form-message"
+           role="status" aria-live="polite" hidden></div>
+
+      <form id="loginForm">
+        <label for="email">Email</label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          maxlength="254"
+          required
+          placeholder="nama@email.com"
+        >
+
+        <label for="password">Password</label>
+        <input
+          id="password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          required
+          placeholder="Masukkan password"
+        >
+
+        <div class="auth-forgot">
+          <a href="/forgot-password/">Lupa password?</a>
+        </div>
+
+        <button id="loginButton" type="submit">Masuk</button>
+      </form>
+
+      <p class="auth-switch">
+        Belum punya akun?
+        <a href="/register/">Daftar sekarang</a>
+      </p>
+
+      <a class="back-home" href="/">← Kembali ke beranda</a>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,31 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Dashboard Admin — IK Production</title>
+</head>
+<body>
+  <main>
+    <h1>Dashboard Admin</h1>
+    <p>Halaman admin sementara. Pengamanan akses akan ditambahkan berikutnya.</p>
+    <button id="logoutButton">Keluar</button>
+  </main>
+
+  <script type="module">
+    import { supabase } from "/assets/js/supabase.js";
+
+    document.getElementById("logoutButton").addEventListener("click", async () => {
+      const { error } = await supabase.auth.signOut();
+
+      if (error) {
+        alert("Gagal keluar. Silakan coba lagi.");
+        return;
+      }
+
+      window.location.replace("/login/");
+    });
+  </script>
+</body>
+</html>
