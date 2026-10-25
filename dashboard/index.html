@@ -4,28 +4,39 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
   <title>Dashboard Pelanggan — IK Production</title>
 </head>
 <body>
   <main>
     <h1>Dashboard Pelanggan</h1>
-    <p>Login berhasil. Dashboard akan kita bangun berikutnya.</p>
-    <button id="logoutButton">Keluar</button>
+    <p id="welcomeMessage">Memeriksa akun...</p>
+
+    <section>
+      <h2>Undangan Saya</h2>
+      <p>Daftar undangan akan ditampilkan pada tahap berikutnya.</p>
+    </section>
+
+    <section>
+      <h2>Paket Saya</h2>
+      <p>Informasi langganan akan ditampilkan setelah integrasi data.</p>
+    </section>
+
+    <button id="logoutButton" type="button">Keluar</button>
   </main>
 
   <script type="module">
-    import { supabase } from "/assets/js/supabase.js";
+    import { requireRole, setupLogout } from "/assets/js/auth-guard.js";
 
-    document.getElementById("logoutButton").addEventListener("click", async () => {
-      const { error } = await supabase.auth.signOut();
+    setupLogout();
 
-      if (error) {
-        alert("Gagal keluar. Silakan coba lagi.");
-        return;
-      }
+    const result = await requireRole(["customer"]);
 
-      window.location.replace("/login/");
-    });
+    if (result) {
+      const name = result.profile.full_name || result.user.email || "Pelanggan";
+      document.getElementById("welcomeMessage").textContent =
+        `Selamat datang, ${name}!`;
+    }
   </script>
 </body>
 </html>

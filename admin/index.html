@@ -4,28 +4,41 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
   <title>Dashboard Admin — IK Production</title>
 </head>
 <body>
   <main>
     <h1>Dashboard Admin</h1>
-    <p>Halaman admin sementara. Pengamanan akses akan ditambahkan berikutnya.</p>
-    <button id="logoutButton">Keluar</button>
+    <p id="welcomeMessage">Memeriksa hak akses...</p>
+
+    <section>
+      <h2>Manajemen SaaS</h2>
+      <ul>
+        <li>Data pelanggan</li>
+        <li>Paket dan harga</li>
+        <li>Katalog tema</li>
+        <li>Konfirmasi pembayaran</li>
+        <li>Langganan pelanggan</li>
+      </ul>
+      <p>Fitur manajemen akan kita implementasikan bertahap.</p>
+    </section>
+
+    <button id="logoutButton" type="button">Keluar</button>
   </main>
 
   <script type="module">
-    import { supabase } from "/assets/js/supabase.js";
+    import { requireRole, setupLogout } from "/assets/js/auth-guard.js";
 
-    document.getElementById("logoutButton").addEventListener("click", async () => {
-      const { error } = await supabase.auth.signOut();
+    setupLogout();
 
-      if (error) {
-        alert("Gagal keluar. Silakan coba lagi.");
-        return;
-      }
+    const result = await requireRole(["admin"]);
 
-      window.location.replace("/login/");
-    });
+    if (result) {
+      const name = result.profile.full_name || result.user.email || "Admin";
+      document.getElementById("welcomeMessage").textContent =
+        `Selamat datang, ${name}!`;
+    }
   </script>
 </body>
 </html>
