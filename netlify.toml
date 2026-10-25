@@ -3,7 +3,13 @@
   publish = "."
   command = ""
 
-# Fallback untuk URL undangan yang belum memiliki file fisik
+# URL undangan dengan trailing slash
+[[redirects]]
+  from = "/*/"
+  to = "/invitation/index.html"
+  status = 200
+
+# URL undangan tanpa trailing slash
 [[redirects]]
   from = "/*"
   to = "/invitation/index.html"

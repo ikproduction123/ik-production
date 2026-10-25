@@ -4,55 +4,114 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f8f4ef">
-  <meta name="description" content="Undangan digital">
-  <title>Undangan Digital | IK Production</title>
-  <link rel="stylesheet" href="/assets/css/invitation.css">
+  <title>Memuat Undangan | IK Production</title>
 </head>
 <body>
-  <main class="invitation" id="invitation">
-    <section class="cover">
-      <p class="eyebrow">UNDANGAN</p>
-      <h1 id="eventTitle">Memuat undangan...</h1>
-      <p class="intro" id="guestGreeting"></p>
-      <p class="event-date" id="eventDate"></p>
-      <button id="openInvitation" type="button" hidden>
-        Buka Undangan
-      </button>
-    </section>
-
-    <section class="details" id="eventDetails" hidden>
-      <p class="eyebrow">DENGAN HORMAT</p>
-      <h2 id="hostNames"></h2>
-      <p id="eventDescription"></p>
-
-      <div class="detail-card">
-        <h3>Waktu dan Tempat</h3>
-        <p id="venueName"></p>
-        <p id="venueAddress"></p>
-        <a id="mapsLink" target="_blank"
-           rel="noopener noreferrer" hidden>
-          Lihat lokasi di Google Maps
-        </a>
-      </div>
-
-      <p class="guest-note" id="guestName"></p>
-    </section>
-
-    <section class="state-message" id="loadingMessage">
-      Sedang memuat undangan...
-    </section>
-    <section class="state-message error" id="errorMessage" hidden>
-      <h2>Undangan belum tersedia</h2>
-      <p>Periksa kembali tautan undangan atau hubungi penyelenggara.</p>
-    </section>
+  <main style="max-width:600px;margin:80px auto;padding:24px;text-align:center;font-family:Arial,sans-serif">
+    <h1>IK Production</h1>
+    <p id="routerMessage">Sedang memuat undangan...</p>
   </main>
 
-  <footer>
-    Dibuat dengan ❤️ oleh IK Production
-  </footer>
+  <script type="module">
+    import { supabase } from "/assets/js/supabase.js";
 
-  <script type="module"
-    src="/assets/js/public-invitation.js"></script>
+    const message = document.getElementById("routerMessage");
+
+    function showError(text) {
+      message.textContent = text;
+    }
+
+    async function routeInvitation() {
+      const parts = location.pathname.split("/").filter(Boolean);
+      const slug = parts[0];
+
+      const reserved = new Set([
+        "login", "register", "forgot-password",
+        "reset-password", "dashboard", "admin",
+        "checkout", "invitation", "package", "assets"
+      ]);
+
+      if (!slug || reserved.has(slug)) {
+        showError("Halaman tidak ditemukan.");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("invitations")
+        .select(`
+          slug,
+          status,
+          theme:themes (
+            slug,
+            template_path,
+            is_active
+          )
+        `)
+        .eq("slug", slug)
+        .eq("status", "published")
+        .maybeSingle();
+
+      if (error) {
+        console.error(error);
+        showError("Undangan gagal dimuat. Silakan coba lagi.");
+        return;
+      }
+
+      if (!data || !data.theme || !data.theme.is_active) {
+        showError("Undangan tidak ditemukan atau belum dipublikasikan.");
+        return;
+      }
+
+      const templatePath = data.theme.template_path;
+
+      // Hanya izinkan file HTML tema di dalam /package/.
+      if (
+        typeof templatePath !== "string" ||
+        !/^\/package\/[a-z0-9-]+\/[a-z0-9-]+\/index\.html$/.test(templatePath)
+      ) {
+        showError("Lokasi template tema belum dikonfigurasi.");
+        return;
+      }
+
+      const response = await fetch(templatePath);
+
+      if (!response.ok) {
+        showError("File tema belum tersedia.");
+        return;
+      }
+
+      const html = await response.text();
+
+      // Tambahkan base URL supaya path relatif seperti ./style.css
+      // dan ./script.js mengarah ke folder tema yang benar.
+      const baseUrl = new URL(
+        "./",
+        new URL(templatePath, location.origin)
+      ).href;
+
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, "text/html");
+
+      let base = doc.querySelector("base");
+
+      if (!base) {
+        base = doc.createElement("base");
+        doc.head.prepend(base);
+      }
+
+      base.href = baseUrl;
+
+      // document.write menjalankan struktur HTML tema sebagai dokumen.
+      // Template harus berasal dari file tema milik situs sendiri.
+      document.open();
+      document.write("<!DOCTYPE html>\n" + doc.documentElement.outerHTML);
+      document.close();
+    }
+
+    routeInvitation().catch((error) => {
+      console.error(error);
+      showError("Terjadi kesalahan saat membuka undangan.");
+    });
+  </script>
 </body>
 </html>
