@@ -218,6 +218,42 @@
   </div>
 </section>
 
+
+<section class="admin-section" id="paymentReviewSection">
+  <div class="section-heading">
+    <div>
+      <h2>Verifikasi Pembayaran</h2>
+      <p>Periksa bukti transfer dan proses pesanan pelanggan.</p>
+    </div>
+    <button type="button" id="refreshPaymentsButton">
+      Muat Ulang
+    </button>
+  </div>
+
+  <div id="paymentReviewMessage" role="status" aria-live="polite"></div>
+
+  <div class="admin-table-wrapper">
+    <table class="admin-table">
+      <thead>
+        <tr>
+          <th>Pelanggan</th>
+          <th>Paket</th>
+          <th>Nominal</th>
+          <th>Status</th>
+          <th>Bukti Transfer</th>
+          <th>Tindakan</th>
+        </tr>
+      </thead>
+      <tbody id="paymentsTableBody">
+        <tr>
+          <td colspan="6">Memuat pembayaran...</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+
   </main>
 
   <script type="module" src="/assets/js/admin.js"></script>

@@ -268,25 +268,7 @@ form.addEventListener("submit", async event => {
 
 $("cancelEditButton").addEventListener("click", resetForm);
 
-async function init() {
-    try {
-        const result = await requireRole(["admin"]);
-        if (!result) return;
 
-        currentAdmin = result.user;
-
-$("welcomeMessage").textContent =
-  `Selamat datang, ${result.profile.full_name || result.user.email || "Admin"}!`;
-
-await loadPlans();
-await initAdminThemes();
-    } catch (error) {
-        console.error(error);
-        showMessage(error.message || "Dashboard admin gagal dimuat.", "error");
-    }
-}
-
-init();
 
 /* =========================================
    MANAJEMEN KATALOG TEMA
@@ -716,3 +698,279 @@ async function initAdminThemes() {
         themeMessage(error.message || "Katalog tema gagal dimuat.", "error");
     }
 }
+
+async function initAdminPayments() {
+    const tbody = document.querySelector("#paymentsTableBody");
+    const message = document.querySelector("#paymentReviewMessage");
+    const refreshButton = document.querySelector("#refreshPaymentsButton");
+
+    if (!tbody || !message || !refreshButton) return;
+
+    function showPaymentMessage(text, type = "error") {
+        message.textContent = text;
+        message.className = `form-message ${type}`;
+    }
+
+    function formatMoney(value) {
+        return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            maximumFractionDigits: 0
+        }).format(value);
+    }
+
+    function addCell(row, value) {
+        const cell = document.createElement("td");
+        cell.textContent = value ?? "-";
+        row.append(cell);
+        return cell;
+    }
+
+    async function loadPayments() {
+        tbody.replaceChildren();
+
+        const loadingRow = document.createElement("tr");
+        const loadingCell = document.createElement("td");
+        loadingCell.colSpan = 6;
+        loadingCell.textContent = "Memuat pembayaran...";
+        loadingRow.append(loadingCell);
+        tbody.append(loadingRow);
+
+        const { data, error } = await supabase
+            .from("payments")
+            .select(
+                `
+        id,
+        amount,
+        status,
+        proof_path,
+        admin_note,
+        created_at,
+        subscription:subscriptions!inner (
+          id,
+          user_id,
+          status,
+          profile:profiles (
+            full_name
+          ),
+          plan:plans (
+            name
+          )
+        )
+      `
+            )
+            .eq("status", "pending")
+            .order("created_at", { ascending: true });
+
+        if (error) throw error;
+
+        tbody.replaceChildren();
+
+        if (!data?.length) {
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+            cell.colSpan = 6;
+            cell.textContent = "Belum ada pembayaran yang menunggu verifikasi.";
+            row.append(cell);
+            tbody.append(row);
+            return;
+        }
+
+        for (const payment of data) {
+            const row = document.createElement("tr");
+            const subscription = payment.subscription;
+            const profile = subscription?.profile;
+            const plan = subscription?.plan;
+
+            addCell(
+                row,
+                profile?.full_name || subscription?.user_id || "Pelanggan"
+            );
+            addCell(row, plan?.name || "Paket tidak ditemukan");
+            addCell(row, formatMoney(payment.amount));
+
+            const statusCell = addCell(row, "");
+            const status = document.createElement("span");
+            status.className = "payment-status";
+            status.textContent = "Menunggu verifikasi";
+            statusCell.append(status);
+
+            const proofCell = document.createElement("td");
+
+            if (payment.proof_path) {
+                const proofButton = document.createElement("button");
+                proofButton.type = "button";
+                proofButton.className = "payment-proof-link";
+                proofButton.textContent = "Lihat Bukti";
+
+                proofButton.addEventListener("click", async () => {
+                    proofButton.disabled = true;
+
+                    try {
+                        const { data: signedData, error: signedError } =
+                            await supabase.storage
+                                .from("payment-proofs")
+                                .createSignedUrl(payment.proof_path, 60);
+
+                        if (signedError) throw signedError;
+
+                        // Buka URL sementara yang dibuat Storage.
+                        window.open(
+                            signedData.signedUrl,
+                            "_blank",
+                            "noopener,noreferrer"
+                        );
+                    } catch (error) {
+                        console.error(error);
+                        showPaymentMessage(
+                            "Bukti tidak dapat dibuka. Periksa izin Storage admin."
+                        );
+                    } finally {
+                        proofButton.disabled = false;
+                    }
+                });
+
+                proofCell.append(proofButton);
+            } else {
+                proofCell.textContent = "Belum ada bukti";
+            }
+
+            row.append(proofCell);
+
+            const actionCell = document.createElement("td");
+            const actions = document.createElement("div");
+            actions.className = "payment-actions";
+
+            const approveButton = document.createElement("button");
+            approveButton.type = "button";
+            approveButton.className = "payment-approve";
+            approveButton.textContent = "Setujui";
+
+            const rejectButton = document.createElement("button");
+            rejectButton.type = "button";
+            rejectButton.className = "payment-reject";
+            rejectButton.textContent = "Tolak";
+
+            approveButton.disabled = !payment.proof_path;
+
+            approveButton.addEventListener("click", async () => {
+                if (!payment.proof_path) {
+                    showPaymentMessage(
+                        "Pelanggan belum mengirim bukti transfer."
+                    );
+                    return;
+                }
+
+                const confirmed = window.confirm(
+                    `Setujui pembayaran ${formatMoney(payment.amount)} untuk paket ${plan?.name || "pelanggan ini"}? Langganan akan aktif selama 365 hari.`
+                );
+
+                if (!confirmed) return;
+
+                await reviewPayment(payment.id, "approve", null);
+            });
+
+            rejectButton.addEventListener("click", async () => {
+                const note = window.prompt(
+                    "Masukkan alasan penolakan pembayaran:"
+                );
+
+                if (note === null) return;
+
+                if (!note.trim()) {
+                    showPaymentMessage("Alasan penolakan wajib diisi.");
+                    return;
+                }
+
+                await reviewPayment(payment.id, "reject", note.trim());
+            });
+
+            async function reviewPayment(paymentId, decision, note) {
+                approveButton.disabled = true;
+                rejectButton.disabled = true;
+
+                try {
+                    const { error: reviewError } = await supabase.rpc(
+                        "admin_review_payment",
+                        {
+                            p_payment_id: paymentId,
+                            p_decision: decision,
+                            p_admin_note: note
+                        }
+                    );
+
+                    if (reviewError) throw reviewError;
+
+                    showPaymentMessage(
+                        decision === "approve"
+                            ? "Pembayaran disetujui. Langganan pelanggan sudah diaktifkan."
+                            : "Pembayaran ditolak dan alasan penolakan disimpan.",
+                        "success"
+                    );
+
+                    await loadPayments();
+                } catch (error) {
+                    console.error(error);
+                    showPaymentMessage(
+                        error.message || "Gagal memproses pembayaran."
+                    );
+                    approveButton.disabled = !payment.proof_path;
+                    rejectButton.disabled = false;
+                }
+            }
+
+            actions.append(approveButton, rejectButton);
+            actionCell.append(actions);
+            row.append(actionCell);
+            tbody.append(row);
+        }
+    }
+
+    refreshButton.addEventListener("click", async () => {
+        refreshButton.disabled = true;
+
+        try {
+            await loadPayments();
+            showPaymentMessage(
+                "Daftar pembayaran berhasil diperbarui.",
+                "success"
+            );
+        } catch (error) {
+            console.error(error);
+            showPaymentMessage(error.message || "Gagal memuat pembayaran.");
+        } finally {
+            refreshButton.disabled = false;
+        }
+    });
+
+    try {
+        await loadPayments();
+    } catch (error) {
+        console.error(error);
+        showPaymentMessage(
+            error.message ||
+                "Gagal memuat pembayaran. Periksa relasi tabel dan izin admin."
+        );
+    }
+}
+
+async function init() {
+    try {
+        const result = await requireRole(["admin"]);
+        if (!result) return;
+
+        currentAdmin = result.user;
+
+        $("welcomeMessage").textContent =
+            `Selamat datang, ${result.profile.full_name || result.user.email || "Admin"}!`;
+
+        await loadPlans();
+        await initAdminThemes();
+        await initAdminPayments();
+    } catch (error) {
+        console.error(error);
+        showMessage(error.message || "Dashboard admin gagal dimuat.", "error");
+    }
+}
+
+init();
