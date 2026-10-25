@@ -1,0 +1,120 @@
+
+.checkout-container {
+  width: min(760px, calc(100% - 32px));
+  margin: 40px auto;
+}
+
+.back-link {
+  color: #6d28d9;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.checkout-heading {
+  margin: 28px 0;
+}
+
+.checkout-heading h1 {
+  margin-bottom: 8px;
+}
+
+.checkout-heading p {
+  color: #6b7280;
+}
+
+.checkout-card {
+  padding: 24px;
+  margin-bottom: 24px;
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+}
+
+.checkout-card h2 {
+  margin-top: 0;
+}
+
+#planSummary {
+  margin-bottom: 20px;
+}
+
+#planSummary h2 {
+  font-size: 1.5rem;
+}
+
+#planSummary p {
+  line-height: 1.6;
+}
+
+.bank-details {
+  padding: 16px;
+  margin: 20px 0;
+  border-radius: 10px;
+  background: #f9fafb;
+  overflow-wrap: anywhere;
+}
+
+.bank-details p {
+  margin: 8px 0;
+}
+
+#proofForm {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+#proofForm input {
+  max-width: 100%;
+}
+
+#proofForm small {
+  color: #6b7280;
+  line-height: 1.5;
+}
+
+#proofForm button,
+#createOrderButton {
+  width: 100%;
+  padding: 14px;
+  border: 0;
+  border-radius: 10px;
+  background: #6d28d9;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+#proofForm button:disabled,
+#createOrderButton:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.checkout-message {
+  padding: 12px;
+  margin-bottom: 16px;
+  border-radius: 8px;
+  line-height: 1.5;
+}
+
+.checkout-message.error {
+  color: #991b1b;
+  background: #fef2f2;
+}
+
+.checkout-message.success {
+  color: #065f46;
+  background: #ecfdf5;
+}
+
+@media (max-width: 480px) {
+  .checkout-container {
+    margin: 24px auto;
+  }
+
+  .checkout-card {
+    padding: 18px;
+  }
+}

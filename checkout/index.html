@@ -1,0 +1,66 @@
+
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Checkout Paket - IK Production</title>
+  <link rel="stylesheet" href="/assets/css/dashboard.css">
+  <link rel="stylesheet" href="/assets/css/checkout.css">
+</head>
+<body>
+  <main class="checkout-container">
+    <a href="/dashboard/" class="back-link">← Kembali ke Dashboard</a>
+
+    <header class="checkout-heading">
+      <h1>Checkout Paket</h1>
+      <p>Pesan paket undangan digital IK Production.</p>
+    </header>
+
+    <section class="checkout-card">
+      <div id="checkoutMessage" role="status" aria-live="polite"></div>
+
+      <div id="planSummary">
+        <p>Memuat detail paket...</p>
+      </div>
+
+      <button type="button" id="createOrderButton" disabled>
+        Buat Pesanan
+      </button>
+    </section>
+
+    <section class="checkout-card" id="paymentSection" hidden>
+      <h2>Instruksi Pembayaran</h2>
+      <p>Silakan transfer sesuai nominal berikut.</p>
+
+      <div class="bank-details">
+        <p><strong>Bank:</strong> GANTI DENGAN NAMA BANK</p>
+        <p><strong>Nomor rekening:</strong> GANTI DENGAN NOMOR REKENING</p>
+        <p><strong>Atas nama:</strong> GANTI DENGAN NAMA PEMILIK</p>
+      </div>
+
+      <p>Total pembayaran:</p>
+      <h2 id="paymentAmount">Rp0</h2>
+
+      <p id="orderReference"></p>
+
+      <form id="proofForm">
+        <label for="paymentProof">Upload bukti transfer</label>
+        <input
+          id="paymentProof"
+          type="file"
+          accept="image/jpeg,image/png,image/webp,application/pdf"
+          required
+        >
+        <small>Format JPG, PNG, WebP, atau PDF. Maksimal 5 MB.</small>
+
+        <button type="submit" id="submitProofButton">
+          Kirim Bukti Pembayaran
+        </button>
+      </form>
+    </section>
+  </main>
+
+  <script type="module" src="/assets/js/checkout.js"></script>
+</body>
+</html>
